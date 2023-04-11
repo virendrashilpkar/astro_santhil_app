@@ -70,7 +70,7 @@ class _LikesState extends State<Likes> {
                                     width: MediaQuery.of(context).size.width,
                                     color: Colors.white30,
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                       child: Row(
                                         children: [
                                           Column(
@@ -79,11 +79,11 @@ class _LikesState extends State<Likes> {
                                             children: [
                                               Container(
                                                 child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white),),
+                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
                                               ),
                                               Container(
                                                 child: Text("20h left",
-                                                    style: TextStyle(color: Colors.white)),
+                                                    style: TextStyle(color: Colors.white, fontSize: 12)),
                                               )
                                             ],
                                           ),
