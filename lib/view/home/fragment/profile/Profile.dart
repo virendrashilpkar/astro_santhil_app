@@ -36,15 +36,30 @@ class _MyHomePageState extends State<Profile> {
       // });
     }
   }
-
+  late double _scrollPosition;
+  late ScrollController _scrollController;
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     CheckUserConnection();
     super.initState();
   }
-
+  _scrollListener() {
+    setState(() {
+      _scrollPosition = _scrollController.position.pixels;
+    });
+  }
+  int currentIndex=0;
   List<Color> colorList=[CommonColors.buttonorg,CommonColors.yellow,CommonColors.bluepro];
   List<String> packagetittle=["Premium","Gold","VIP"];
+  List<String> packagedis=["20","25","30"];
+  List<Color> colorList2=[CommonColors.buttonorg,CommonColors.yellow];
+  List<String> packagetittle2=["Premium","Gold"];
+  List<String> packagedis2=["20","25"];
+
+  int parcasepackage=100;
+
 
 
   @override
@@ -52,7 +67,7 @@ class _MyHomePageState extends State<Profile> {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: SafeArea(
-        child: Container(
+        child: SingleChildScrollView(
             child: Column(
               children: [
                 new SizedBox(
@@ -70,10 +85,15 @@ class _MyHomePageState extends State<Profile> {
                       new SizedBox(
                         width: 24,
                       ),
-                      new SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Image.asset("assets/setting_pro.png",height:24,width: 20,color: Colors.white,),
+                      InkWell(
+                        onTap: (){
+                          Navigator.of(context).pushNamed("Settings");
+                        },
+                        child: new SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Image.asset("assets/setting_pro.png",height:24,width: 20,color: Colors.white,),
+                        ),
                       ),
                       new SizedBox(
                         width: 24,
@@ -176,19 +196,35 @@ class _MyHomePageState extends State<Profile> {
                     ],
                   ),
                 ),
-                new SizedBox(height: 40,),
+                new SizedBox(height: 18,),
+                if(packagetittle.length >= parcasepackage) new Container(
+                  child: Text("You have Premium membership",style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color:Colors.white),),
+                ),
+                if(packagetittle.length >= parcasepackage) new Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 50),
+                  alignment: Alignment.center,
+                  child: Text("Upgrade NOW and be more succesful 3 MONTHS  PROMOTION",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color:Colors.white),textAlign: TextAlign.center,),
+                ),
 
-                new Container(
+                packagetittle.length >= parcasepackage ? new Container(
                   height: MediaQuery.of(context).size.width/2,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 3,
-                          itemBuilder: (ctx,int){
-                            return new Container(
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: packagetittle2.length,
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
+                        itemBuilder: (ctx,index){
+                          return  InkWell(
+                            onTap: (){
+                              setState(() {
+                                parcasepackage=100;
+                              });
+                            },
+                            child: new Container(
                               width: MediaQuery.of(context).size.width/3,
                               height: MediaQuery.of(context).size.width/2,
                               child: Stack(
@@ -200,7 +236,73 @@ class _MyHomePageState extends State<Profile> {
                                       width: MediaQuery.of(context).size.width/3.5,
                                       height: MediaQuery.of(context).size.width/2-50,
                                       decoration: BoxDecoration(
-                                        color:CommonColors.buttonorg,
+                                        color:colorList2[index],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0) //                 <--- border radius here
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          new SizedBox(
+                                            height: 47,
+                                            width: 36,
+                                            child: Image.asset("assets/drop_pro.png"),
+                                          ),
+                                          new SizedBox(height: 5,),
+                                          new Container(
+                                            child: Text("${packagetittle2[index]}",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                                          ),
+                                          new SizedBox(height: 5,),
+                                          new Container(
+                                            child: Text("\$ 175.00",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                ) :
+                new Container(
+                  height: MediaQuery.of(context).size.width/2,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: packagetittle.length,
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
+                        itemBuilder: (ctx,index){
+                          return index!=parcasepackage ? InkWell(
+                            onTap: (){
+                              setState(() {
+                                parcasepackage=index;
+                                currentIndex=index;
+                              });
+                            },
+                            child: new Container(
+                              width: MediaQuery.of(context).size.width/3,
+                              height: MediaQuery.of(context).size.width/2,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    bottom: 10,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width/3.5,
+                                      height: MediaQuery.of(context).size.width/2-50,
+                                      decoration: BoxDecoration(
+                                        color:colorList[index],
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0) //                 <--- border radius here
                                         ),
@@ -216,7 +318,7 @@ class _MyHomePageState extends State<Profile> {
                                           ),
                                           new SizedBox(height: 10,),
                                           new Container(
-                                            child: Text("Premium",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                                            child: Text("${packagetittle[index]}",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
                                           )
                                         ],
                                       ),
@@ -234,198 +336,211 @@ class _MyHomePageState extends State<Profile> {
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                                            Text("Save ${packagedis[index]}%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
                                           ],
                                         )
                                     ),
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                            ),
+                          ):Container();
+                        },
+                      )
                     ],
                   ),
                 ),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: new Row(
+                new SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: new Container(
-                          width: double.maxFinite,
-                          height: MediaQuery.of(context).size.width/2,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Positioned(
-                                bottom: 10,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width/3.5,
-                                  height: MediaQuery.of(context).size.width/2-50,
-                                  decoration: BoxDecoration(
-                                    color:CommonColors.buttonorg,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0) //                 <--- border radius here
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      new SizedBox(
-                                        height: 47,
-                                        width: 36,
-                                        child: Image.asset("assets/drop_pro.png"),
-                                      ),
-                                      new SizedBox(height: 10,),
-                                      new Container(
-                                        child: Text("Premium",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                child: Container(
-                                    margin: const EdgeInsets.only(right: 5,top:5),
-                                    decoration: BoxDecoration(
-                                      color: CommonColors.red,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
-                                      ],
-                                    )
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: new Container(
-                          width: double.maxFinite,
-                          height: MediaQuery.of(context).size.width/2,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Positioned(
-                                bottom: 10,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width/3.5,
-                                  height: MediaQuery.of(context).size.width/2-50,
-                                  decoration: BoxDecoration(
-                                    color:CommonColors.yellow,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0) //                 <--- border radius here
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      new SizedBox(
-                                        height: 47,
-                                        width: 36,
-                                        child: Image.asset("assets/drop_pro.png"),
-                                      ),
-                                      new SizedBox(height: 10,),
-                                      new Container(
-                                        child: Text("Gold",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                child: Container(
-                                    margin: const EdgeInsets.only(right: 5,top:5),
-                                    decoration: BoxDecoration(
-                                      color: CommonColors.red,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
-                                      ],
-                                    )
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: new Container(
-                          width: double.maxFinite,
-                          height: MediaQuery.of(context).size.width/2,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Positioned(
-                                bottom: 10,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width/3.5,
-                                  height: MediaQuery.of(context).size.width/2-50,
-                                  decoration: BoxDecoration(
-                                    color:CommonColors.bluepro,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0) //                 <--- border radius here
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      new SizedBox(
-                                        height: 47,
-                                        width: 36,
-                                        child: Image.asset("assets/drop_pro.png"),
-                                      ),
-                                      new SizedBox(height: 10,),
-                                      new Container(
-                                        child: Text("VIP",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                child: Container(
-                                    margin: const EdgeInsets.only(right: 5,top:5),
-                                    decoration: BoxDecoration(
-                                      color: CommonColors.red,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
-                                      ],
-                                    )
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      for(int i = 0; i < packagedis.length; i++)
+                        Container(
+                            height: 10, width: 10,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            decoration: BoxDecoration(
+                                color: i == currentIndex ?  CommonColors.buttonorg:Colors.white,
+                                borderRadius: BorderRadius.circular(5)
+                            )
+                        )
+                    ]
                 ),
-
-                new SizedBox(height: 60,),
+                // Container(
+                //   padding: const EdgeInsets.symmetric(horizontal: 5),
+                //   child: new Row(
+                //     children: [
+                //       Expanded(
+                //         child: new Container(
+                //           width: double.maxFinite,
+                //           height: MediaQuery.of(context).size.width/2,
+                //           child: Stack(
+                //             alignment: Alignment.center,
+                //             children: [
+                //               Positioned(
+                //                 bottom: 10,
+                //                 child: Container(
+                //                   width: MediaQuery.of(context).size.width/3.5,
+                //                   height: MediaQuery.of(context).size.width/2-50,
+                //                   decoration: BoxDecoration(
+                //                     color:CommonColors.buttonorg,
+                //                     borderRadius: BorderRadius.all(
+                //                         Radius.circular(10.0) //                 <--- border radius here
+                //                     ),
+                //                   ),
+                //                   child: Column(
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     crossAxisAlignment: CrossAxisAlignment.center,
+                //                     children: [
+                //                       new SizedBox(
+                //                         height: 47,
+                //                         width: 36,
+                //                         child: Image.asset("assets/drop_pro.png"),
+                //                       ),
+                //                       new SizedBox(height: 10,),
+                //                       new Container(
+                //                         child: Text("Premium",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                //                       )
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //               Positioned(
+                //                 bottom: 0,
+                //                 child: Container(
+                //                     margin: const EdgeInsets.only(right: 5,top:5),
+                //                     decoration: BoxDecoration(
+                //                       color: CommonColors.red,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                     padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                //                     child: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                //                       ],
+                //                     )
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //       Expanded(
+                //         child: new Container(
+                //           width: double.maxFinite,
+                //           height: MediaQuery.of(context).size.width/2,
+                //           child: Stack(
+                //             alignment: Alignment.center,
+                //             children: [
+                //               Positioned(
+                //                 bottom: 10,
+                //                 child: Container(
+                //                   width: MediaQuery.of(context).size.width/3.5,
+                //                   height: MediaQuery.of(context).size.width/2-50,
+                //                   decoration: BoxDecoration(
+                //                     color:CommonColors.yellow,
+                //                     borderRadius: BorderRadius.all(
+                //                         Radius.circular(10.0) //                 <--- border radius here
+                //                     ),
+                //                   ),
+                //                   child: Column(
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     crossAxisAlignment: CrossAxisAlignment.center,
+                //                     children: [
+                //                       new SizedBox(
+                //                         height: 47,
+                //                         width: 36,
+                //                         child: Image.asset("assets/drop_pro.png"),
+                //                       ),
+                //                       new SizedBox(height: 10,),
+                //                       new Container(
+                //                         child: Text("Gold",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                //                       )
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //               Positioned(
+                //                 bottom: 0,
+                //                 child: Container(
+                //                     margin: const EdgeInsets.only(right: 5,top:5),
+                //                     decoration: BoxDecoration(
+                //                       color: CommonColors.red,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                     padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                //                     child: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                //                       ],
+                //                     )
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //       Expanded(
+                //         child: new Container(
+                //           width: double.maxFinite,
+                //           height: MediaQuery.of(context).size.width/2,
+                //           child: Stack(
+                //             alignment: Alignment.center,
+                //             children: [
+                //               Positioned(
+                //                 bottom: 10,
+                //                 child: Container(
+                //                   width: MediaQuery.of(context).size.width/3.5,
+                //                   height: MediaQuery.of(context).size.width/2-50,
+                //                   decoration: BoxDecoration(
+                //                     color:CommonColors.bluepro,
+                //                     borderRadius: BorderRadius.all(
+                //                         Radius.circular(10.0) //                 <--- border radius here
+                //                     ),
+                //                   ),
+                //                   child: Column(
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     crossAxisAlignment: CrossAxisAlignment.center,
+                //                     children: [
+                //                       new SizedBox(
+                //                         height: 47,
+                //                         width: 36,
+                //                         child: Image.asset("assets/drop_pro.png"),
+                //                       ),
+                //                       new SizedBox(height: 10,),
+                //                       new Container(
+                //                         child: Text("VIP",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                //                       )
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //               Positioned(
+                //                 bottom: 0,
+                //                 child: Container(
+                //                     margin: const EdgeInsets.only(right: 5,top:5),
+                //                     decoration: BoxDecoration(
+                //                       color: CommonColors.red,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                     padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                //                     child: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         Text("Save 25%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                //                       ],
+                //                     )
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                new SizedBox(height: 15,),
                 Container(
                   height: 50,
                   margin: const EdgeInsets.only(right: 50,left: 50),
@@ -451,7 +566,7 @@ class _MyHomePageState extends State<Profile> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: InkWell(onTap: () {
-                            Navigator.of(context).pushNamed('CountryCity');
+                            Navigator.of(context).pushNamed('MatchPro');
                           },splashColor: Colors.blue.withOpacity(0.2),
                             customBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
@@ -462,6 +577,7 @@ class _MyHomePageState extends State<Profile> {
                     ],
                   ),
                 ),
+                new SizedBox(height: 40,),
               ],
             )
         ),

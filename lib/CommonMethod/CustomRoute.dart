@@ -12,11 +12,13 @@ import 'package:shadiapp/view/enablelocation/EnableLocation.dart';
 import 'package:shadiapp/view/forgotpassword/ForgotPassword.dart';
 import 'package:shadiapp/view/heightweight/HeightWeight.dart';
 import 'package:shadiapp/view/home/Home.dart';
+import 'package:shadiapp/view/home/fragment/match/MatchPro.dart';
 import 'package:shadiapp/view/intrests/Intrests.dart';
 import 'package:shadiapp/view/lookingfor/LookingFor.dart';
 import 'package:shadiapp/view/namedob/NameDOB.dart';
 import 'package:shadiapp/view/otpverify/OTPVerify.dart';
 import 'package:shadiapp/view/problemauth/ProblemAuth.dart';
+import 'package:shadiapp/view/setting/Settings.dart';
 
 class CustomRoute {
   static Route<dynamic> allRoutes(RouteSettings settings) {
@@ -71,6 +73,12 @@ class CustomRoute {
         case "Home":
         // ignore: prefer_const_constructors
           return Home();
+        case "MatchPro":
+        // ignore: prefer_const_constructors
+          return MatchPro();
+        case "Settings":
+        // ignore: prefer_const_constructors
+          return Settings();
 
       }
       // ignore: prefer_const_constructors
