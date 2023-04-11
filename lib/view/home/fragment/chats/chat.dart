@@ -38,7 +38,7 @@ class _ChatState extends State <Chat> {
             Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                  margin: const EdgeInsets.symmetric(horizontal: 18.5,vertical: 0),
                   alignment: Alignment.centerLeft,
                   child: InkWell(
                     onTap: (){
@@ -64,6 +64,7 @@ class _ChatState extends State <Chat> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
+                    margin: EdgeInsets.only(right: 15),
                     child: Image.asset(
                       'assets/settings.png',
                       width: 20,
@@ -72,16 +73,14 @@ class _ChatState extends State <Chat> {
                 )
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Container(
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 30.0),
                 child: Text("Likes you 45",
                   style: TextStyle(color: CommonColors.buttonorg),
                 ),
               ),
-            ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 10.0),
+              margin: EdgeInsets.only(left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
               height: 100,
               child: ListView.builder(
                   itemCount: images.length,
@@ -89,7 +88,7 @@ class _ChatState extends State <Chat> {
                   itemBuilder: (context, index){
                     return Container(
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(20, 0, 0, 20),
+                        margin: EdgeInsets.fromLTRB(10, 0, 0, 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
                               Radius.circular(15.0)),
@@ -155,7 +154,9 @@ class _ChatState extends State <Chat> {
                               child: Row(
                                 children: [
                                   Container(
+                                    height: 50,
                                     child: CircleAvatar(
+                                      radius: 30,
                                       backgroundImage: NetworkImage(images[index]),
                                       backgroundColor: CommonColors.bottomgrey,
                                     ),
@@ -168,7 +169,7 @@ class _ChatState extends State <Chat> {
                                         margin: EdgeInsets.only(left: 10.0),
                                         child: Text("Jimmy",
                                           style: TextStyle(
-                                            color: Colors.white
+                                            color: Colors.white, fontSize: 16
                                           ),
                                         )
                                       ),
@@ -176,7 +177,7 @@ class _ChatState extends State <Chat> {
                                         margin: EdgeInsets.only(left: 10.0),
                                         child: Text("Hi",
                                           style: TextStyle(
-                                            color: Colors.white30, fontSize: 12
+                                            color: Colors.white30, fontSize: 16
                                           ),
                                         )
                                       ),
@@ -184,10 +185,10 @@ class _ChatState extends State <Chat> {
                                   ),
                                   Spacer(),
                                   Container(
-                                      margin: EdgeInsets.only(left: 10.0),
+                                      margin: EdgeInsets.only(left: 10.0, right: 20.0),
                                       child: Text("1h",
                                         style: TextStyle(
-                                            color: Colors.white30, fontSize: 12
+                                            color: Colors.white30, fontSize: 15
                                         ),
                                       )
                                   ),
