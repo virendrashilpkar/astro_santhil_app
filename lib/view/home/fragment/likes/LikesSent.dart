@@ -25,22 +25,25 @@ class _LikesSentState extends State<LikesSent> with TickerProviderStateMixin{
          child: Column(
            children: [
              Container(
+               margin: EdgeInsets.only(top: 20.0),
                height: 60,
                padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
                child: Container(
-                 padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                 padding: EdgeInsets.symmetric(horizontal: 3.0, vertical: 3.0),
                  decoration: BoxDecoration(
                    borderRadius: BorderRadius.all(
-                       Radius.circular(20.0)),
+                       Radius.circular(50.0)),
                    color: Colors.white30,
                  ),
                  child: TabBar(
                    controller: _tabController,
-                   labelColor: Colors.white,
-                   unselectedLabelColor: Colors.black,
+                   unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400,
+                   fontSize: 16, color: Colors.white),
+                   labelStyle:  TextStyle(fontWeight: FontWeight.w700,
+                       fontSize: 16, color: Colors.white),
                    indicator: BoxDecoration(
                        borderRadius: BorderRadius.all(
-                           Radius.circular(20.0)),
+                           Radius.circular(60.0)),
                        color: CommonColors.buttonorg
                    ),
                    tabs: [

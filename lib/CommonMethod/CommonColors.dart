@@ -18,5 +18,6 @@ class CommonColors{
   static Color yellow=Color(0xffFEDA14);
   static Color custombottom=Color(0xff34393D);
   static Color settingblue=Color(0xff8ED0D5);
+  static Color matchDrawer=Color(0xff342525);
 
 }

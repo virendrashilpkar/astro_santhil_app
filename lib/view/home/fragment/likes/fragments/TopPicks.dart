@@ -29,6 +29,7 @@ class _TopPicks extends State<TopPicks> {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
         child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -38,7 +39,7 @@ class _TopPicks extends State<TopPicks> {
             itemBuilder: (context, index){
               return Container(
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(15.0)),
@@ -62,7 +63,7 @@ class _TopPicks extends State<TopPicks> {
                                 width: MediaQuery.of(context).size.width,
                                 color: Colors.white30,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Row(
                                     children: [
                                       Column(
@@ -71,11 +72,12 @@ class _TopPicks extends State<TopPicks> {
                                         children: [
                                           Container(
                                             child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white)),
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
                                           ),
                                           Container(
+                                            margin: EdgeInsets.only(bottom: 5.0),
                                             child: Text("20h left",
-                                                style: TextStyle(color: Colors.white)),
+                                                style: TextStyle(color: Colors.white, fontSize: 12)),
                                           )
                                         ],
                                       ),

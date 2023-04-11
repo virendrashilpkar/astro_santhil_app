@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
-import 'fragment/chats/chat.dart';
+import 'fragment/chats/Chat.dart';
 
 
 class Home extends StatefulWidget {

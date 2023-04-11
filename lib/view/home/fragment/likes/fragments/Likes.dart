@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
-import 'package:shadiapp/view/home/fragment/match/match.dart';
+import 'package:shadiapp/view/home/fragment/match/Match.dart';
 
 class Likes extends StatefulWidget {
   @override
@@ -30,6 +30,7 @@ class _LikesState extends State<Likes> {
   return Scaffold(
     backgroundColor: CommonColors.themeblack,
     body: Container(
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -46,59 +47,60 @@ class _LikesState extends State<Likes> {
                   );
                 },
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(15.0)),
                     color: CommonColors.bottomgrey,
                   ),
                   child:
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(images[index]),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(images[index]),
                                 fit: BoxFit.fill)
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    color: Colors.white30,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                      child: Row(
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Spacer(),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                color: Colors.white30,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white),),
-                                              ),
-                                              Container(
-                                                child: Text("20h left",
-                                                    style: TextStyle(color: Colors.white)),
-                                              )
-                                            ],
-                                          ),
-                                          Spacer(),
                                           Container(
-                                            child: Image.asset("assets/white_bg_star.png",height: 25,width: 25),
+                                            child: Text("Ana, 24",
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5.0),
+                                            child: Text("20h left",
+                                                style: TextStyle(color: Colors.white, fontSize: 12)),
                                           )
                                         ],
                                       ),
-                                    ),
+                                      Spacer(),
+                                      Container(
+                                        child: Image.asset("assets/white_bg_star.png",height: 25,width: 25),
+                                      )
+                                    ],
                                   ),
-                                ]
-                              )
-                            ),
-                          ),
+                                ),
+                              ),
+                            ]
+                        )
+                    ),
+                  ),
                 ),
               ),
             );
