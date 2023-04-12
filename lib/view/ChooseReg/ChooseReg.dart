@@ -80,7 +80,7 @@ class _MyHomePageState extends State<ChooseReg> {
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.w400,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -99,7 +99,7 @@ class _MyHomePageState extends State<ChooseReg> {
                       style: TextStyle(
                         color: Colors.blue,
                         fontSize: 13,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.w400,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -140,7 +140,7 @@ class _MyHomePageState extends State<ChooseReg> {
                       Expanded(
                           child: Center(
                             child: Text("Sign in through Google", style: TextStyle(
-                                color: CommonColors.themeblack, fontSize: 12),),
+                                color: CommonColors.themeblack, fontSize: 12,fontWeight: FontWeight.w600),),
                           )),
                       Container(
                         width: 27.0,
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<ChooseReg> {
                       Expanded(
                           child: Center(
                             child: Text("Sign in through Facebook", style: TextStyle(
-                                color: CommonColors.themeblack, fontSize: 12),),
+                                color: CommonColors.themeblack, fontSize: 12,fontWeight: FontWeight.w600),),
                           )),
                       Container(
                         width: 27.0,
@@ -247,7 +247,7 @@ class _MyHomePageState extends State<ChooseReg> {
                       Expanded(
                           child: Center(
                             child: Text("Log in by phone number", style: TextStyle(
-                                color: CommonColors.themeblack, fontSize: 12),),
+                                color: CommonColors.themeblack, fontSize: 12,fontWeight: FontWeight.w600),),
                           )),
                       Container(
                         width: 27.0,
@@ -282,11 +282,11 @@ class _MyHomePageState extends State<ChooseReg> {
            child: Container(
               margin: const EdgeInsets.only(top: 20,bottom: 25),
               child: Text(
-                'Problems with authorization?',
+                'Authorization problems?',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -116,7 +116,7 @@ class _MyHomePageState extends State<Intrests> {
                   textAlign: TextAlign.start,
                 ),
               ),
-              new SizedBox(height: 8,),
+              new SizedBox(height: 20,),
               Container(
                 height: 50,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -231,7 +231,7 @@ class _MyHomePageState extends State<Intrests> {
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),

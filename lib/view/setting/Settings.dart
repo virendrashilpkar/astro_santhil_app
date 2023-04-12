@@ -1110,8 +1110,218 @@ class _MyHomePageState extends State<Settings> {
                   ],
                 ),
               ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("Privacy",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 25,),
+              Container(
+                height: 50,
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.editblack,
+                  // border: Border.all(color: Colors.white),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text("Terms of Services",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),textAlign: TextAlign.left,)
+              ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("Contact us",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 25,),
+              Container(
+                height: 50,
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.editblack,
+                  // border: Border.all(color: Colors.white),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text("Support",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),textAlign: TextAlign.left,)
+              ),
 
+              new SizedBox(height: 140,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
 
+                        Expanded(
+                            child: Center(
+                              child: Text("RESTORE PURCHASE", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 20,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("LOGOUT", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 20,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("DELETE PROFILE", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              new SizedBox(height: 100,),
+
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/facebook.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                  new SizedBox(width: 35,),
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/twitter.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                  new SizedBox(width: 35,),
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/instagram.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+
+              new SizedBox(height: 100,),
             ],
           ),
         ),

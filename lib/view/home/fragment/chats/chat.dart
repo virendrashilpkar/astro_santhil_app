@@ -76,7 +76,7 @@ class _ChatState extends State <Chat> {
             Container(
                 margin: EdgeInsets.symmetric(horizontal: 30.0),
                 child: Text("Likes you 45",
-                  style: TextStyle(color: CommonColors.buttonorg),
+                  style: TextStyle(color: CommonColors.buttonorg,fontSize: 14,fontWeight: FontWeight.w600),
                 ),
               ),
             Container(
@@ -87,50 +87,48 @@ class _ChatState extends State <Chat> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
                     return Container(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(10, 0, 0, 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15.0)),
-                          color: CommonColors.bottomgrey,
-                        ),
-                        child:
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(images[index]),
-                                  fit: BoxFit.fill)
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Spacer(),
-                                    Container(
-                                      color: Colors.white30,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  child: Text("Ana, 24",
-                                                    style: TextStyle(color: Colors.white),),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(15.0)),
+                        color: CommonColors.bottomgrey,
+                      ),
+                      child:
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15.0),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage(images[index]),
+                                    fit: BoxFit.fill)
+                            ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Spacer(),
+                                  Container(
+                                    color: Colors.white30,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      child: Row(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Text("Ana, 24",
+                                                  style: TextStyle(color: Colors.white),),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ]
-                              )
-                          ),
+                                  ),
+                                ]
+                            )
                         ),
                       ),
                     );

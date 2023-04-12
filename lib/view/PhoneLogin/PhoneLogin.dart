@@ -103,7 +103,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                                 return ['+1', '+91', '+44', '+81'].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(value,style: TextStyle(color: Colors.white,fontSize: 20),),
+                                    child: Text(value,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),),
                                   );
                                 }).toList();
                               },
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 20),),
+                                  child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 20,fontWeight: FontWeight.w400,),),
                                 );
                               }).toList(),
                             ),
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                           keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             hintText: '1234567890',
-                            hintStyle: new TextStyle(color: Colors.grey,fontSize: 20),
+                            hintStyle: new TextStyle(color: Colors.grey,fontSize: 20,fontWeight: FontWeight.w400,),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white),
                             ),
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                               borderSide: BorderSide(color: Colors.cyan),
                             ),
                           ),
-                          style: new TextStyle(color: Colors.white,fontSize: 20),
+                          style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return 'Please enter your phone number';
@@ -187,7 +187,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20),),
+                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),
@@ -207,25 +207,25 @@ class _MyHomePageState extends State<PhoneLogin> {
                 ],
               ),
             ),
-            InkWell(
-              onTap: (){
-                Navigator.of(context).pushNamed('ForgotPassword');
-              },
-              splashColor: CommonColors.themeblack,
-              highlightColor: CommonColors.themeblack,
-              child: Container(
-                margin: const EdgeInsets.only(top: 20,bottom: 25),
-                child: Text(
-                  'Forgot Password',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
+            // InkWell(
+            //   onTap: (){
+            //     Navigator.of(context).pushNamed('ForgotPassword');
+            //   },
+            //   splashColor: CommonColors.themeblack,
+            //   highlightColor: CommonColors.themeblack,
+            //   child: Container(
+            //     margin: const EdgeInsets.only(top: 20,bottom: 25),
+            //     child: Text(
+            //       'Forgot Password',
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 15,
+            //         fontWeight: FontWeight.w400,
+            //       ),
+            //       textAlign: TextAlign.center,
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),

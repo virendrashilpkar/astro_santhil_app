@@ -126,7 +126,7 @@ class _MyHomePageState extends State<HeightWeight> {
                         },
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios,color: Colors.white,size: 20,)
+                    Icon(Icons.arrow_forward_ios,color: Colors.grey,size: 20,)
                   ],
                 ),
               ),
@@ -176,20 +176,20 @@ class _MyHomePageState extends State<HeightWeight> {
                         },
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios,color: Colors.white,size: 20,)
+                    Icon(Icons.arrow_forward_ios,color: Colors.grey,size: 20,)
                   ],
                 ),
               ),
 
               Container(
                 alignment: Alignment.center,
-                margin: const EdgeInsets.only(top: 14,bottom: 14,left: 28,right: 28),
+                margin: const EdgeInsets.only(top: 15,bottom: 15,left: 28,right: 28),
                 child: Text(
                   'This will appear on Shadi-App, and you will not be able to change it. However you can choose to hide or show your height and weight.',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -210,7 +210,7 @@ class _MyHomePageState extends State<HeightWeight> {
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),

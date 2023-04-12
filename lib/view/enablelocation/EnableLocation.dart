@@ -122,7 +122,7 @@ class _MyHomePageState extends State<EnableLocation> {
                         Expanded(
                             child: Center(
                               child: Text("Allow", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<EnableLocation> {
                         Expanded(
                             child: Center(
                               child: Text("Decline", style: TextStyle(
-                                  color: Colors.white, fontSize: 16),),
+                                  color: Colors.white, fontSize: 16,fontWeight: FontWeight.w400,),),
                             )),
                       ],
                     ),

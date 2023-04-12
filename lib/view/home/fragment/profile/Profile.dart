@@ -186,6 +186,7 @@ class _MyHomePageState extends State<Profile> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: InkWell(onTap: () {
+                            Navigator.of(context).pushNamed("EditProfile");
                           },splashColor: Colors.blue.withOpacity(0.2),
                             customBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),

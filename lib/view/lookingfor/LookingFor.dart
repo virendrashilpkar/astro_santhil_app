@@ -113,7 +113,7 @@ class _MyHomePageState extends State<LookingFor> {
                             Expanded(
                                 child: Center(
                                   child: Text("${youarea[index]}", style: TextStyle(
-                                      color: Colors.white, fontSize:  16,fontWeight: FontWeight.w400),),
+                                      color: youarevalue == youarea[index] ? Colors.white:Colors.white.withOpacity(0.6), fontSize:  16,fontWeight: youarevalue == youarea[index] ? FontWeight.w600 : FontWeight.w400),),
                                 )),
                           ],
                         ),
@@ -181,8 +181,8 @@ class _MyHomePageState extends State<LookingFor> {
 
                             Expanded(
                                 child: Center(
-                                  child: Text("${lookingfor[index]}", style: TextStyle(
-                                      color: Colors.white, fontSize: 16,fontWeight: FontWeight.w400),),
+                                  child: Text("${lookingfor[index]}",style: TextStyle(
+                                      color: lookingvalue == lookingfor[index] ? Colors.white:Colors.white.withOpacity(0.6), fontSize:  16,fontWeight: lookingvalue == lookingfor[index] ? FontWeight.w600 : FontWeight.w400),),
                                 )),
                           ],
                         ),
@@ -259,7 +259,7 @@ class _MyHomePageState extends State<LookingFor> {
                     return maritalStatuses.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                        child: Text(value,style: TextStyle(color:martialstatus=="Martial status" ? Colors.grey : Colors.white,fontSize: 16),),
                       );
                     }).toList();
                   },
@@ -295,7 +295,7 @@ class _MyHomePageState extends State<LookingFor> {
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),

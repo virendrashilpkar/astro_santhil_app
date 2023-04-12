@@ -13,6 +13,7 @@ import 'package:shadiapp/view/forgotpassword/ForgotPassword.dart';
 import 'package:shadiapp/view/heightweight/HeightWeight.dart';
 import 'package:shadiapp/view/home/Home.dart';
 import 'package:shadiapp/view/home/fragment/match/MatchPro.dart';
+import 'package:shadiapp/view/home/fragment/profile/EditProfile.dart';
 import 'package:shadiapp/view/intrests/Intrests.dart';
 import 'package:shadiapp/view/lookingfor/LookingFor.dart';
 import 'package:shadiapp/view/namedob/NameDOB.dart';
@@ -79,6 +80,9 @@ class CustomRoute {
         case "Settings":
         // ignore: prefer_const_constructors
           return Settings();
+        case "EditProfile":
+        // ignore: prefer_const_constructors
+          return EditProfile();
 
       }
       // ignore: prefer_const_constructors

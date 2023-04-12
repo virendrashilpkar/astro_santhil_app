@@ -83,7 +83,7 @@ class _MyHomePageState extends State<AccountRecover> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -109,7 +109,7 @@ class _MyHomePageState extends State<AccountRecover> {
                               decoration:  InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Email address',
-                                hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16)
+                                hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16,fontWeight: FontWeight.w400,)
                               ),
                             ),
                           )),
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<AccountRecover> {
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 14,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -148,7 +148,7 @@ class _MyHomePageState extends State<AccountRecover> {
                       Expanded(
                           child: Center(
                             child: Text("Send Email", style: TextStyle(
-                                color: Colors.white, fontSize: 20),),
+                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),
