@@ -5,7 +5,6 @@ class Chat extends StatefulWidget {
   @override
   State<Chat> createState() => _ChatState();
 }
-
 class _ChatState extends State <Chat> {
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
