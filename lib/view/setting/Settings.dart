@@ -850,10 +850,12 @@ class _MyHomePageState extends State<Settings> {
                   ],
                 ),
               ),
+              new SizedBox(height: 20,),
+
               Container(
                 height: 50,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.white),
@@ -880,7 +882,7 @@ class _MyHomePageState extends State<Settings> {
               new SizedBox(height: 40,),
               Container(
                 height: 50,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 100),
                 decoration: BoxDecoration(
                   color: CommonColors.buttonorg,
                   borderRadius:
@@ -893,8 +895,8 @@ class _MyHomePageState extends State<Settings> {
 
                         Expanded(
                             child: Center(
-                              child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                              child: Text("Check availability", style: TextStyle(
+                                  color: Colors.white, fontSize: 14,fontWeight: FontWeight.w400),),
                             )),
                       ],
                     ),
@@ -913,7 +915,413 @@ class _MyHomePageState extends State<Settings> {
                   ],
                 ),
               ),
+
+              new Container(
+                margin: const EdgeInsets.only(left: 37,right: 37,top: 12),
+                alignment: Alignment.centerLeft,
+                child: new Text("Create a unique username. Use your username instead of your fullname.",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.white.withOpacity(0.6)),),
+              ),
+
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("App settings",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Notifications",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 15,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Email",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+
+              new SizedBox(height: 15,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Push notifications",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+
+
               new SizedBox(height: 40,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 25),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("Share Shadi-App", style: TextStyle(
+                                  color: Colors.white, fontSize: 16,fontWeight: FontWeight.w600),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+
+
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("Privacy",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Cookie Policy",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 15,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Privacy Policy",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+
+              new SizedBox(height: 15,),
+              new Container(
+                margin: const EdgeInsets.only(left: 20,right: 30),
+                // decoration: BoxDecoration(
+                //     color: CommonColors.editblack,
+                //     borderRadius: BorderRadius.circular(37)
+                // ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // new SizedBox(width: 20,),
+                    new Container(
+                      child: new Text("Privacy preferences",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
+                    ),
+                    Spacer(),
+                    new Container(
+                        child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                    ),
+                    // new SizedBox(width: 20,),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("Privacy",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 25,),
+              Container(
+                height: 50,
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.editblack,
+                  // border: Border.all(color: Colors.white),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text("Terms of Services",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),textAlign: TextAlign.left,)
+              ),
+              new SizedBox(height: 30,),
+              new Container(
+                margin: const EdgeInsets.only(left: 23,right: 23),
+                alignment: Alignment.centerLeft,
+                child: new Text("Contact us",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+              ),
+              new SizedBox(height: 25,),
+              Container(
+                height: 50,
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.editblack,
+                  // border: Border.all(color: Colors.white),
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text("Support",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),textAlign: TextAlign.left,)
+              ),
+
+              new SizedBox(height: 140,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("RESTORE PURCHASE", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 20,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("LOGOUT", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 20,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("DELETE PROFILE", style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+                          Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              new SizedBox(height: 100,),
+
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/facebook.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                  new SizedBox(width: 35,),
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/twitter.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                  new SizedBox(width: 35,),
+                  new SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: InkWell(
+                      onTap: (){
+
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset("assets/instagram.png"),
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.2),
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+
+              new SizedBox(height: 100,),
             ],
           ),
         ),

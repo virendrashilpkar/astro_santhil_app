@@ -94,7 +94,7 @@ class _MyHomePageState extends State<NameDOB> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              new SizedBox(height: 15,),
+              new SizedBox(height: 17,),
               Container(
                 height: 50,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<NameDOB> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Your birthday',
+                  'Your birthday is',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -184,9 +184,9 @@ class _MyHomePageState extends State<NameDOB> {
                   decoration: InputDecoration(
                     hintText: 'DD/MM/YYYY',
                     border: InputBorder.none,
-                    hintStyle: new TextStyle(color: Colors.grey,fontSize: 16),
+                    hintStyle: new TextStyle(color: Colors.grey,fontSize: 16,fontWeight: FontWeight.w400),
                   ),
-                  style: new TextStyle(color: Colors.white,fontSize: 16),
+                  style: new TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w400),
                   onTap: () {
                     _selectDate();
                     FocusScope.of(context).requestFocus(new FocusNode());
@@ -210,8 +210,8 @@ class _MyHomePageState extends State<NameDOB> {
                   'This will appear on Shadi-App, and you will not be able to change it.',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -232,7 +232,7 @@ class _MyHomePageState extends State<NameDOB> {
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),

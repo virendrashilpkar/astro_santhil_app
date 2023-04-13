@@ -8,6 +8,7 @@ class CommonColors{
   static Color edittextblack=Color(0xffE1E1E1);
   static Color buttonorg=Color(0xffEF7D90);
   static Color bottomgrey=Color(0xffA6A6A6);
+  static Color editblackgrey=Color(0xffD5D5D5);
   static Color white=Color(0xffffffff);
   static Color red=Color(0xffFF0000);
   static Color blue=Color(0xff3C85FF);
@@ -18,6 +19,5 @@ class CommonColors{
   static Color yellow=Color(0xffFEDA14);
   static Color custombottom=Color(0xff34393D);
   static Color settingblue=Color(0xff8ED0D5);
-  static Color matchDrawer=Color(0xff342525);
 
 }

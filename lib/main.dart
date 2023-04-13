@@ -73,7 +73,8 @@ void navigateUser(BuildContext context) async{
     // Navigator.of(context).pushNamed('ChooseReg');
   }else{
 
-    Navigator.of(context).pushNamed('Home');
+    // Navigator.of(context).pushNamed('Home');
+    Navigator.of(context).pushNamed('EditProfile');
     // Navigator.of(context).pushNamed('ChooseReg');
   }
 }

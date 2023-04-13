@@ -305,7 +305,7 @@ class _MyHomePageState extends State<AddPhotos> {
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
-                                  color: Colors.white, fontSize: 20),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                             )),
                       ],
                     ),

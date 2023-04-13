@@ -95,7 +95,7 @@ class _MyHomePageState extends State<CountryCity> {
                   // color: Colors.white,
                 ),
                 isExpanded: true,
-                style: TextStyle(color: Colors.white,fontSize: 16),
+                style: TextStyle(color:Colors.white,fontSize: 16),
                 onChanged: (newValue) {
                   setState(() {
                     country = newValue!;
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<CountryCity> {
                   return ['Select country', 'india', 'pakistan', 'china'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                      child: Text(value,style: TextStyle(color:country == 'Select country' ? Colors.grey:  Colors.white,fontSize: 16),),
                     );
                   }).toList();
                 },
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<CountryCity> {
                   return ['Select city', 'indore', 'bhopal', 'guna'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                      child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
                     );
                   }).toList();
                 },
@@ -187,8 +187,8 @@ class _MyHomePageState extends State<CountryCity> {
                 'This will appear on Shadi-App, however you can choose to hide or show your country and city.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -209,7 +209,7 @@ class _MyHomePageState extends State<CountryCity> {
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20),),
+                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),

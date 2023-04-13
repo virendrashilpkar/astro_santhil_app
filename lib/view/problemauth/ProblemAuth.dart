@@ -55,7 +55,7 @@ class _MyHomePageState extends State<ProblemAuth> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 33,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<ProblemAuth> {
                               decoration:  InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Email address',
-                                  hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16)
+                                  hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16,fontWeight: FontWeight.w400)
                               ),
                             ),
                           )),
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<ProblemAuth> {
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.start,
               ),
@@ -119,7 +119,7 @@ class _MyHomePageState extends State<ProblemAuth> {
                       Expanded(
                           child: Center(
                             child: Text("Sign in", style: TextStyle(
-                                color: Colors.white, fontSize: 20),),
+                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600),),
                           )),
                     ],
                   ),

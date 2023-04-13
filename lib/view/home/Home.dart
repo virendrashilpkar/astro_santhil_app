@@ -2,13 +2,21 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/view/addphotos/AddPhotos.dart';
+import 'package:shadiapp/view/enablelocation/EnableLocation.dart';
+import 'package:shadiapp/view/forgotpassword/ForgotPassword.dart';
+import 'package:shadiapp/view/heightweight/HeightWeight.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/HomeSearch.dart';
 import 'package:shadiapp/view/home/fragment/likes/LikesSent.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
+import 'package:shadiapp/view/otpverify/OTPVerify.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:collection/collection.dart';
 
-
-import 'fragment/chats/Chat.dart';
-import 'fragment/live/Live.dart';
+import 'fragment/chats/chat.dart';
 
 
 class Home extends StatefulWidget {
@@ -51,7 +59,7 @@ class _MyHomePageState extends State<Home> {
 
   final pages = [
     HomeSearch(),
-    Live(),
+    OTPVerify(),
     LikesSent(),
     Chat(),
     Profile()
