@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
-// import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
+import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
 
 class Chat extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _ChatState extends State <Chat> {
       backgroundColor: CommonColors.themeblack,
       endDrawer: Drawer(
         width: 180,
-        // backgroundColor: CommonColors.matchDrawer,
+        backgroundColor: CommonColors.matchDrawer,
     child: ListView(
     padding: EdgeInsets.zero,
       children: <Widget>[
@@ -203,11 +203,11 @@ class _ChatState extends State <Chat> {
                             ),
                             InkWell(
                               onTap: (){
-                                // Navigator.of(context).push(
-                                //     MaterialPageRoute(
-                                //         builder: (context) => ChatRoom(images[index])
-                                //     )
-                                // );
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatRoom(images[index])
+                                    )
+                                );
                               },
                               child: Container(
                                 margin: EdgeInsets.all(10.0),
