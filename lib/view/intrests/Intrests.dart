@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
@@ -107,7 +106,7 @@ class _MyHomePageState extends State<Intrests> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.only(left: 20,right: 55),
                 child: Text(
-                  'How would you describe yourself? select 4',
+                  'How would you describe\nyourself ? select 4',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -150,6 +149,7 @@ class _MyHomePageState extends State<Intrests> {
                     )
                   ),
                   style: new TextStyle(color: Colors.white,fontSize: 14),
+                  textAlign: TextAlign.left,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter your Tag';

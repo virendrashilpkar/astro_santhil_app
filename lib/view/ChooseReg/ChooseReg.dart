@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
@@ -76,7 +75,7 @@ class _MyHomePageState extends State<ChooseReg> {
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 35),
                   child: Text(
-                    'By clicking "Login", you agree to our terms. Find out how we handle your data in our',
+                    'Before you login please read our privacy policy\nand find out how we handle your data.\nBy logging in you agree to our terms.',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,

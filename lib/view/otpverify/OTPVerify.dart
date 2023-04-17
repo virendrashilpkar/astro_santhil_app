@@ -72,7 +72,7 @@ class _MyHomePageState extends State<OTPVerify> {
             Container(
               // height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              // padding: const EdgeInsets.symmetric(horizontal: 20),
               // decoration: BoxDecoration(
               // color: Colors.white,
               // borderRadius:
@@ -81,8 +81,8 @@ class _MyHomePageState extends State<OTPVerify> {
               child: Stack(
                 children: <Widget>[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
                         flex: 3,
