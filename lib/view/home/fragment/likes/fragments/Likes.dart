@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
-// import 'package:shadiapp/view/home/fragment/match/match.dart';
+import 'package:shadiapp/view/home/fragment/match/Match.dart';
 
 class Likes extends StatefulWidget {
   @override
@@ -40,10 +40,10 @@ class _LikesState extends State<Likes> {
             return Container(
               child: InkWell(
                 onTap: (){
-                  // Navigator.of(context).push(
-                  //     MaterialPageRoute(builder: (context) => Match()
-                  //     )
-                  // );
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => Match()
+                      )
+                  );
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
