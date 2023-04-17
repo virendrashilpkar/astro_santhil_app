@@ -6,6 +6,7 @@ class Chat extends StatefulWidget {
   @override
   State<Chat> createState() => _ChatState();
 }
+
 class _ChatState extends State <Chat> {
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
@@ -29,7 +30,7 @@ class _ChatState extends State <Chat> {
       backgroundColor: CommonColors.themeblack,
       endDrawer: Drawer(
         width: 180,
-        // backgroundColor: CommonColors.matchDrawer,
+        backgroundColor: CommonColors.matchDrawer,
     child: ListView(
     padding: EdgeInsets.zero,
       children: <Widget>[
