@@ -154,7 +154,7 @@ class _LiveRoomState extends State<LiveRoom> {
                     ],
                   ),
                 ),
-                +ListView.builder(
+                ListView.builder(
                       itemCount: message.length,
                       reverse: true,
                       shrinkWrap: true,

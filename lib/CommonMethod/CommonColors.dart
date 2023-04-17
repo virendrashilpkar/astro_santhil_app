@@ -23,5 +23,6 @@ class CommonColors{
   static Color custombottom=Color(0xff34393D);
   static Color settingblue=Color(0xff8ED0D5);
   static Color upgradeblue=Color(0xff1FD2E1);
+  static Color matchDrawer=Color(0xff3e3a3a);
 
 }
