@@ -30,11 +30,12 @@ class _LikesState extends State<Likes> {
   return Scaffold(
     backgroundColor: CommonColors.themeblack,
     body: Container(
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 2.0,
-            mainAxisSpacing: 10.0),
+            crossAxisSpacing: 15.0,
+            mainAxisSpacing: 15.0),
           itemCount: images.length,
           itemBuilder: (context, index){
             return Container(
@@ -46,7 +47,7 @@ class _LikesState extends State<Likes> {
                   );
                 },
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(15.0)),
@@ -68,7 +69,15 @@ class _LikesState extends State<Likes> {
                                   Spacer(),
                                   Container(
                                     width: MediaQuery.of(context).size.width,
-                                    color: Colors.white30,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                        Color(0xff66DFD7D7),
+                                        Color(0xff00D9D9D9),
+                                      ],
+                                        begin: Alignment.center,
+                                        end: Alignment.bottomRight,)
+                                    ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                       child: Row(
@@ -79,7 +88,8 @@ class _LikesState extends State<Likes> {
                                             children: [
                                               Container(
                                                 child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
+                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
+                                                fontSize: 15),),
                                               ),
                                               Container(
                                                 child: Text("20h left",

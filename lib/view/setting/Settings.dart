@@ -284,7 +284,7 @@ class _MyHomePageState extends State<Settings> {
               new Container(
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 alignment: Alignment.centerLeft,
-                child: new Text("Account Settings",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white.withOpacity(0.6)),),
+                child: new Text("Account Settings",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
               ),
               new SizedBox(height: 25,),
               new Container(
@@ -362,7 +362,7 @@ class _MyHomePageState extends State<Settings> {
               new Container(
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 alignment: Alignment.centerLeft,
-                child: new Text("Search Settings",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white.withOpacity(0.6)),),
+                child: new Text("Search Settings",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
               ),
               new SizedBox(height: 40,),
               new Container(
@@ -429,6 +429,7 @@ class _MyHomePageState extends State<Settings> {
               ),
               new SizedBox(height: 21,),
               Container(
+                height: 50.0,
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 decoration: BoxDecoration(
                     color: CommonColors.editblack,
@@ -443,6 +444,7 @@ class _MyHomePageState extends State<Settings> {
                     ),
                     Spacer(),
                     new Container(
+                      height: 20,
                         child: CupertinoSwitch(
                           value:GoGlobal,
                           onChanged: (value){
@@ -519,6 +521,7 @@ class _MyHomePageState extends State<Settings> {
 
               new SizedBox(height: 28,),
               Container(
+                height: 50.0,
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 decoration: BoxDecoration(
                     color: CommonColors.editblack,
@@ -533,6 +536,7 @@ class _MyHomePageState extends State<Settings> {
                     ),
                     Spacer(),
                     new Container(
+                      height: 20.0,
                       child: CupertinoSwitch(
                         value:GoGlobal,
                         onChanged: (value){
@@ -605,7 +609,7 @@ class _MyHomePageState extends State<Settings> {
               new Container(
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 alignment: Alignment.centerLeft,
-                child: new Text("My visibility",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white.withOpacity(0.6)),),
+                child: new Text("My visibility",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
               ),
 
               new SizedBox(height: 22,),
@@ -796,6 +800,7 @@ class _MyHomePageState extends State<Settings> {
 
               new SizedBox(height: 40,),
               Container(
+                height: 50.0,
                 margin: const EdgeInsets.only(left: 20,right: 20),
                 // decoration: BoxDecoration(
                 //     color: CommonColors.editblack,
@@ -810,6 +815,7 @@ class _MyHomePageState extends State<Settings> {
                     ),
                     Spacer(),
                     new Container(
+                      height: 20.0,
                       child: CupertinoSwitch(
                         value:GoGlobal,
                         onChanged: (value){
