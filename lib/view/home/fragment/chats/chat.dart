@@ -6,7 +6,6 @@ class Chat extends StatefulWidget {
   @override
   State<Chat> createState() => _ChatState();
 }
-
 class _ChatState extends State <Chat> {
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
@@ -110,6 +109,8 @@ class _ChatState extends State <Chat> {
                   child: Container(
                     child: Image.asset(
                       'assets/shield_pro.png',
+                      width: 20,
+                      height: 24,
                     ),
                   ),
                 ),
@@ -120,6 +121,7 @@ class _ChatState extends State <Chat> {
                     child: Image.asset(
                       'assets/settings.png',
                       width: 20,
+                      height: 20,
                     ),
                   ),
                 )

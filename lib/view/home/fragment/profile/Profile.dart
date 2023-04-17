@@ -85,21 +85,21 @@ class _MyHomePageState extends State<Profile> {
                     children: [
                       new Spacer(),
                       new SizedBox(
-                        width: 24,
-                        height: 24,
+                        width: 20,
+                        height: 20,
                         child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
                       ),
                       new SizedBox(
-                        width: 24,
+                        width: 15,
                       ),
                       InkWell(
                         onTap: (){
                           Navigator.of(context).pushNamed("Settings");
                         },
                         child: new SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: Image.asset("assets/setting_pro.png",height:24,width: 20,color: Colors.white,),
+                          width: 20,
+                          height: 20,
+                          child: Image.asset("assets/setting_pro.png",height:20,width: 20,color: Colors.white,),
                         ),
                       ),
                       new SizedBox(

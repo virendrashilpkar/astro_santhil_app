@@ -29,16 +29,16 @@ class _TopPicks extends State<TopPicks> {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: Container(
+        margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0),
+                crossAxisSpacing: 15.0,
+                mainAxisSpacing: 15.0),
             itemCount: images.length,
             itemBuilder: (context, index){
               return Container(
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(15.0)),
@@ -59,32 +59,25 @@ class _TopPicks extends State<TopPicks> {
                             children: [
                               Spacer(),
                               Container(
+                                alignment: Alignment.centerLeft,
                                 width: MediaQuery.of(context).size.width,
-                                color: Colors.white30,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white)),
-                                          ),
-                                          Container(
-                                            child: Text("20h left",
-                                                style: TextStyle(color: Colors.white)),
-                                          )
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        child: Image.asset("assets/white_bg_star.png",height: 25,width: 25),
-                                      )
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff66DFD7D7),
+                                      Color(0xff00D9D9D9),
                                     ],
-                                  ),
+                                    begin: Alignment.center,
+                                    end: Alignment.bottomRight,)
+                              ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal:10.0),
+                                  child: Container(
+                                            child: Text("Ana, 24",
+                                                style: TextStyle(color: Colors.white,
+                                                fontSize: 15)),
+                                          ),
                                 ),
                               ),
                             ]

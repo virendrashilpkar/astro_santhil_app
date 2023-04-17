@@ -601,7 +601,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 hintText: 'Add New Tag...',
                                 border: InputBorder.none,
                                 hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
-                                prefixIcon: SizedBox(child: Image.asset("assets/tag_intrests.png"),),
+                                prefixIcon: SizedBox(child: Image.asset("assets/tag_interest.png"),),
                                 suffixIcon: new InkWell(
                                   onTap: (){
                                     if(selectedIndex.length!=4){
@@ -1290,7 +1290,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 );
                               }).toList();
                             },
-                            iconSize: 24,
+                            iconSize: 20,
                             icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select Caste', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
@@ -1368,7 +1368,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 );
                               }).toList();
                             },
-                            iconSize: 24,
+                            iconSize: 20,
                             icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select your mother tongue', 'Hindi', 'English'] // add your own dial codes
