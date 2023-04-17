@@ -6,7 +6,6 @@ class Chat extends StatefulWidget {
   @override
   State<Chat> createState() => _ChatState();
 }
-
 class _ChatState extends State <Chat> {
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
@@ -140,8 +139,7 @@ class _ChatState extends State <Chat> {
                   itemBuilder: (context, index){
                     return Container(
                       child: Container(
-                        width: 80,
-                        height: 100,
+                        width: 75,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
@@ -212,14 +210,13 @@ class _ChatState extends State <Chat> {
                                 );
                               },
                               child: Container(
-                                // margin: EdgeInsets.all(10.0),
-                                padding: const EdgeInsets.only(left: 30,top: 8,bottom: 8,right: 43),
+                                margin: EdgeInsets.all(10.0),
                                 child: Row(
                                   children: [
                                     Container(
                                       height: 50,
                                       child: CircleAvatar(
-                                        radius: 31,
+                                        radius: 30,
                                         backgroundImage: NetworkImage(images[index]),
                                         backgroundColor: CommonColors.bottomgrey,
                                       ),
@@ -235,7 +232,7 @@ class _ChatState extends State <Chat> {
                                               child: Text("Jimmy",
                                                 style: TextStyle(
                                                   color: Colors.white, fontSize: 16,
-                                                    fontWeight: FontWeight.w500
+                                                    fontWeight: FontWeight.w500, fontStyle: FontStyle.normal
                                                 ),
                                               )
                                             ),
@@ -246,7 +243,8 @@ class _ChatState extends State <Chat> {
                                           child: Text("Hi",
                                             style: TextStyle(
                                               color: Colors.white30, fontSize: 16,
-                                                fontWeight: FontWeight.w400
+                                                fontFamily: "OpenSans_Regular",
+                                                fontWeight: FontWeight.w400, fontStyle: FontStyle.normal
                                             ),
                                           )
                                         ),
@@ -255,7 +253,7 @@ class _ChatState extends State <Chat> {
                                     Spacer(),
                                     Container(
                                       alignment: Alignment.topCenter,
-                                        // margin: EdgeInsets.only(left: 10.0, right: 20.0, bottom: 10.0),
+                                        margin: EdgeInsets.only(left: 10.0, right: 20.0, bottom: 10.0),
                                         child: Text("1h",
                                           style: TextStyle(
                                               color: Colors.white30, fontSize: 15
