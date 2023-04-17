@@ -10,6 +10,7 @@ import 'package:shadiapp/view/forgotpassword/ForgotPassword.dart';
 import 'package:shadiapp/view/heightweight/HeightWeight.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/HomeSearch.dart';
 import 'package:shadiapp/view/home/fragment/likes/LikesSent.dart';
+import 'package:shadiapp/view/home/fragment/live/Live.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
 import 'package:shadiapp/view/otpverify/OTPVerify.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<Home> {
 
   final pages = [
     HomeSearch(),
-    OTPVerify(),
+    Live(),
     LikesSent(),
     Chat(),
     Profile()

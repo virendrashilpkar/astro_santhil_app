@@ -74,7 +74,7 @@ void navigateUser(BuildContext context) async{
   }else{
 
     // Navigator.of(context).pushNamed('Home');
-    Navigator.of(context).pushNamed('EditProfile');
-    // Navigator.of(context).pushNamed('ChooseReg');
+    // Navigator.of(context).pushNamed('FreeSub');
+    Navigator.of(context).pushNamed('ChooseReg');
   }
 }
