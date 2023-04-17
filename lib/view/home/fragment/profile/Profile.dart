@@ -273,10 +273,9 @@ class _MyHomePageState extends State<Profile> {
                               child: Container(
                                 height: 28,
                                 width: 28,
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(8),
                                 color: Colors.white,
-                                child: Icon(Icons.camera_alt,color: Colors.black,
-                                size: 15,),
+                                child: Image.asset("assets/camera_icon.png")
                               )
                             ),
                           )
@@ -602,7 +601,7 @@ class _MyHomePageState extends State<Profile> {
                                       decoration: BoxDecoration(
                                         color:colorList2[index],
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0) //                 <--- border radius here
+                                            Radius.circular(17.0) //                 <--- border radius here
                                         ),
                                       ),
                                       child: Column(
@@ -679,7 +678,7 @@ class _MyHomePageState extends State<Profile> {
                                         decoration: BoxDecoration(
                                           color:colorList[index],
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0) //                 <--- border radius here
+                                              Radius.circular(17.0) //                 <--- border radius here
                                           ),
                                         ),
                                         child: Column(
@@ -689,7 +688,7 @@ class _MyHomePageState extends State<Profile> {
                                             new SizedBox(
                                               height: 47,
                                               width: 36,
-                                              child: Image.asset("assets/drop_pro.png"),
+                                              child: Image.asset("assets/drop_pro.png",fit: BoxFit.cover,),
                                             ),
                                             new SizedBox(height: 10,),
                                             new Container(

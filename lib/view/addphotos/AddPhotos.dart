@@ -151,7 +151,7 @@ class _MyHomePageState extends State<AddPhotos> {
                 child: Text(
                   'Add at least 2 photos to continue',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.white.withOpacity(0.6),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),

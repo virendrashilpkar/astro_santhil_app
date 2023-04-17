@@ -95,7 +95,7 @@ class _MyHomePageState extends State<EnableLocation> {
                 alignment: Alignment.center,
                 // margin: const EdgeInsets.only(left: 20,right: 55),
                 child: Text(
-                  'Enable Location Serices',
+                  'Enable Location Services',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -156,7 +156,7 @@ class _MyHomePageState extends State<EnableLocation> {
                         Expanded(
                             child: Center(
                               child: Text("Decline", style: TextStyle(
-                                  color: Colors.white, fontSize: 16,fontWeight: FontWeight.w400,),),
+                                  color: Colors.white.withOpacity(0.6), fontSize: 16,fontWeight: FontWeight.w400,),),
                             )),
                       ],
                     ),

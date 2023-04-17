@@ -73,6 +73,9 @@ class _MyHomePageState extends State<Intrests> {
 
   List<int> selectedIndex = [];
 
+
+  bool ischeck =false;
+
   TextEditingController tagsearch = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -133,8 +136,8 @@ class _MyHomePageState extends State<Intrests> {
                     hintText: 'Add New Tag...',
                     border: InputBorder.none,
                     hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
-                    prefixIcon: SizedBox(child: Image.asset("assets/tag_intrests.png"),),
-                    suffixIcon: new InkWell(
+                    prefixIcon: SizedBox(child: Image.asset("assets/tag_intrests.png",color: Colors.white.withOpacity(0.6),),),
+                    suffixIcon: ischeck ? new InkWell(
                       onTap: (){
                           if(selectedIndex.length!=4){
                             setState((){
@@ -146,8 +149,19 @@ class _MyHomePageState extends State<Intrests> {
                           }
                       },
                       child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                    )
+                    ):null
                   ),
+                  onChanged: (value){
+                    if(value.isNotEmpty){
+                      setState(() {
+                        ischeck = true;
+                      });
+                    }else{
+                      setState(() {
+                        ischeck = false;
+                      });
+                    }
+                  },
                   style: new TextStyle(color: Colors.white,fontSize: 14),
                   textAlign: TextAlign.left,
                   validator: (value) {
@@ -187,7 +201,7 @@ class _MyHomePageState extends State<Intrests> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                              Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white.withOpacity(0.6)),),
                               new SizedBox(width: 5,),
                               new SizedBox(
                                 child: InkWell(onTap: (){
@@ -196,7 +210,7 @@ class _MyHomePageState extends State<Intrests> {
                                   });
                                 },child: Padding(
                                   padding: const EdgeInsets.all(0.0),
-                                  child: Icon(Icons.close,color: Colors.white,),
+                                  child: Icon(Icons.close,color: Colors.white.withOpacity(0.6),),
                                 )),
                               )
                             ],

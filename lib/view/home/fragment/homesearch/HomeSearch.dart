@@ -585,6 +585,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                           ),
                                         ),
                                       ),
+                                      Spacer(),
                                       InkWell(
                                         onTap:(){
                                           _matchEngine.currentItem?.nope();
@@ -606,6 +607,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                           ),
                                         ),
                                       ),
+                                      Spacer(),
                                       InkWell(
                                         onTap:(){
                                           _matchEngine!.currentItem?.superLike();
@@ -628,7 +630,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                           ),
                                         ),
                                       ),
-
+                                      Spacer(),
                                       InkWell(
                                         onTap:(){
                                           print("like");
@@ -650,9 +652,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                           ),
                                         ),
                                       ),
-
-
-
+                                      Spacer(),
                                     ],
                                   ),
                                 ),
@@ -672,7 +672,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_swipeItems[index].content.name}  ${_swipeItems[index].content.age}",
+                                                          "${_swipeItems[index].content.name}   ${_swipeItems[index].content.age}",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 20,
@@ -703,6 +703,8 @@ class _MyHomePageState extends State<HomeSearch> {
                                                     ),
                                                   ],
                                                 ),
+
+                                                new SizedBox(height: 5,),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -737,8 +739,8 @@ class _MyHomePageState extends State<HomeSearch> {
                                           showProfile(context,item);
                                           },
                                         child: Container(
-                                          height: 50,
-                                          width: 50,
+                                          height: 29,
+                                          width: 29,
                                           margin: const EdgeInsets.symmetric(horizontal: 20),
                                           decoration: BoxDecoration(
                                             color: CommonColors.white,

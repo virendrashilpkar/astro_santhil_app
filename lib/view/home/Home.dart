@@ -81,6 +81,7 @@ class _MyHomePageState extends State<Home> {
           ),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
@@ -102,8 +103,8 @@ class _MyHomePageState extends State<Home> {
                 });
               },
               icon: pageIndex == 1
-                  ? Image.asset("assets/home_live.png",color: CommonColors.buttonorg,height: 20,width: 20,)
-                  : Image.asset("assets/home_live.png",color: CommonColors.bottomgrey,height: 20,width: 20,)
+                  ? Image.asset("assets/home_live.png",height: 30,width: 20,)
+                  : Image.asset("assets/home_live.png",height: 30,width: 20,)
             ),
             IconButton(
               enableFeedback: false,
