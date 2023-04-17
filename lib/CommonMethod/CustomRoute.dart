@@ -20,6 +20,10 @@ import 'package:shadiapp/view/namedob/NameDOB.dart';
 import 'package:shadiapp/view/otpverify/OTPVerify.dart';
 import 'package:shadiapp/view/problemauth/ProblemAuth.dart';
 import 'package:shadiapp/view/setting/Settings.dart';
+import 'package:shadiapp/view/subscription/GoldSub.dart';
+import 'package:shadiapp/view/subscription/PremiumSub.dart';
+import 'package:shadiapp/view/subscription/VIPSub.dart';
+import 'package:shadiapp/view/subscription/freeSub.dart';
 
 class CustomRoute {
   static Route<dynamic> allRoutes(RouteSettings settings) {
@@ -83,6 +87,18 @@ class CustomRoute {
         case "EditProfile":
         // ignore: prefer_const_constructors
           return EditProfile();
+        case "FreeSub":
+        // ignore: prefer_const_constructors
+          return FreeSub();
+        case "PremiumSub":
+        // ignore: prefer_const_constructors
+          return PremiumSub();
+        case "GoldSub":
+        // ignore: prefer_const_constructors
+          return GoldSub();
+        case "VIPSub":
+        // ignore: prefer_const_constructors
+          return VIPSub();
 
       }
       // ignore: prefer_const_constructors

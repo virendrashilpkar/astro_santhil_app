@@ -4,11 +4,14 @@ import 'dart:ui';
 class CommonColors{
 
   static Color themeblack=Color(0xff1E1E1E);
+  static Color black=Color(0xff000000);
   static Color editblack=Color(0xff575757);
+  static Color subgreycheck=Color(0xff424242);
   static Color edittextblack=Color(0xffE1E1E1);
   static Color buttonorg=Color(0xffEF7D90);
   static Color bottomgrey=Color(0xffA6A6A6);
   static Color editblackgrey=Color(0xffD5D5D5);
+  static Color freegrey=Color(0xffDDDDDD);
   static Color white=Color(0xffffffff);
   static Color red=Color(0xffFF0000);
   static Color blue=Color(0xff3C85FF);
@@ -19,5 +22,6 @@ class CommonColors{
   static Color yellow=Color(0xffFEDA14);
   static Color custombottom=Color(0xff34393D);
   static Color settingblue=Color(0xff8ED0D5);
+  static Color upgradeblue=Color(0xff1FD2E1);
 
 }
