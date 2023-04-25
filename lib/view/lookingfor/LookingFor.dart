@@ -31,9 +31,9 @@ class _MyHomePageState extends State<LookingFor> {
   }
   String youarevalue="";
   String lookingvalue="";
-  String martialstatus="Martial status";
+  String Maritalstatus="Marital status";
   List<String> maritalStatuses = [
-    'Martial status',
+    'Marital status',
     'Single',
     'Married',
     'Divorced',
@@ -220,7 +220,7 @@ class _MyHomePageState extends State<LookingFor> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'My martial status is',
+                  'My marital status is',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -241,7 +241,7 @@ class _MyHomePageState extends State<LookingFor> {
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
                 ),
                 child: DropdownButton<String>(
-                  value: martialstatus,
+                  value: Maritalstatus,
                   underline: Container(
                     // height: 1,
                     // margin:const EdgeInsets.only(top: 20),
@@ -251,14 +251,14 @@ class _MyHomePageState extends State<LookingFor> {
                   style: TextStyle(color: Colors.white,fontSize: 16),
                   onChanged: (newValue) {
                     setState(() {
-                      martialstatus = newValue!;
+                      Maritalstatus = newValue!;
                     });
                   },
                   selectedItemBuilder: (BuildContext context) {
                     return maritalStatuses.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value,style: TextStyle(color:martialstatus=="Martial status" ? Colors.grey : Colors.white,fontSize: 16),),
+                        child: Text(value,style: TextStyle(color:Maritalstatus=="Marital status" ? Colors.grey : Colors.white,fontSize: 16),),
                       );
                     }).toList();
                   },

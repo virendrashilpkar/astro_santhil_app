@@ -52,7 +52,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
         "name": "Annamika Sinha",
         "age": "25",
-        "place": "Los Angeles|USA|Panjabi",
+        "place": "Los Angeles | USA | Panjabi",
         "height": "5'6",
         "weight": "56kg",
         "region": "Hindu",
@@ -62,7 +62,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/396/511/HD-wallpaper-bong-angel-bengali.jpg",
         "name": "Shalu Singh",
         "age": "22",
-        "place": "Indore|Bhopal|Gujrati",
+        "place": "Indore | Bhopal | Gujrati",
         "height": "5'2",
         "weight": "20kg",
         "region": "Hindu",
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/798/474/HD-wallpaper-beauty-123-beautiful-ivana-saree.jpg",
         "name": "Ivana Sinha",
         "age": "25",
-        "place": "Los Angeles|USA|Panjabi",
+        "place": "Los Angeles | USA | Panjabi",
         "height": "5'6",
         "weight": "56kg",
         "region": "Hindu",
@@ -82,7 +82,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/366/237/HD-wallpaper-vaishnavi-beautiful-saree.jpg",
         "name": "Priya Singh",
         "age": "22",
-        "place": "Indore|Bhopal|Gujrati",
+        "place": "Indore | Bhopal | Gujrati",
         "height": "5'2",
         "weight": "20kg",
         "region": "Hindu",
@@ -92,7 +92,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/233/819/HD-wallpaper-vaishnavi-shanu-short-film-software-developer.jpg",
         "name": "Vaishnavi Shanu",
         "age": "25",
-        "place": "Los Angeles|USA|Panjabi",
+        "place": "Los Angeles | USA | Panjabi",
         "height": "5'6",
         "weight": "56kg",
         "region": "Hindu",
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/344/1000/HD-wallpaper-ashika-ranganath-saree-lover-model.jpg",
         "name": "Ashika Ranganath",
         "age": "22",
-        "place": "Indore|Bhopal|Gujrati",
+        "place": "Indore | Bhopal | Gujrati",
         "height": "5'2",
         "weight": "20kg",
         "region": "Hindu",
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/280/777/HD-wallpaper-anju-kurien-mallu-actress-saree-lover.jpg",
   "name": "Jasmine Lee",
   "age": "26",
-  "place": "Seoul|South Korea|Korean",
+  "place": "Seoul | South Korea | Korean",
   "height": "5'5",
   "weight": "50kg",
   "religion": "Buddhist",
@@ -122,7 +122,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/373/1013/HD-wallpaper-anju-32-actress-girl-mallu-anju-kurian.jpg",
   "name": "Emily Smith",
   "age": "35",
-  "place": "Sydney|Australia|Caucasian",
+  "place": "Sydney | Australia | Caucasian",
   "height": "5'8",
   "weight": "60kg",
   "religion": "Christian",
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/306/75/HD-wallpaper-anju-kurian-babu-suren.jpg",
   "name": "Maria Rodriguez",
   "age": "29",
-  "place": "Buenos Aires|Argentina|Latina",
+  "place": "Buenos Aires | Argentina | Latina",
   "height": "5'6",
   "weight": "55kg",
   "religion": "Catholic",
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/504/652/HD-wallpaper-anju-kurian-anju-kurian-mallu.jpg",
   "name": "Lucy Garcia",
   "age": "22",
-  "place": "Madrid|Spain|Hispanic",
+  "place": "Madrid | Spain | Hispanic",
   "height": "5'4",
   "weight": "48kg",
   "religion": "Agnostic",
@@ -152,7 +152,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/290/185/HD-wallpaper-anju-kurian-flash-graphy-lip.jpg",
   "name": "Sarah Johnson",
   "age": "31",
-  "place": "New York|USA|African American",
+  "place": "New York | USA | African American",
   "height": "5'9",
   "weight": "65kg",
   "religion": "Protestant",
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/320/566/HD-wallpaper-jisoo-jisoo-blackpink.jpg",
   "name": "Hannah Nguyen",
   "age": "27",
-  "place": "Hanoi|Vietnam|Asian",
+  "place": "Hanoi | Vietnam | Asian",
   "height": "5'6",
   "weight": "52kg",
   "religion": "Buddhist",
@@ -172,7 +172,7 @@ class _MyHomePageState extends State<HomeSearch> {
   "image": "https://w0.peakpx.com/wallpaper/862/303/HD-wallpaper-jisoo-blackpink-blackpink-jisoo-k-pop.jpg",
   "name": "Emma Williams",
   "age": "24",
-  "place": "London|UK|Caucasian",
+  "place": "London | UK | Caucasian",
   "height": "5'7",
   "weight": "57kg",
   "religion": "Atheist",
@@ -182,7 +182,7 @@ class _MyHomePageState extends State<HomeSearch> {
         "image": "https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",
         "name": "Grace Kim",
         "age": "32",
-        "place": "Tokyo|Japan|Asian",
+        "place": "Tokyo | Japan | Asian",
         "height": "5'4",
         "weight": "49kg",
         "religion": "Shinto",
@@ -317,9 +317,9 @@ class _MyHomePageState extends State<HomeSearch> {
                               // margin: const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
                                 "${item.content.place}\n"
-                                    "${item.content.height}|"
-                                    "${item.content.weight}|"
-                                    "${item.content.region}|"
+                                    "${item.content.height} | "
+                                    "${item.content.weight} | "
+                                    "${item.content.region} | "
                                     "${item.content.status}",
                                 style: TextStyle(
                                   color: Colors.white,
@@ -334,7 +334,7 @@ class _MyHomePageState extends State<HomeSearch> {
                             Row(
                               children: [
                                 Container(
-                                  // height:23,
+                                  height:24,
                                   decoration: BoxDecoration(
                                     color:CommonColors.yellow,
                                     border: Border.all(
@@ -344,15 +344,16 @@ class _MyHomePageState extends State<HomeSearch> {
                                         Radius.circular(32.0) //                 <--- border radius here
                                     ),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 9,vertical: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 9,vertical: 0),
                                   alignment: Alignment.center,
                                   child: Text("GOLD",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                                 ),
                                 Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                                     child: new StarRating(
                                       color: CommonColors.yellow,
                                       rating: rating,
+                                      size:24,
                                       onRatingChanged: (rating) => setState(() => rating = rating),
                                     )
                                 )
@@ -363,7 +364,7 @@ class _MyHomePageState extends State<HomeSearch> {
                             Row(
                               children: [
                                 Container(
-                                  // height:23,
+                                  height:23,
                                   // width: 120,
                                   decoration: BoxDecoration(
                                     color:CommonColors.buttonorg,
@@ -374,7 +375,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                         Radius.circular(32.0) //                 <--- border radius here
                                     ),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
                                   alignment: Alignment.centerLeft,
                                   child: Text("Within 3 months",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                                 ),
@@ -536,12 +537,12 @@ class _MyHomePageState extends State<HomeSearch> {
                           Container(
                             height: MediaQuery.of(context).size.height/3,
                             width: MediaQuery.of(context).size.width,
-                            padding:const EdgeInsets.symmetric(horizontal: 30),
+                            padding:const EdgeInsets.symmetric(horizontal: 50),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black54],
+                                colors: [Colors.transparent, Colors.black],
                               ),
                             ),
                             child: Column(
@@ -611,7 +612,6 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           _matchEngine!.currentItem?.superLike();
-
                                         },
                                         child: Container(
                                           height: 50,
@@ -624,7 +624,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                           child: Stack(
                                             children: <Widget>[
                                               Center(
-                                                  child: Image.asset("assets/home_star.png",color: Colors.white,height: 21,width: 21)
+                                                  child: Image.asset("assets/home_star.png",color: Colors.white,height: 27,width: 27)
                                               ),
                                             ],
                                           ),
@@ -646,13 +646,13 @@ class _MyHomePageState extends State<HomeSearch> {
                                           child: Stack(
                                             children: <Widget>[
                                               Center(
-                                                  child: Image.asset("assets/home_like.png",color: Colors.white,height: 21,width: 21)
+                                                  child: Image.asset("assets/home_like.png",color: Colors.white,height: 29,width: 29)
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      Spacer(),
+                                      // Spacer(),
                                     ],
                                   ),
                                 ),
@@ -677,6 +677,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                             color: Colors.white,
                                                             fontSize: 20,
                                                             fontWeight: FontWeight.w700,
+                                                            // height: 1.4
                                                           ),
                                                           textAlign: TextAlign.left,
                                                         ),
@@ -712,9 +713,9 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_swipeItems[index].content.height}|"
-                                                              "${_swipeItems[index].content.weight}|"
-                                                              "${_swipeItems[index].content.region}|"
+                                                          "${_swipeItems[index].content.height} | "
+                                                              "${_swipeItems[index].content.weight} | "
+                                                              "${_swipeItems[index].content.region} | "
                                                               "${_swipeItems[index].content.status}",
                                                           style: TextStyle(
                                                             color: CommonColors.white,
@@ -741,7 +742,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                         child: Container(
                                           height: 29,
                                           width: 29,
-                                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                                          margin: const EdgeInsets.symmetric(horizontal: 0),
                                           decoration: BoxDecoration(
                                             color: CommonColors.white,
                                             borderRadius: const BorderRadius.all(Radius.circular(25)),

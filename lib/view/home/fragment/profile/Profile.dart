@@ -84,10 +84,15 @@ class _MyHomePageState extends State<Profile> {
                   child: Row(
                     children: [
                       new Spacer(),
-                      new SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
+                      InkWell(
+                        onTap:(){
+                          Navigator.of(context).pushNamed('MatchPro');
+                        },
+                        child: new SizedBox(
+                          width: 20,
+                          height: 24,
+                          child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
+                        ),
                       ),
                       new SizedBox(
                         width: 15,
@@ -97,9 +102,9 @@ class _MyHomePageState extends State<Profile> {
                           Navigator.of(context).pushNamed("Settings");
                         },
                         child: new SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Image.asset("assets/setting_pro.png",height:20,width: 20,color: Colors.white,),
+                          width: 22,
+                          height: 24,
+                          child: Image.asset("assets/setting_pro.png",height:24,width: 22,color: Colors.white,),
                         ),
                       ),
                       new SizedBox(
@@ -580,6 +585,7 @@ class _MyHomePageState extends State<Profile> {
                         itemCount: packagetittle2.length,
                         scrollDirection: Axis.horizontal,
                         controller: _scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         itemBuilder: (ctx,index){
                           return  InkWell(
                             onTap: (){
@@ -647,6 +653,7 @@ class _MyHomePageState extends State<Profile> {
                           itemCount: packagetittle.length,
                           scrollDirection: Axis.horizontal,
                           controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           itemBuilder: (ctx,index){
                             return index!=parcasepackage ? InkWell(
                               onTap: (){

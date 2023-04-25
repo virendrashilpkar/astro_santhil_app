@@ -53,9 +53,9 @@ class _MyHomePageState extends State<PhoneLogin> {
             
             Container(
               alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
-                'What’s your phone number',
+                'What’s your\nphone number',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 33,
@@ -172,7 +172,7 @@ class _MyHomePageState extends State<PhoneLogin> {
 
             Container(
               height: 50,
-              margin: const EdgeInsets.only(top: 95,right: 50,left: 50),
+              margin: const EdgeInsets.only(top: 95,right: 70,left: 70),
               // margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: CommonColors.buttonorg,

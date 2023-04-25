@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/ConnectivityProvider.dart';
@@ -16,6 +17,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: CommonColors.themeblack,
+      statusBarColor: Colors.transparent
+    ));
     return ChangeNotifierProvider(
       create:(context) => ConnectivityProvider(),
         child:  MaterialApp(

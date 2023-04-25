@@ -14,7 +14,7 @@ class _LiveRoomState extends State<LiveRoom> {
 
   TextEditingController comment = TextEditingController();
 
-  var message =["hi", "how are you", "where are you from"];
+  var message =["hi", "how are you", "where are you from","kya haal hai","you are looking so good i am just want to see you soon as soon as posible."];
 
   @override
   Widget build(BuildContext context) {
@@ -110,76 +110,92 @@ class _LiveRoomState extends State<LiveRoom> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 10.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: 350,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(20.0)),
-                          color: CommonColors.bottomgrey,
-                        ),
-                        child:
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(widget.image),
-                                      fit: BoxFit.fill)
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Spacer(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 5.0),
-                                      child:
-                                      Container(
-                                        child: Text("Ana, 24",
-                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
-                                      ),
-                                    ),
-                                  ]
-                              )
-                          ),
-                        ),
-                      ),
-                    ],
+                Container(
+                  margin: EdgeInsets.only(top: 10.0),
+                  width: MediaQuery.of(context).size.width,
+                  height: 350,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(20.0)),
+                    color: CommonColors.bottomgrey,
                   ),
-                ),
-                ListView.builder(
-                      itemCount: message.length,
-                      reverse: true,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index){
-                        return Container(
-                          child: Row(
+                  child:
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(widget.image),
+                                fit: BoxFit.fill)
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                margin: EdgeInsets.all(8.0),
-                                height: 30,
-                                child: CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: NetworkImage(widget.image),
-                                  backgroundColor: CommonColors.bottomgrey,
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 5.0),
+                                child:
+                                Container(
+                                  child: Text("Ana, 24",
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
                                 ),
                               ),
-                              Container(
-                                child: Text(message[index],
-                                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400),),
-                              )
-                            ],
-                          ),
-                        );
-                      }),
+                            ]
+                        )
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                        itemCount: message.length,
+                        reverse: true,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        itemBuilder: (context, index){
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  // margin: EdgeInsets.all(8.0),
+                                  height: 34,
+                                  width: 34,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17.0),
+                                    child: Image.network(
+                                      widget.image,
+                                      height: 34,
+                                      width: 34,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                ),
+                                SizedBox(width: 12,),
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(message[index],
+                                        style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400),),
+                                        Text("Arun just joined",
+                                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w400),),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                ),
                 Container(
+                  margin: const EdgeInsets.only(left: 25,right: 20,bottom: 20,top: 20),
                   alignment: Alignment.bottomCenter,
                   child: Row(
                     children: [
@@ -191,17 +207,27 @@ class _LiveRoomState extends State<LiveRoom> {
                               border: Border.all(color: Colors.white),
                               borderRadius: BorderRadius.all(Radius.circular(30))
                           ),
-                          margin: EdgeInsets.only(left: 20, top: 20, right: 5.0 , bottom: 20.0),
+                          // margin: EdgeInsets.only(left: 0, top: 20, right: 5.0 , bottom: 20.0),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
+                            padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                             child: TextField(
+                              textCapitalization: TextCapitalization.sentences,
                               controller: comment,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Add Comment',
                                 hintStyle: TextStyle(
-                                    color: Colors.white
+                                    color: Color(0xffC4C4C4),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.1
                                 ),
+                              ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.1
                               ),
                             ),
                           ),
@@ -210,7 +236,7 @@ class _LiveRoomState extends State<LiveRoom> {
                       // Expanded(
                       //   child:
                       Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
+                        padding: const EdgeInsets.only(right: 5.0,left: 5),
                         child: Column(
                           children: [
                             Container(
@@ -222,7 +248,7 @@ class _LiveRoomState extends State<LiveRoom> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
+                        padding: const EdgeInsets.only(right: 0.0),
                         child: Column(
                           children: [
                             Container(

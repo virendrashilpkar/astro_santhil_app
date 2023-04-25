@@ -128,48 +128,79 @@ class _MyHomePageState extends State<Intrests> {
                   border: Border.all(color: Colors.white),
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
                 ),
-                child: TextFormField(
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.done,
-                  controller: tagsearch,
-                  decoration: InputDecoration(
-                    hintText: 'Add New Tag...',
-                    border: InputBorder.none,
-                    hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
-                    prefixIcon: SizedBox(child: Image.asset("assets/tag_intrests.png",color: Colors.white.withOpacity(0.6),),),
-                    suffixIcon: ischeck ? new InkWell(
-                      onTap: (){
-                          if(selectedIndex.length!=4){
-                            setState((){
-                            tags.add(tagsearch.text!);
-                            selectedIndex.add(tags.length-1);
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height:20,width:20,
+                      child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:20,width:20,),),
+                    SizedBox(
+                      width: 5,),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.done,
+                        controller: tagsearch,
+                        decoration: InputDecoration(
+                          hintText: 'Add New Tag...',
+                          border: InputBorder.none,
+                          hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                          // prefixIcon: SizedBox(
+                          //   height:5,width:5,
+                          //   child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:5,width:5,),),
+                          // suffixIcon: ischeck ? new InkWell(
+                          //   onTap: (){
+                          //       if(selectedIndex.length!=4){
+                          //         setState((){
+                          //         tags.add(tagsearch.text!);
+                          //         selectedIndex.add(tags.length-1);
+                          //         });
+                          //       }else{
+                          //         Toaster.show(context, "You can select only 4");
+                          //       }
+                          //   },
+                          //   child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                          // ):null
+                        ),
+                        onChanged: (value){
+                          if(value.isNotEmpty){
+                            setState(() {
+                              ischeck = true;
                             });
                           }else{
-                            Toaster.show(context, "You can select only 4");
+                            setState(() {
+                              ischeck = false;
+                            });
                           }
+                        },
+                        style: new TextStyle(color: Colors.white,fontSize: 14),
+                        textAlign: TextAlign.left,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your Tag';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,),
+                    ischeck ? new InkWell(
+                      onTap: (){
+                        if(selectedIndex.length!=4){
+                          setState((){
+                            tags.add(tagsearch.text!);
+                            selectedIndex.add(tags.length-1);
+                          });
+                        }else{
+                          Toaster.show(context, "You can select only 4");
+                        }
                       },
                       child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                    ):null
-                  ),
-                  onChanged: (value){
-                    if(value.isNotEmpty){
-                      setState(() {
-                        ischeck = true;
-                      });
-                    }else{
-                      setState(() {
-                        ischeck = false;
-                      });
-                    }
-                  },
-                  style: new TextStyle(color: Colors.white,fontSize: 14),
-                  textAlign: TextAlign.left,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your Tag';
-                    }
-                    return null;
-                  },
+                    ):Container()
+                  ],
                 ),
               ),
               new SizedBox(height: 10,),

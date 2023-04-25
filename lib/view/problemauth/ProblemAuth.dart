@@ -47,7 +47,7 @@ class _MyHomePageState extends State<ProblemAuth> {
           children: [
 
             Container(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'Authentication problems?',
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<ProblemAuth> {
 
             Container(
               alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.only(top: 20,bottom: 78,left: 20,right: 20),
+              margin: const EdgeInsets.only(top: 20,bottom: 78,left: 28,right: 12),
               child: Text(
                 'We have sent an email. Please check your email to recover your account.',
                 style: TextStyle(
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<ProblemAuth> {
             ),
             Container(
               height: 50,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 45),
               decoration: BoxDecoration(
                 color: CommonColors.buttonorg,
                 borderRadius:

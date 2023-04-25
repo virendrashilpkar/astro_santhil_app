@@ -143,7 +143,10 @@ class _MyHomePageState extends State<Settings> {
                               color: CommonColors.themeblack,
                               borderRadius: BorderRadius.circular(65),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            alignment: Alignment.center,
+                            width:69,
+                            height:26,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -183,7 +186,10 @@ class _MyHomePageState extends State<Settings> {
                               color: CommonColors.white,
                               borderRadius: BorderRadius.circular(65),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            alignment: Alignment.center,
+                            width:69,
+                            height:26,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -223,7 +229,10 @@ class _MyHomePageState extends State<Settings> {
                               color: CommonColors.white,
                               borderRadius: BorderRadius.circular(65),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            alignment: Alignment.center,
+                            width:69,
+                            height:26,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -263,7 +272,10 @@ class _MyHomePageState extends State<Settings> {
                               color: CommonColors.white,
                               borderRadius: BorderRadius.circular(65),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                            // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 0),
+                            alignment: Alignment.center,
+                            width:69,
+                            height:26,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -443,8 +455,8 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("GoGlobal",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    new Container(
-                      height: 20,
+                   Transform.scale(
+                     scale:0.8,
                         child: CupertinoSwitch(
                           value:GoGlobal,
                           onChanged: (value){
@@ -535,8 +547,8 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("Only show people in this range",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    new Container(
-                      height: 20.0,
+                   Transform.scale(
+                     scale:0.8,
                       child: CupertinoSwitch(
                         value:GoGlobal,
                         onChanged: (value){
@@ -736,9 +748,9 @@ class _MyHomePageState extends State<Settings> {
                 margin: const EdgeInsets.only(left: 37,right: 37,top: 20),
                 alignment:Alignment.centerLeft,
                 child: new SizedBox(
-                  height:25,
-                  width:25,
-                  child: Image.asset("assets/not_eye.png",height:25,width:25),
+                  height:24,
+                  width:27,
+                  child: Image.asset("assets/not_eye.png",height:24,width:27),
                 ),
               ),
 
@@ -814,8 +826,8 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("Show me online",style: new TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    new Container(
-                      height: 20.0,
+                   Transform.scale(
+                     scale:0.8,
                       child: CupertinoSwitch(
                         value:GoGlobal,
                         onChanged: (value){

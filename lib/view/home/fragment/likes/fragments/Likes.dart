@@ -27,6 +27,11 @@ class _LikesState extends State<Likes> {
   ];
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.width / 2)+20;
+    final double itemWidth = size.width / 2;
   return Scaffold(
     backgroundColor: CommonColors.themeblack,
     body: Container(
@@ -35,80 +40,82 @@ class _LikesState extends State<Likes> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 15.0,
-            mainAxisSpacing: 15.0),
+            mainAxisSpacing: 15.0,
+            childAspectRatio: (itemWidth / itemHeight),
+          ),
           itemCount: images.length,
           itemBuilder: (context, index){
-            return Container(
-              child: InkWell(
-                onTap: (){
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Match()
-                      )
-                  );
-                },
-                child: Container(
-
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(15.0)),
-                    color: CommonColors.bottomgrey,
-                  ),
-                  child:
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: Container(
+            return InkWell(
+              onTap: (){
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => Match()
+                    )
+                );
+              },
+              child: Container(
+                height: 168,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(15.0)),
+                  color: CommonColors.bottomgrey,
+                ),
+                child:
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(images[index]),
+                              fit: BoxFit.fill)
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Spacer(),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(images[index]),
-                                fit: BoxFit.fill)
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff66DFD7D7),
+                                      Color(0xff00D9D9D9),
+                                    ],
+                                    begin: Alignment.center,
+                                    end: Alignment.bottomRight,)
                               ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                        Color(0xff66DFD7D7),
-                                        Color(0xff00D9D9D9),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text("Ana, 24",
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
+                                                fontSize: 14),),
+                                        ),
+                                        Container(
+                                          child: Text("20h left",
+                                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400,)),
+                                        )
                                       ],
-                                        begin: Alignment.center,
-                                        end: Alignment.bottomRight,)
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: Row(
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
-                                                fontSize: 15),),
-                                              ),
-                                              Container(
-                                                child: Text("20h left",
-                                                    style: TextStyle(color: Colors.white, fontSize: 12)),
-                                              )
-                                            ],
-                                          ),
-                                          Spacer(),
-                                          Container(
-                                            child: Image.asset("assets/white_bg_star.png",height: 25,width: 25),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ]
-                              )
+                                    Spacer(),
+                                    Container(
+                                      height: 28,
+                                      width: 28,
+                                      child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                          ]
+                      )
+                  ),
                 ),
               ),
             );

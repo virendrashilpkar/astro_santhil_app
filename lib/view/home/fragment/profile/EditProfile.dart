@@ -154,7 +154,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   bool PhotoOptions=false;
   int ischeck=100;
   int ischeckregion=100;
-
+  bool ischeck2 =false;
 
   String country = 'Select country';
   String city = 'Select city';
@@ -298,9 +298,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   children: <Widget>[
 
                                     ClipRRect(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
                                         child: imagelist[index] == null ? Image.asset(
-                                          "assets/add_photos.png",
+                                          "assets/add_photos2.png",
                                           fit: BoxFit.cover,
                                           // height: itemHeight,
                                           // width: itemWidth,
@@ -420,7 +420,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Photo Options",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -479,13 +480,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           children: [
                             new SizedBox(width: 30,),
                             new Container(
-                              child: Text("Get verified",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
+                              child: Text("Get verified",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 16,color:Colors.white),),
                             ),
                             new SizedBox(width: 10,),
                             SizedBox(
-                              height: 25,
-                              width: 25,
-                              child: Image.asset("assets/blue_tick.png",height: 25,width: 25,fit: BoxFit.cover,),
+                              height: 20,
+                              width: 20,
+                              child: Image.asset("assets/blue_tick.png",height: 20,width: 20,fit: BoxFit.cover,),
                             )
                           ],
                         ),
@@ -563,7 +564,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Interests",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -584,47 +586,144 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
 
                         new SizedBox(height: 10,),
+                        // Container(
+                        //   height: 50,
+                        //   margin: const EdgeInsets.symmetric(horizontal: 30),
+                        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                        //   // decoration: BoxDecoration(
+                        //   //   // color: Colors.white,
+                        //   //   border: Border.all(color: Colors.white),
+                        //   //   borderRadius: const BorderRadius.all(Radius.circular(25)),
+                        //   // ),
+                        //   child: TextFormField(
+                        //     keyboardType: TextInputType.name,
+                        //     textInputAction: TextInputAction.done,
+                        //     controller: tagsearch,
+                        //     decoration: InputDecoration(
+                        //         hintText: 'Add New Tag...',
+                        //         border: InputBorder.none,
+                        //         hintStyle: new TextStyle(color: Colors.white.withOpacity(0.8),fontSize: 14,fontWeight: FontWeight.w400),
+                        //         prefixIcon: SizedBox(child: Image.asset("assets/tag_interest.png",color: Colors.white,),),
+                        //         suffixIcon: ischeck2 ? new InkWell(
+                        //           onTap: (){
+                        //             if(selectedIndex.length!=4){
+                        //               setState((){
+                        //                 tags.add(tagsearch.text!);
+                        //                 selectedIndex.add(tags.length-1);
+                        //               });
+                        //             }else{
+                        //               Toaster.show(context, "You can select only 4");
+                        //             }
+                        //           },
+                        //           child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                        //         ):null
+                        //     ),
+                        //     onChanged: (value){
+                        //       if(value.isNotEmpty){
+                        //         setState(() {
+                        //           ischeck2 = true;
+                        //         });
+                        //       }else{
+                        //         setState(() {
+                        //           ischeck2 = false;
+                        //         });
+                        //       }
+                        //     },
+                        //     style: new TextStyle(color: Colors.white,fontSize: 14),
+                        //     validator: (value) {
+                        //       if (value!.isEmpty) {
+                        //         return 'Please enter your Tag';
+                        //       }
+                        //       return null;
+                        //     },
+                        //   ),
+                        // ),
+
                         Container(
                           height: 50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            // color: Colors.white,
-                            border: Border.all(color: Colors.white),
-                            borderRadius: const BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: TextFormField(
-                            keyboardType: TextInputType.name,
-                            textInputAction: TextInputAction.done,
-                            controller: tagsearch,
-                            decoration: InputDecoration(
-                                hintText: 'Add New Tag...',
-                                border: InputBorder.none,
-                                hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
-                                prefixIcon: SizedBox(child: Image.asset("assets/tag_interest.png"),),
-                                suffixIcon: new InkWell(
-                                  onTap: (){
-                                    if(selectedIndex.length!=4){
-                                      setState((){
-                                        tags.add(tagsearch.text!);
-                                        selectedIndex.add(tags.length-1);
+                          // decoration: BoxDecoration(
+                          //   // color: Colors.white,
+                          //   border: Border.all(color: Colors.white),
+                          //   borderRadius: const BorderRadius.all(Radius.circular(25)),
+                          // ),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height:20,width:20,
+                                child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:20,width:20,),),
+                              SizedBox(
+                                width: 5,),
+                              Expanded(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  textInputAction: TextInputAction.done,
+                                  controller: tagsearch,
+                                  decoration: InputDecoration(
+                                    hintText: 'Add New Tag...',
+                                    border: InputBorder.none,
+                                    hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                    // prefixIcon: SizedBox(
+                                    //   height:5,width:5,
+                                    //   child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:5,width:5,),),
+                                    // suffixIcon: ischeck ? new InkWell(
+                                    //   onTap: (){
+                                    //       if(selectedIndex.length!=4){
+                                    //         setState((){
+                                    //         tags.add(tagsearch.text!);
+                                    //         selectedIndex.add(tags.length-1);
+                                    //         });
+                                    //       }else{
+                                    //         Toaster.show(context, "You can select only 4");
+                                    //       }
+                                    //   },
+                                    //   child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                                    // ):null
+                                  ),
+                                  onChanged: (value){
+                                    if(value.isNotEmpty){
+                                      setState(() {
+                                        ischeck2 = true;
                                       });
                                     }else{
-                                      Toaster.show(context, "You can select only 4");
+                                      setState(() {
+                                        ischeck2 = false;
+                                      });
                                     }
                                   },
-                                  child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                                )
-                            ),
-                            style: new TextStyle(color: Colors.white,fontSize: 14),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Please enter your Tag';
-                              }
-                              return null;
-                            },
+                                  style: new TextStyle(color: Colors.white,fontSize: 14),
+                                  textAlign: TextAlign.left,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter your Tag';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,),
+                              ischeck2 ? new InkWell(
+                                onTap: (){
+                                  if(selectedIndex.length!=4){
+                                    setState((){
+                                      tags.add(tagsearch.text!);
+                                      selectedIndex.add(tags.length-1);
+                                    });
+                                  }else{
+                                    Toaster.show(context, "You can select only 4");
+                                  }
+                                },
+                                child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                              ):Container()
+                            ],
                           ),
                         ),
+
                         new SizedBox(height: 10,),
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 27),
@@ -654,18 +753,19 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
                                           new SizedBox(width: 5,),
-                                          new SizedBox(
-                                            child: InkWell(onTap: (){
-                                              setState(() {
-                                                selectedIndex.remove(index);
-                                              });
-                                            },child: Padding(
-                                              padding: const EdgeInsets.all(0.0),
-                                              child: Icon(Icons.close,color: Colors.white,),
-                                            )),
-                                          )
+                                          Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
+                                          new SizedBox(width: 5,),
+                                          // new SizedBox(
+                                          //   child: InkWell(onTap: (){
+                                          //     setState(() {
+                                          //       selectedIndex.remove(index);
+                                          //     });
+                                          //   },child: Padding(
+                                          //     padding: const EdgeInsets.all(0.0),
+                                          //     child: Icon(Icons.close,color: Colors.white,),
+                                          //   )),
+                                          // )
                                         ],
                                       )
                                   ),
@@ -690,7 +790,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Profile managed by ",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -898,7 +999,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Lifestyle",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1031,7 +1133,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Living In",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1082,7 +1185,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               }).toList();
                             },
                             iconSize: 24,
-                            icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                            icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select country', 'india', 'pakistan', 'china'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -1122,12 +1225,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               return ['Select city', 'indore', 'bhopal', 'guna'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                                  child: Text(value,style: TextStyle(color: city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
                                 );
                               }).toList();
                             },
                             iconSize: 24,
-                            icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                            icon: Icon(Icons.arrow_forward_ios,color: city == 'Select city' ? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select city', 'indore', 'bhopal', 'guna'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -1148,7 +1251,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Religion",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1240,7 +1344,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Caste",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1286,12 +1391,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               return ['Select Caste', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value,style: TextStyle(color: caste== "Select Caste" ?Colors.grey: Colors.white,fontSize: 16),),
+                                  child: Text(value,style: TextStyle(color: caste== "Select Caste" ?CommonColors.edittextblack : Colors.white,fontSize: 16),),
                                 );
                               }).toList();
                             },
                             iconSize: 20,
-                            icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                            icon: Icon(Icons.arrow_forward_ios,color: caste=="Select Caste"? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select Caste', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -1318,7 +1423,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Mother tongue",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1364,12 +1470,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               return ['Select your mother tongue', 'Hindi', 'English'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value,style: TextStyle(color: tongue== "Select your mother tongue" ?Colors.grey: Colors.white,fontSize: 16),),
+                                  child: Text(value,style: TextStyle(color: tongue== "Select your mother tongue" ?CommonColors.edittextblack: Colors.white,fontSize: 16),),
                                 );
                               }).toList();
                             },
                             iconSize: 20,
-                            icon: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                            icon: Icon(Icons.arrow_forward_ios,color:tongue== "Select your mother tongue" ? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select your mother tongue', 'Hindi', 'English'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -1402,7 +1508,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Age",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1437,7 +1544,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Height",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1472,7 +1580,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Weight",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1507,7 +1616,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Smoke",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1543,7 +1653,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Drink",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){
@@ -1578,7 +1689,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 child: new Text("Diet",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
+                              new Transform.scale(
+                                scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:PhotoOptions,
                                   onChanged: (value){

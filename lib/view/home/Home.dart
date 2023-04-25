@@ -84,60 +84,80 @@ class _MyHomePageState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
+            InkWell(
+              // enableFeedback: false,
+              onTap: () {
                 setState(() {
                   pageIndex = 0;
                 });
               },
-              icon: pageIndex == 0
-                  ? Image.asset("assets/home_search.png",color: CommonColors.buttonorg,height: 20,width: 20,)
-                  : Image.asset("assets/home_search.png",color: CommonColors.bottomgrey,height: 20,width: 20,)
+              child: Container(
+                height: 34,width: 20,
+                alignment: Alignment.topCenter,
+                child: pageIndex == 0
+                    ? Image.asset("assets/home_search.png",color: CommonColors.buttonorg,height: 34,width: 20,)
+                    : Image.asset("assets/home_search.png",color: CommonColors.bottomgrey,height: 34,width: 20,),
+              )
             ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
+            InkWell(
+              // enableFeedback: false,
+                onTap: () {
                 setState(() {
                   pageIndex = 1;
                 });
               },
-              icon: pageIndex == 1
-                  ? Image.asset("assets/home_live.png",height: 30,width: 20,)
-                  : Image.asset("assets/home_live.png",height: 30,width: 20,)
+                child: Container(
+                  height: 34,width: 21,
+                  alignment: Alignment.topCenter,
+                  child: pageIndex == 1
+                    ? Image.asset("assets/home_live.png",height: 34,width: 21,)
+                    : Image.asset("assets/home_live.png",height: 34,width: 21,),
+                )
             ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
+            InkWell(
+              // enableFeedback: false,
+                onTap: () {
                 setState(() {
                   pageIndex = 2;
                 });
               },
-              icon: pageIndex == 2
-                  ? Image.asset("assets/home_fav.png",color: CommonColors.buttonorg,height: 20,width: 20,)
-                  : Image.asset("assets/home_fav.png",color: CommonColors.bottomgrey,height: 20,width: 20,)
+                child: Container(
+                height: 34,width: 23,
+                  alignment: Alignment.topCenter,
+                  child: pageIndex == 2
+                    ? Image.asset("assets/home_fav.png",color: CommonColors.buttonorg,height: 34,width: 23,)
+                    : Image.asset("assets/home_fav.png",color: CommonColors.bottomgrey,height: 34,width: 23,),
+                )
             ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
+            InkWell(
+              // enableFeedback: false,
+                onTap: () {
                 setState(() {
                   pageIndex = 3;
                 });
               },
-              icon: pageIndex == 3
-                  ? Image.asset("assets/home_chat.png",color: CommonColors.buttonorg,height: 20,width: 20,)
-                  : Image.asset("assets/home_chat.png",color: CommonColors.bottomgrey,height: 20,width: 20,)
+                child: Container(
+                  height: 34,width: 21,
+                  alignment: Alignment.topCenter,
+                  child: pageIndex == 3
+                    ? Image.asset("assets/home_chat.png",color: CommonColors.buttonorg,height: 34,width: 21,)
+                    : Image.asset("assets/home_chat.png",color: CommonColors.bottomgrey,height: 34,width: 21,),
+                )
             ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
+            InkWell(
+              // enableFeedback: false,
+                onTap: () {
                 setState(() {
                   pageIndex = 4;
                 });
               },
-              icon: pageIndex == 4
-                  ? Image.asset("assets/home_profile.png",color: CommonColors.buttonorg,height: 20,width: 20,)
-                  : Image.asset("assets/home_profile.png",color: CommonColors.bottomgrey,height: 20,width: 20,)
+                child: Container(
+                  height: 34,width: 18,
+                  alignment: Alignment.topCenter,
+                  child: pageIndex == 4
+                    ? Image.asset("assets/home_profile.png",color: CommonColors.buttonorg,height: 34,width: 18,)
+                    : Image.asset("assets/home_profile.png",color: CommonColors.bottomgrey,height: 34,width: 18,),
+                )
             ),
           ],
         ),

@@ -86,10 +86,10 @@ class _ChatState extends State <Chat> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             new SizedBox(height: MediaQuery.of(context).padding.top+20,),
-            Row(
+            new Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 18.5,vertical: 0),
+                  margin: const EdgeInsets.symmetric(horizontal: 35.5,vertical: 0),
                   alignment: Alignment.centerLeft,
                   child: InkWell(
                     onTap: (){
@@ -117,7 +117,7 @@ class _ChatState extends State <Chat> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
-                    margin: EdgeInsets.only(right: 15),
+                    margin: EdgeInsets.only(right: 35),
                     child: Image.asset(
                       'assets/settings.png',
                       width: 20,
@@ -128,13 +128,13 @@ class _ChatState extends State <Chat> {
               ],
             ),
             Container(
-                margin: EdgeInsets.symmetric(horizontal: 30.0),
+                margin: EdgeInsets.symmetric(horizontal: 35.0),
                 child: Text("Likes you 45",
                   style: TextStyle(color: CommonColors.buttonorg),
                 ),
               ),
             Container(
-              margin: EdgeInsets.only(left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
+              margin: EdgeInsets.only(left: 25.0, top: 10.0, right: 0.0, bottom: 10.0),
               height: 100,
               child: ListView.builder(
                   itemCount: images.length,
@@ -142,7 +142,8 @@ class _ChatState extends State <Chat> {
                   itemBuilder: (context, index){
                     return Container(
                       child: Container(
-                        width: 75,
+                        width: 80,
+                        height: 97,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
@@ -213,13 +214,18 @@ class _ChatState extends State <Chat> {
                                 );
                               },
                               child: Container(
-                                margin: EdgeInsets.all(10.0),
+                                decoration:index==0 ? BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.all(Radius.circular(10))
+                                ):null,
+                                margin: EdgeInsets.only(top: 2,bottom: 5),
+                                padding: EdgeInsets.only(top: 10,bottom: 10,left: 35),
                                 child: Row(
                                   children: [
                                     Container(
-                                      height: 50,
+                                      height: 62,
                                       child: CircleAvatar(
-                                        radius: 30,
+                                        radius: 31,
                                         backgroundImage: NetworkImage(images[index]),
                                         backgroundColor: CommonColors.bottomgrey,
                                       ),
@@ -231,7 +237,7 @@ class _ChatState extends State <Chat> {
                                         Row(
                                           children: [
                                             Container(
-                                              margin: EdgeInsets.only(left: 10.0),
+                                              margin: EdgeInsets.only(left: 13.0),
                                               child: Text("Jimmy",
                                                 style: TextStyle(
                                                   color: Colors.white, fontSize: 16,
@@ -242,7 +248,7 @@ class _ChatState extends State <Chat> {
                                           ],
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(left: 10.0),
+                                          margin: EdgeInsets.only(left: 13.0),
                                           child: Text("Hi",
                                             style: TextStyle(
                                               color: Colors.white30, fontSize: 16,
@@ -254,9 +260,23 @@ class _ChatState extends State <Chat> {
                                       ],
                                     ),
                                     Spacer(),
-                                    Container(
+                                    index==0 ? Container(
+                                      height: 26,
+                                      width: 26,
+                                      margin: EdgeInsets.only(right: 45.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                          color:CommonColors.themeblack
+                                      ),
+                                      child: Text("1",
+                                          style: TextStyle(
+                                              color: Colors.white30, fontSize: 15
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        )
+                                    ):Container(
                                       alignment: Alignment.topCenter,
-                                        margin: EdgeInsets.only(left: 10.0, right: 20.0, bottom: 10.0),
+                                        margin: EdgeInsets.only( right: 45.0,),
                                         child: Text("1h",
                                           style: TextStyle(
                                               color: Colors.white30, fontSize: 15

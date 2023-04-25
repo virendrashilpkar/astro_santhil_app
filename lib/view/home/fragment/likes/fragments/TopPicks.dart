@@ -26,6 +26,11 @@ class _TopPicks extends State<TopPicks> {
   ];
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.width / 2)+20;
+    final double itemWidth = size.width / 2;
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: Container(
@@ -34,7 +39,9 @@ class _TopPicks extends State<TopPicks> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 15.0,
-                mainAxisSpacing: 15.0),
+                mainAxisSpacing: 15.0,
+              childAspectRatio: (itemWidth / itemHeight),
+            ),
             itemCount: images.length,
             itemBuilder: (context, index){
               return Container(
@@ -61,7 +68,7 @@ class _TopPicks extends State<TopPicks> {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 width: MediaQuery.of(context).size.width,
-                                height: 30,
+                                // height: 30,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
@@ -72,12 +79,22 @@ class _TopPicks extends State<TopPicks> {
                                     end: Alignment.bottomRight,)
                               ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal:10.0),
-                                  child: Container(
-                                            child: Text("Ana, 24",
-                                                style: TextStyle(color: Colors.white,
-                                                fontSize: 15)),
-                                          ),
+                                  padding: const EdgeInsets.symmetric(horizontal:10.0,vertical: 6),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        child: Text("Ana, 24",
+                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
+                                              fontSize: 14),),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        height: 28,
+                                        width: 28,
+                                        child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ]
