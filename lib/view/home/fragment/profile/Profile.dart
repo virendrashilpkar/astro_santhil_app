@@ -543,7 +543,7 @@ class _MyHomePageState extends State<Profile> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text("Edit Profile", style: TextStyle(
-                                        color: Colors.white, fontSize: 16,fontWeight: FontWeight.w700),),
+                                        color: Colors.white, fontSize: 17,fontWeight: FontWeight.w800),),
                                   ],
                                 ),
                               )),

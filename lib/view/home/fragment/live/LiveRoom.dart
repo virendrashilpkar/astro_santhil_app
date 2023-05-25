@@ -126,7 +126,7 @@ class _LiveRoomState extends State<LiveRoom> {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: NetworkImage(widget.image),
-                                fit: BoxFit.fill)
+                                fit: BoxFit.cover)
                         ),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -151,7 +151,7 @@ class _LiveRoomState extends State<LiveRoom> {
                         itemCount: message.length,
                         reverse: true,
                         shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        padding: const EdgeInsets.symmetric(horizontal: 33),
                         itemBuilder: (context, index){
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 5),
@@ -195,37 +195,40 @@ class _LiveRoomState extends State<LiveRoom> {
                         }),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 25,right: 20,bottom: 20,top: 20),
+                  margin: const EdgeInsets.only(left: 33,right: 27,bottom: 20,top: 20),
                   alignment: Alignment.bottomCenter,
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
                           // width: MediaQuery.of(context).size.width,
-                          height: 50.0,
+                          height: 38.0,
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.white),
                               borderRadius: BorderRadius.all(Radius.circular(30))
                           ),
+                          alignment: Alignment.centerLeft,
                           // margin: EdgeInsets.only(left: 0, top: 20, right: 5.0 , bottom: 20.0),
                           child: Padding(
                             padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                             child: TextField(
                               textCapitalization: TextCapitalization.sentences,
                               controller: comment,
+                              maxLines: 1,
                               decoration: InputDecoration(
+                                isDense: true,
                                 border: InputBorder.none,
                                 hintText: 'Add Comment',
                                 hintStyle: TextStyle(
                                     color: Color(0xffC4C4C4),
-                                  fontSize: 15,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w400,
                                   letterSpacing: 0.1
                                 ),
                               ),
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 15,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w400,
                                   letterSpacing: 0.1
                               ),

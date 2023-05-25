@@ -141,17 +141,22 @@ class _ChatState extends State <Chat> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
                     return Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      padding: const EdgeInsets.all(2),
+                      decoration: index==0 ? BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(15.0)),
+                        border: Border.all(color: Colors.yellow,width: 1)
+                      ):null,
                       child: Container(
                         width: 80,
                         height: 97,
-                        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
                               Radius.circular(15.0)),
                           color: CommonColors.bottomgrey,
                         ),
-                        child:
-                        ClipRRect(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
                           child: Container(
                               decoration: BoxDecoration(
@@ -215,7 +220,7 @@ class _ChatState extends State <Chat> {
                               },
                               child: Container(
                                 decoration:index==0 ? BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Color(0xff373737),
                                   borderRadius: BorderRadius.all(Radius.circular(10))
                                 ):null,
                                 margin: EdgeInsets.only(top: 2,bottom: 5),
@@ -268,9 +273,10 @@ class _ChatState extends State <Chat> {
                                         borderRadius: BorderRadius.circular(20),
                                           color:CommonColors.themeblack
                                       ),
+                                      alignment: Alignment.center,
                                       child: Text("1",
                                           style: TextStyle(
-                                              color: Colors.white30, fontSize: 15
+                                              color: Color(0xffEF7D90), fontSize: 15,fontWeight: FontWeight.w400
                                           ),
                                           textAlign: TextAlign.center,
                                         )
@@ -279,7 +285,7 @@ class _ChatState extends State <Chat> {
                                         margin: EdgeInsets.only( right: 45.0,),
                                         child: Text("1h",
                                           style: TextStyle(
-                                              color: Colors.white30, fontSize: 15
+                                              color: Colors.white30, fontSize: 15,fontWeight: FontWeight.w400
                                           ),
                                           textAlign: TextAlign.center,
                                         )

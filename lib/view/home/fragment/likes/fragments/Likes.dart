@@ -99,13 +99,14 @@ class _LikesState extends State<Likes> {
                                         ),
                                         Container(
                                           child: Text("20h left",
-                                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400,)),
+                                              style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w400,)),
                                         )
                                       ],
                                     ),
                                     Spacer(),
                                     Container(
                                       height: 28,
+                                      margin: const EdgeInsets.symmetric(vertical: 6),
                                       width: 28,
                                       child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
                                     )

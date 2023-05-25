@@ -79,7 +79,7 @@ class _TopPicks extends State<TopPicks> {
                                     end: Alignment.bottomRight,)
                               ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal:10.0,vertical: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal:10.0),
                                   child: Row(
                                     children: [
                                       Container(
@@ -90,6 +90,7 @@ class _TopPicks extends State<TopPicks> {
                                       Spacer(),
                                       Container(
                                         height: 28,
+                                        margin: const EdgeInsets.symmetric(vertical: 6),
                                         width: 28,
                                         child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
                                       )

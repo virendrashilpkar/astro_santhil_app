@@ -211,7 +211,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
               height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 40),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                // color: Colors,
                 borderRadius: BorderRadius.circular(
                   25.0,
                 ),
@@ -226,7 +226,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                   color: CommonColors.buttonorg,
                 ),
                 labelColor: CommonColors.white,
-                unselectedLabelColor: CommonColors.themeblack,
+                unselectedLabelColor: CommonColors.white,
                 unselectedLabelStyle: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),
                 labelStyle: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),
                 tabs: [

@@ -1185,7 +1185,7 @@ class _MyHomePageState extends State<Settings> {
                         Expanded(
                             child: Center(
                               child: Text("RESTORE PURCHASE", style: TextStyle(
-                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w900),),
                             )),
                       ],
                     ),
@@ -1221,7 +1221,7 @@ class _MyHomePageState extends State<Settings> {
                         Expanded(
                             child: Center(
                               child: Text("LOGOUT", style: TextStyle(
-                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w900),),
                             )),
                       ],
                     ),
@@ -1257,7 +1257,7 @@ class _MyHomePageState extends State<Settings> {
                         Expanded(
                             child: Center(
                               child: Text("DELETE PROFILE", style: TextStyle(
-                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w800),),
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w900),),
                             )),
                       ],
                     ),

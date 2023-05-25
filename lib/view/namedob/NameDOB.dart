@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -38,20 +40,20 @@ class _MyHomePageState extends State<NameDOB> {
 
   TextEditingController intialdateval = TextEditingController();
 
-
-  Future _selectDate() async {
-    DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(2020),
-        lastDate: new DateTime(2030));
-    if (picked != null)
-      setState(() => {
-            intialdateval.text = "${picked.day.toString().padLeft(2,'0')}/${picked.month.toString().padLeft(2,'0')}/${picked.year}"
-
-          }
-      );
-  }
+  //
+  // Future _selectDate() async {
+  //   DateTime? picked = await showDatePicker(
+  //       context: context,
+  //       initialDate: new DateTime.now(),
+  //       firstDate: new DateTime(2020),
+  //       lastDate: new DateTime(2030));
+  //   if (picked != null)
+  //     setState(() => {
+  //           intialdateval.text = "${picked.day.toString().padLeft(2,'0')}/${picked.month.toString().padLeft(2,'0')}/${picked.year}"
+  //
+  //         }
+  //     );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +180,7 @@ class _MyHomePageState extends State<NameDOB> {
                 child: TextFormField(
                   keyboardType: TextInputType.phone,
                   autocorrect: false,
-                  readOnly: true,
+                  // readOnly: true,
                   controller: intialdateval,
                   decoration: InputDecoration(
                     hintText: 'DD/MM/YYYY',
@@ -186,10 +188,13 @@ class _MyHomePageState extends State<NameDOB> {
                     hintStyle: new TextStyle(color: Colors.grey,fontSize: 16,fontWeight: FontWeight.w400),
                   ),
                   style: new TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w400),
-                  onTap: () {
-                    _selectDate();
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
+                  // onTap: () {
+                  //   _selectDate();
+                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                  // },
+                  inputFormatters: [
+                    DateTextFormatter(),
+                  ],
                   maxLines: 1,
                   validator: (value) {
                     if (value!.isEmpty || value.length < 1) {
@@ -259,3 +264,66 @@ class _MyHomePageState extends State<NameDOB> {
   }
 }
 
+class DateTextFormatter extends TextInputFormatter {
+  static const _maxChars = 8;
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    String separator = '/';
+    var text = _format(
+      newValue.text,
+      oldValue.text,
+      separator,
+    );
+
+    return newValue.copyWith(
+      text: text,
+      selection: updateCursorPosition(
+        oldValue,
+        text,
+      ),
+    );
+  }
+
+  String _format(
+      String value,
+      String oldValue,
+      String separator,
+      ) {
+    var isErasing = value.length < oldValue.length;
+    var isComplete = value.length > _maxChars + 2;
+
+    if (!isErasing && isComplete) {
+      return oldValue;
+    }
+
+    value = value.replaceAll(separator, '');
+    final result = <String>[];
+
+    for (int i = 0; i < min(value.length, _maxChars); i++) {
+      result.add(value[i]);
+      if ((i == 1 || i == 3) && i != value.length - 1) {
+        result.add(separator);
+      }
+    }
+
+    return result.join();
+  }
+
+  TextSelection updateCursorPosition(
+      TextEditingValue oldValue,
+      String text,
+      ) {
+    var endOffset = max(
+      oldValue.text.length - oldValue.selection.end,
+      0,
+    );
+
+    var selectionEnd = text.length - endOffset;
+
+    return TextSelection.fromPosition(TextPosition(offset: selectionEnd));
+  }
+}

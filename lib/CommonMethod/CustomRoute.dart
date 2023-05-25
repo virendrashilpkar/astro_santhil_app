@@ -29,11 +29,11 @@ class CustomRoute {
   static Route<dynamic> allRoutes(RouteSettings settings) {
     return MaterialPageRoute(builder: (context) {
 
-      bool isOnline = Provider.of<ConnectivityProvider>(context).isOnline;
-
-      if(!isOnline){
-        return NoInternetPage();
-      }
+      // bool isOnline = Provider.of<ConnectivityProvider>(context).isOnline;
+      //
+      // if(!isOnline){
+      //   return NoInternetPage();
+      // }
 
       switch (settings.name) {
         case "ChooseReg":

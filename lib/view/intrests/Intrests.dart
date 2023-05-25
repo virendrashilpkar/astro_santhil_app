@@ -241,7 +241,7 @@ class _MyHomePageState extends State<Intrests> {
                                   });
                                 },child: Padding(
                                   padding: const EdgeInsets.all(0.0),
-                                  child: Icon(Icons.close,color: Colors.white.withOpacity(0.6),),
+                                  child: Icon(Icons.close,size: 16,color: Colors.white.withOpacity(0.6),),
                                 )),
                               )
                             ],

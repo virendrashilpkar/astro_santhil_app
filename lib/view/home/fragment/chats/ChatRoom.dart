@@ -165,8 +165,8 @@ class _ChatRoom extends State<ChatRoom> {
                           ),
                         ),
                         Positioned(
-                          right: 15,
-                          left: 15,
+                          right: 20,
+                          left: 30,
                           bottom: 25,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -184,7 +184,7 @@ class _ChatRoom extends State<ChatRoom> {
                                         Expanded(
                                             child: Container(
                                               margin: const EdgeInsets.only(
-                                                  top: 0, right: 10, left: 10),
+                                                  top: 0, right: 20, left: 20),
                                               child: TextField(
                                                 controller: message,
                                                 keyboardType: TextInputType.text,
@@ -215,11 +215,12 @@ class _ChatRoom extends State<ChatRoom> {
                                     )),
                               ),
                               Container(
-                                margin: EdgeInsets.only(bottom: 40.0, left: 10.0),
-                                child: Icon(
-                                  Icons.mic_none,
-                                  color: Color(0xffFFFFFF),
-                                ),
+
+                                margin: EdgeInsets.only(right: 0.0, left: 20.0),
+                                child: SizedBox(
+                                    height: 28,
+                                    width: 20,
+                                    child: Image.asset("assets/chat_mic.png"))
                               ),
                             ],
                           ),

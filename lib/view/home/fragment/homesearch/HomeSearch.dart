@@ -537,7 +537,7 @@ class _MyHomePageState extends State<HomeSearch> {
                           Container(
                             height: MediaQuery.of(context).size.height/3,
                             width: MediaQuery.of(context).size.width,
-                            padding:const EdgeInsets.symmetric(horizontal: 50),
+                            padding:const EdgeInsets.only(left: 50,right: 30),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -639,6 +639,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                         child: Container(
                                           height: 50,
                                           width: 50,
+                                          margin: const EdgeInsets.only(right: 20),
                                           decoration: BoxDecoration(
                                             color: CommonColors.green,
                                             borderRadius: const BorderRadius.all(Radius.circular(25)),
