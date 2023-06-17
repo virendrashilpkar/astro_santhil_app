@@ -2,6 +2,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/phone_login_Model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/otpverify/OTPVerify.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PhoneLogin extends StatefulWidget {
   @override
@@ -12,6 +18,11 @@ class _MyHomePageState extends State<PhoneLogin> {
 
   bool ActiveConnection = false;
   String T = "";
+  late PhoneLoginModel loginModel;
+  late SharedPreferences _preferences;
+  TextEditingController phone = TextEditingController();
+  bool clickLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -29,16 +40,47 @@ class _MyHomePageState extends State<PhoneLogin> {
     }
   }
 
+  getAsync() async {
+    try{
+      _preferences = await SharedPreferences.getInstance();
+      setState(() {
 
+      });
+    }catch (e) {
+      print(e);
+    }
+  }
 
+  Future<void> LoginMethod() async {
+    setState(() {
+      clickLoad = true;
+    });
+    loginModel = await Services.LoginCrdentials(phone.text);
+    if(loginModel.status == 1){
+      _preferences.setString(ShadiApp.userId,loginModel.data.toString());
+      Toaster.show(context, loginModel.massege.toString());
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => OTPVerify(phone.text)
+          )
+      );
+    }else{
+      Toaster.show(context, loginModel.massege.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
 
   final _formKey = GlobalKey<FormState>();
   String _dialCode = '+1'; // default dial code
   String _phoneNumber="";
+
   @override
   void initState() {
     CheckUserConnection();
     super.initState();
+    getAsync();
   }
 
   @override
@@ -50,7 +92,6 @@ class _MyHomePageState extends State<PhoneLogin> {
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             Container(
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -130,6 +171,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                       Expanded(
                         flex: 3,
                         child: TextFormField(
+                          controller: phone,
                           keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             hintText: '1234567890',
@@ -183,11 +225,18 @@ class _MyHomePageState extends State<PhoneLogin> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-
+                      clickLoad ? Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3.0,
+                            ),
+                          )
+                      ):
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
+                              color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),
@@ -195,7 +244,7 @@ class _MyHomePageState extends State<PhoneLogin> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        Navigator.of(context).pushNamed('OTPVerify');
+                        LoginMethod();
 
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(

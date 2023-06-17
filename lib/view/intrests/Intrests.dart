@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/preference_list_model.dart';
+import 'package:shadiapp/Models/user_add_preference_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
@@ -17,6 +21,12 @@ class _MyHomePageState extends State<Intrests> {
 
   bool ActiveConnection = false;
   String T = "";
+  SharedPreferences? _preferences;
+  late PreferenceListModel _preferenceListModel;
+  late AddPreferenceModel _addPreferenceModel;
+  bool clickLoad = false;
+  bool isLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -37,10 +47,43 @@ class _MyHomePageState extends State<Intrests> {
 
   List<File?> imagelist = List.filled(6, null);
   // List<File?> imagelist=[null,null,null,null,null,null];
+  List<Datum> prefList = [];
+
+  Future<void> viewPrefs() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _preferenceListModel = await Services.PrefView("${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_preferenceListModel.status == 1){
+      for(var i = 0; i < _preferenceListModel.data!.length; i++){
+        prefList = _preferenceListModel.data ?? <Datum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
+  Future<void> addPrefs(String preferenceId) async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _addPreferenceModel = await Services.AddPrefsMethod("${_preferences?.getString(ShadiApp.userId)}", preferenceId);
+    if(_addPreferenceModel.status == 1){
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    }else{
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
 
   @override
   void initState() {
     CheckUserConnection();
+    viewPrefs();
     super.initState();
   }
   List<String> tags = [
@@ -207,15 +250,21 @@ class _MyHomePageState extends State<Intrests> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 17),
                 alignment: Alignment.centerLeft,
-                child: Wrap(
+                child: isLoad ? Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3.0,
+                  ),
+                ):Wrap(
                   children: [
                     ...List.generate(
-                      tags.length,
+                      prefList.length,
                           (index) => GestureDetector(
                         onTap: () {
                           setState(() {
                             if(selectedIndex.length!=4){
                               selectedIndex.add(index);
+                              addPrefs(prefList![index].id.toString());
                             }else{
                               Toaster.show(context, "You can select only 4");
                             }
@@ -232,7 +281,7 @@ class _MyHomePageState extends State<Intrests> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white.withOpacity(0.6)),),
+                              Text("${prefList![index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white.withOpacity(0.6)),),
                               new SizedBox(width: 5,),
                               new SizedBox(
                                 child: InkWell(onTap: (){
@@ -272,7 +321,14 @@ class _MyHomePageState extends State<Intrests> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-
+                        clickLoad ? Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3.0,
+                              ),
+                            )
+                        ):
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(

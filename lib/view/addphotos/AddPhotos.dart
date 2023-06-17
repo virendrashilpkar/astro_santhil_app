@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/upload_image_model.dart';
+import 'package:shadiapp/Models/view_image_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
@@ -17,6 +21,12 @@ class _MyHomePageState extends State<AddPhotos> {
 
   bool ActiveConnection = false;
   String T = "";
+  SharedPreferences? _preferences;
+  late UploadImageModel _uploadImageModel;
+  late ViewImageModel _viewImageModel;
+
+  bool clickLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -33,14 +43,47 @@ class _MyHomePageState extends State<AddPhotos> {
       // });
     }
   }
+
   String youarevalue="";
 
   List<File?> imagelist = List.filled(6, null);
+  List<Datum> _list = [];
   // List<File?> imagelist=[null,null,null,null,null,null];
+
+  Future<void> uploadImage(File image) async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _uploadImageModel = await Services.ImageUpload(image, "${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_uploadImageModel.status == 1){
+      Toaster.show(context, _uploadImageModel.message.toString());
+
+    }else{
+      Toaster.show(context, _uploadImageModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+  Future<void> viewImage() async {
+    _preferences = await SharedPreferences.getInstance();
+    _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_viewImageModel.status == 1) {
+      for(var i = 0; i < _viewImageModel.data!.length; i++){
+        _list = _viewImageModel.data ?? <Datum> [];
+      }
+    }
+    setState(() {
+
+    });
+  }
 
   @override
   void initState() {
     CheckUserConnection();
+    viewImage();
     super.initState();
   }
 
@@ -78,6 +121,7 @@ class _MyHomePageState extends State<AddPhotos> {
     if (pickedFile != null) {
       setState((){
         imagelist[index] = File(pickedFile.path);
+        uploadImage(File(pickedFile.path));
       });
     }
   }
@@ -90,6 +134,7 @@ class _MyHomePageState extends State<AddPhotos> {
     if (pickedFile != null) {
       setState((){
         imagelist[index] = File(pickedFile.path);
+        uploadImage(File(pickedFile.path));
       });
 
     }
@@ -190,7 +235,11 @@ class _MyHomePageState extends State<AddPhotos> {
 
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  child: imagelist[index] == null ? Image.asset(
+                                  child: _list != null ? Image.network(
+                                    "${_list![index].image}",fit: BoxFit.cover,
+                                    height: itemHeight,
+                                    width: itemWidth,
+                                  ):imagelist[index] == null ? Image.asset(
                                     "assets/add_photos.png",
                                     fit: BoxFit.cover,
                                     // height: itemHeight,
@@ -300,7 +349,14 @@ class _MyHomePageState extends State<AddPhotos> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-
+                        clickLoad ? Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3.0,
+                              ),
+                            )
+                        ):
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
@@ -313,8 +369,12 @@ class _MyHomePageState extends State<AddPhotos> {
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
                           List<File> imagelistfinal = imagelist.whereNotNull().toList();
+                          if(_list.length == 0){
                           if(imagelistfinal.length<2){
                             Toaster.show(context, "Add at least 2 photos to continue");
+                          }else{
+                            Navigator.of(context).pushNamed('Intrests');
+                          }
                           }else{
                             Navigator.of(context).pushNamed('Intrests');
                           }

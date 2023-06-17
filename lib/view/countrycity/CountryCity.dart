@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_update_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +17,22 @@ class CountryCity extends StatefulWidget {
 class _MyHomePageState extends State<CountryCity> {
 
   bool ActiveConnection = false;
+  SharedPreferences? _preferences;
+  late UserDetailModel _userDetailModel;
+  late UpdateUserModel _updateUserModel;
   String T = "";
+  String firstName = "";
+  String lastName = "";
+  String birthDate = "";
+  String gender = "";
+  String height = "";
+  String weight = "";
+  String maritalStatus = "";
+  String email = "";
+  String lookingFor = "";
+
+  bool clickLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -30,13 +50,66 @@ class _MyHomePageState extends State<CountryCity> {
     }
   }
 
+  getAsync() async {
+    try{
+      _preferences = await SharedPreferences.getInstance();
+      setState(() {
+
+      });
+    }catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> userDetail() async {
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
+    if(_userDetailModel.status == 1){
+      firstName = _userDetailModel.data![0].firstName.toString();
+      lastName = _userDetailModel.data![0].lastName.toString();
+      birthDate = _userDetailModel.data![0].birthDate.toString();
+      gender = _userDetailModel.data![0].gender.toString();
+      country = _userDetailModel.data![0].country.toString();
+      city = _userDetailModel.data![0].city.toString();
+      weight = _userDetailModel.data![0].weight.toString();
+      height = _userDetailModel.data![0].height.toString();
+      maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
+      email = _userDetailModel.data![0].email.toString();
+      setState(() {
+
+      });
+    }
+  }
+
+  Future<void> updateUser() async {
+    setState(() {
+      clickLoad = true;
+    });
+
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
+        lastName, birthDate, gender, country, city, height, weight, maritalStatus, email, lookingFor);
+    if(_updateUserModel.status == 1){
+      Toaster.show(context, _updateUserModel.message.toString());
+      Navigator.of(context).pushNamed('NameDOB');
+    }else{
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
   @override
   void initState() {
+    userDetail();
     CheckUserConnection();
     super.initState();
   }
+
   String country = 'Select country';
   String city = 'Select city';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +160,7 @@ class _MyHomePageState extends State<CountryCity> {
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
               child: DropdownButton<String>(
-                value: country,
+                value: country.isNotEmpty ? country : null,
                 underline: Container(
                   // height: 1,
                   // margin:const EdgeInsets.only(top: 20),
@@ -204,7 +277,14 @@ class _MyHomePageState extends State<CountryCity> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-
+                      clickLoad ? Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3.0,
+                            ),
+                          )
+                      ):
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
@@ -216,7 +296,7 @@ class _MyHomePageState extends State<CountryCity> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        Navigator.of(context).pushNamed('NameDOB');
+                        updateUser();
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

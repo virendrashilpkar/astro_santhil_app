@@ -50,7 +50,7 @@ class CustomRoute {
           return ProblemAuth();
         case "OTPVerify":
         // ignore: prefer_const_constructors
-          return OTPVerify();
+          return OTPVerify("");
         case "ForgotPassword":
         // ignore: prefer_const_constructors
           return ForgotPassword();

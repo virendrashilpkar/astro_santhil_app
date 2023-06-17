@@ -2,8 +2,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/otp_verify_model.dart';
+import 'package:shadiapp/Models/phone_login_Model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OTPVerify extends StatefulWidget {
+  String number = "";
+
+  OTPVerify(this.number);
+
   @override
   State<OTPVerify> createState() => _MyHomePageState();
 }
@@ -11,7 +21,12 @@ class OTPVerify extends StatefulWidget {
 class _MyHomePageState extends State<OTPVerify> {
 
   bool ActiveConnection = false;
+  late OtpVerifyModel otpVerifyModel;
+  late PhoneLoginModel loginModel;
+  bool clickLoad = false;
   String T = "";
+  SharedPreferences? _preferences;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -29,18 +44,62 @@ class _MyHomePageState extends State<OTPVerify> {
     }
   }
 
+  getAsync() async {
+    try{
+      _preferences = await SharedPreferences.getInstance();
+      setState(() {
 
+      });
+    }catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> OtpVerify() async {
+    setState(() {
+      clickLoad = true;
+    });
+    otp = otp1.text+otp2.text+otp3.text+otp4.text;
+    otpVerifyModel = await Services.Otp(_preferences!.getString(ShadiApp.userId).toString(), otp.toString());
+    if(otpVerifyModel.status == 1){
+      Navigator.of(context).pushNamed('CountryCity');
+      Toaster.show(context, otpVerifyModel.massege.toString());
+    }else{
+      Toaster.show(context, otpVerifyModel.massege.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+  Future<void> LoginMethod() async {
+    setState(() {
+      clickLoad = true;
+    });
+    loginModel = await Services.LoginCrdentials(widget.number);
+    if(loginModel.status == 1){
+      Toaster.show(context, "Otp Send Successfulluy");
+    }else{
+      Toaster.show(context, "Something Went Wrong");
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
 
   TextEditingController otp1 = TextEditingController();
   TextEditingController otp2 = TextEditingController();
   TextEditingController otp3 = TextEditingController();
   TextEditingController otp4 = TextEditingController();
   TextEditingController otp5 = TextEditingController();
+  String? otp;
   final _formKey = GlobalKey<FormState>();
   String _dialCode = '+1'; // default dial code
   String _phoneNumber="";
+
   @override
   void initState() {
+    getAsync();
     CheckUserConnection();
     super.initState();
   }
@@ -296,11 +355,18 @@ class _MyHomePageState extends State<OTPVerify> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-
+                      clickLoad ? Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3.0,
+                            ),
+                          )
+                      ):
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
+                              color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),
@@ -308,7 +374,7 @@ class _MyHomePageState extends State<OTPVerify> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        Navigator.of(context).pushNamed('CountryCity');
+                       OtpVerify();
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
@@ -328,14 +394,19 @@ class _MyHomePageState extends State<OTPVerify> {
               highlightColor: CommonColors.themeblack,
               child: Container(
                 margin: const EdgeInsets.only(top: 20,bottom: 25),
-                child: Text(
-                  'Send a new code again',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
+                child: InkWell(
+                  onTap: (){
+                    LoginMethod();
+                  },
+                  child: Text(
+                    'Send a new code again',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             )

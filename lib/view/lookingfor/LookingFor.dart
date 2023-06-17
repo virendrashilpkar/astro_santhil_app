@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_update_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +17,23 @@ class LookingFor extends StatefulWidget {
 class _MyHomePageState extends State<LookingFor> {
 
   bool ActiveConnection = false;
+  SharedPreferences? _preferences;
+  late UserDetailModel _userDetailModel;
+  late UpdateUserModel _updateUserModel;
   String T = "";
+  String firstName = "";
+  String lastName = "";
+  String birthDate = "";
+  String gender = "";
+  String country = "";
+  String city = "";
+  String height = "";
+  String weight = "";
+  String email = "";
+  String lookingFor = "";
+
+  bool clickLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -42,8 +63,53 @@ class _MyHomePageState extends State<LookingFor> {
   List<String> youarea=["Man","Woman"];
   List<String> lookingfor=["Woman","Man","Both"];
 
+  Future<void> userDetail() async {
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
+    if(_userDetailModel.status == 1){
+      firstName = _userDetailModel.data![0].firstName.toString();
+      lastName = _userDetailModel.data![0].lastName.toString();
+      birthDate = _userDetailModel.data![0].birthDate.toString();
+      gender = _userDetailModel.data![0].gender.toString();
+      country = _userDetailModel.data![0].country.toString();
+      city = _userDetailModel.data![0].city.toString();
+      weight = _userDetailModel.data![0].weight.toString();
+      height = _userDetailModel.data![0].height.toString();
+      Maritalstatus = _userDetailModel.data![0].maritalStatus.toString();
+      email = _userDetailModel.data![0].email.toString();
+      if(gender == "male"){
+        youarevalue = "Man";
+      }else if(gender == "female"){
+        youarevalue = "Woman";
+      }
+      setState(() {
+
+      });
+    }
+  }
+
+  Future<void> updateUser() async {
+    setState(() {
+      clickLoad = true;
+    });
+    print("sdfhghdsfhgdf ${lookingFor}");
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
+        lastName, birthDate, gender, country, city, height, weight, Maritalstatus, email, lookingFor);
+    if(_updateUserModel.status == 1){
+      Toaster.show(context, _updateUserModel.message.toString());
+      Navigator.of(context).pushNamed('AddPhotos');
+    }else{
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
   @override
   void initState() {
+    userDetail();
     CheckUserConnection();
     super.initState();
   }
@@ -93,6 +159,7 @@ class _MyHomePageState extends State<LookingFor> {
               new SizedBox(height: 10,),
               ListView.builder(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(0),
                 itemCount: youarea.length,
                 itemBuilder: (context, index) {
@@ -128,6 +195,11 @@ class _MyHomePageState extends State<LookingFor> {
                                     youarevalue="";
                                   }else {
                                     youarevalue = youarea[index];
+                                    if(youarevalue == "Man"){
+                                      gender = "male";
+                                    }else if(youarevalue == "Woman"){
+                                      gender = "female";
+                                    }
                                   }
                                 }
                               });
@@ -163,6 +235,7 @@ class _MyHomePageState extends State<LookingFor> {
               ListView.builder(
                 padding: const EdgeInsets.all(0),
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 itemCount: lookingfor.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -197,6 +270,15 @@ class _MyHomePageState extends State<LookingFor> {
                                     lookingvalue="";
                                   }else {
                                     lookingvalue = lookingfor[index];
+                                    if(lookingvalue == "Woman"){
+                                      lookingFor = "woman";
+                                    }if(lookingvalue == "Man"){
+                                      lookingFor = "man";
+                                    }if(lookingvalue == "Both"){
+                                      lookingFor = "both";
+                                    }
+                                    print("objectaklsdlkj ${lookingvalue}");
+                                    print("objectaklsdlkj ${lookingFor}");
                                   }
                                 }
                               });
@@ -290,7 +372,14 @@ class _MyHomePageState extends State<LookingFor> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-
+                        clickLoad ? Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3.0,
+                              ),
+                            )
+                        ):
                         Expanded(
                             child: Center(
                               child: Text("Continue", style: TextStyle(
@@ -302,7 +391,7 @@ class _MyHomePageState extends State<LookingFor> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed('AddPhotos');
+                         updateUser();
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
