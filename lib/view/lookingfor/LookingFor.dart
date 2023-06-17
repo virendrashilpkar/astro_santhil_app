@@ -270,17 +270,17 @@ class _MyHomePageState extends State<LookingFor> {
                                     lookingvalue="";
                                   }else {
                                     lookingvalue = lookingfor[index];
-                                    if(lookingvalue == "Woman"){
-                                      lookingFor = "woman";
-                                    }if(lookingvalue == "Man"){
-                                      lookingFor = "man";
-                                    }if(lookingvalue == "Both"){
-                                      lookingFor = "both";
-                                    }
-                                    print("objectaklsdlkj ${lookingvalue}");
-                                    print("objectaklsdlkj ${lookingFor}");
                                   }
                                 }
+                                if(lookingvalue == "Woman"){
+                                  lookingFor = "female";
+                                }if(lookingvalue == "Man"){
+                                  lookingFor = "male";
+                                }if(lookingvalue == "Both"){
+                                  lookingFor = "both";
+                                }
+                                print("objectaklsdlkj ${lookingvalue}");
+                                print("objectaklsdlkj ${lookingFor}");
                               });
 
                             },splashColor: Colors.blue.withOpacity(0.2),

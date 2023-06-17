@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
@@ -77,6 +79,16 @@ class _MyHomePageState extends State<Settings> {
   TextEditingController tagsearch = TextEditingController();
   RangeValues _currentRangeValues = const RangeValues(18, 29);
   RangeValues _currentheightValues = const RangeValues(0, 10);
+
+  void navigateUser(BuildContext context) async{
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+
+    _preferences.clear();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => ChooseReg()),
+            (route) => false);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1229,7 +1241,7 @@ class _MyHomePageState extends State<Settings> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed("EnableLocation");
+                          navigateUser(context);
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

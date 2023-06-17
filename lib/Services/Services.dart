@@ -10,12 +10,13 @@ import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_list_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
 
 class Services {
 
-  static String BaseUrl = "http://52.63.253.231:4000/api/v1/";
+  static String BaseUrl = "http://192.168.2.2:4000/api/v1/";
 
   static String Login = BaseUrl+"login";
   static String OtpVerify = BaseUrl+"otp-verify";
@@ -25,6 +26,7 @@ class Services {
   static String ViewImage = BaseUrl+"user/images";
   static String PrefList = BaseUrl+"user/preference";
   static String AddPrefs = BaseUrl+"user/addpreference";
+  static String UserList = BaseUrl+"users/list";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
     final params = {
@@ -205,4 +207,24 @@ class Services {
     }
   }
 
+  static Future<UserListModel> GetUserMethod(String uId) async {
+
+    var request = http.MultipartRequest(
+      'GET',
+      Uri.parse(UserList),
+    );
+
+    request.fields  ["id"] = uId;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("GetUserMethodParams ${request.fields}");
+    print("GetUserMethodResponse ${response2.body}");
+    if (response2.statusCode == 200) {
+      var data = json.decode(response2.body);
+      UserListModel user = UserListModel.fromJson(data);
+      return user;
+    }else {
+      throw Exception('Failed');
+    }
+  }
 }

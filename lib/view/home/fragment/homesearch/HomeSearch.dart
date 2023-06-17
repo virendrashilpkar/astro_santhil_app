@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_list_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +24,21 @@ class _MyHomePageState extends State<HomeSearch> {
 
   bool ActiveConnection = false;
   String T = "";
+  SharedPreferences? _preferences;
+  late UserListModel _userListModel;
+  late UserDetailModel _userDetailModel = UserDetailModel();
+  List<UserDatum> _userList = [];
+  bool clickLoad = false;
+  bool isLoad = false;
+
+  String name = "";
+  String age = "";
+  String place = "";
+  String height = "";
+  String weight = "";
+  String region = "";
+  String maratialStatus = "";
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -37,11 +56,46 @@ class _MyHomePageState extends State<HomeSearch> {
     }
   }
 
+  Future<void> userList() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}");
+    if(_userListModel.status == 1){
+      for(var i = 0; i < _userListModel.data!.length; i++){
+        _userList = _userListModel.data ?? <UserDatum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
+  Future<void> userDetail(String id) async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod(id);
+    if(_userDetailModel.status == 1){
+      name = _userDetailModel.data![0].firstName.toString();
+
+      place = _userDetailModel.data![0].city.toString();
+      height = _userDetailModel.data![0].height.toString();
+      weight = _userDetailModel.data![0].weight.toString();
+      maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
+    }
+
+   setState(() {
+     clickLoad = false;
+   });
+  }
+
   @override
   void initState() {
     CheckUserConnection();
     Getdata();
-
+    userList();
     super.initState();
   }
 
@@ -190,19 +244,22 @@ class _MyHomePageState extends State<HomeSearch> {
       }
   ]
   };
+
   late Content content;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   List<SwipeItem> _swipeItems = <SwipeItem>[];
-  late MatchEngine _matchEngine;
-  void Getdata(){
-    String jsonStu = jsonEncode(datastring);
-    var data = jsonDecode(jsonStu);
-    content = Content.fromJson(data);
-
-    for (int i = 0; i < content.data!.length; i++) {
-      Datum getdata=content.data![i];
-      _swipeItems.add(SwipeItem(
-          content: getdata,
+  late MatchEngine _matchEngine = MatchEngine();
+  void Getdata() async{
+    // String jsonStu = jsonEncode(datastring);
+    // var data = jsonDecode(jsonStu);
+    // content = Content.fromJson(data);
+    _preferences = await SharedPreferences.getInstance();
+    _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}");
+    for (int i = 0; i < _userListModel.data!.length; i++) {
+     _userList = _userListModel.data ?? <UserDatum> [];
+      _swipeItems.add(
+          SwipeItem(
+          content: _userList.length,
           likeAction: () {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Liked"),
@@ -235,8 +292,7 @@ class _MyHomePageState extends State<HomeSearch> {
   }
 
 
-  void showProfile(BuildContext context,SwipeItem item){
-
+  void showProfile(BuildContext context,SwipeItem item, String image){
     showBottomSheet(
       context: context,
       backgroundColor: CommonColors.themeblack,
@@ -245,7 +301,12 @@ class _MyHomePageState extends State<HomeSearch> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
+        return clickLoad ? Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 3.0,
+          ),
+        ): StatefulBuilder(
           builder: (BuildContext context, StateSetter setState){
             double rating = 3.5;
             List<String> about = [
@@ -282,7 +343,7 @@ class _MyHomePageState extends State<HomeSearch> {
 
                                 child:  ClipRRect(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  child: Image.network("${item.content.image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                                  child: Image.network("${image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
                                 )
                             ),
                             new SizedBox(height: 15,),
@@ -294,7 +355,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                   alignment: Alignment.topLeft,
                                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                                   child: Text(
-                                    "${item.content.name}  ${item.content.age}",
+                                    "${name}  ${age}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 26,
@@ -316,11 +377,11 @@ class _MyHomePageState extends State<HomeSearch> {
                               alignment: Alignment.topLeft,
                               // margin: const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                "${item.content.place}\n"
-                                    "${item.content.height} | "
-                                    "${item.content.weight} | "
-                                    "${item.content.region} | "
-                                    "${item.content.status}",
+                                "${place}\n"
+                                    "${height} | "
+                                    "${weight} | "
+                                    "${region} | "
+                                    "${maratialStatus}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -508,7 +569,12 @@ class _MyHomePageState extends State<HomeSearch> {
       key: _scaffoldKey,
       backgroundColor: CommonColors.white,
       body: Container(
-          child: Stack(
+          child: isLoad ? Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+              strokeWidth: 3.0,
+            ),
+          ):Stack(
               alignment: Alignment.bottomCenter,
               children: [
                 Container(
@@ -529,7 +595,7 @@ class _MyHomePageState extends State<HomeSearch> {
                             width: MediaQuery.of(context).size.width,
                             child:FadeInImage.assetNetwork(
                                 placeholder: 'assets/home_placeholder.jpeg',
-                                image:"${_swipeItems[index].content.image}",
+                                image:"${_userList[index].image}",
                               fit: BoxFit.cover,
                             )
                             // Image.network("${_swipeItems[index].content.image}",fit: BoxFit.cover),
@@ -673,7 +739,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_swipeItems[index].content.name}   ${_swipeItems[index].content.age}",
+                                                          "${_userList[index].firstName}   ${_userList[index].age}",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 20,
@@ -693,7 +759,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_swipeItems[index].content.place}",
+                                                          "${_userList[index].lastName}",
                                                           style: TextStyle(
                                                             color: CommonColors.lightblue,
                                                             fontSize: 14,
@@ -714,10 +780,10 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_swipeItems[index].content.height} | "
-                                                              "${_swipeItems[index].content.weight} | "
-                                                              "${_swipeItems[index].content.region} | "
-                                                              "${_swipeItems[index].content.status}",
+                                                          "${_userList[index].height ?? "height"} | "
+                                                              "${_userList[index].weight} | "
+                                                              "${_userList[index].height ?? "religion"} | "
+                                                              "${_userList[index].maritalStatus}",
                                                           style: TextStyle(
                                                             color: CommonColors.white,
                                                             fontSize: 14,
@@ -738,7 +804,8 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           SwipeItem item = _swipeItems[index];
-                                          showProfile(context,item);
+                                          showProfile(context,item, _userList![index].image.toString());
+                                          userDetail(_userList![index].id.toString());
                                           },
                                         child: Container(
                                           height: 29,
@@ -774,7 +841,7 @@ class _MyHomePageState extends State<HomeSearch> {
                       ));
                     },
                     itemChanged: (SwipeItem item, int index) {
-                      print("item: ${item.content.name}, index: $index");
+                      print("item: ${_userList![index].firstName}, index: $index");
                     },
                     leftSwipeAllowed: true,
                     rightSwipeAllowed: true,

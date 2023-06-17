@@ -26,6 +26,7 @@ class _MyHomePageState extends State<AddPhotos> {
   late ViewImageModel _viewImageModel;
 
   bool clickLoad = false;
+  bool isLoad = false;
 
   Future CheckUserConnection() async {
     try {
@@ -68,6 +69,7 @@ class _MyHomePageState extends State<AddPhotos> {
   }
 
   Future<void> viewImage() async {
+    isLoad = true;
     _preferences = await SharedPreferences.getInstance();
     _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_viewImageModel.status == 1) {
@@ -75,6 +77,7 @@ class _MyHomePageState extends State<AddPhotos> {
         _list = _viewImageModel.data ?? <Datum> [];
       }
     }
+    isLoad = false;
     setState(() {
 
     });
@@ -154,7 +157,12 @@ class _MyHomePageState extends State<AddPhotos> {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: SingleChildScrollView(
-        child: Center(
+        child: isLoad ? Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 3.0,
+          ),
+        ):Center(
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             // crossAxisAlignment: CrossAxisAlignment.start,

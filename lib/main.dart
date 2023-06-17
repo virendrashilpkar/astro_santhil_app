@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/ConnectivityProvider.dart';
 import 'package:shadiapp/CommonMethod/CustomRoute.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
+import 'package:shadiapp/view/home/Home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -71,15 +73,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 void navigateUser(BuildContext context) async{
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool? status = prefs.getBool('true');
-  if (status == true) {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+  String? status = "${_preferences.getString(ShadiApp.userId)}";
+  if (status.isNotEmpty) {
 
-    // Navigator.of(context).pushNamed('ChooseReg');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Home()), (route) => false);
   }else{
-
     // Navigator.of(context).pushNamed('Home');
     // Navigator.of(context).pushNamed('FreeSub');
-    Navigator.of(context).pushNamed('ChooseReg');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ChooseReg()), (route) => false);
   }
 }
