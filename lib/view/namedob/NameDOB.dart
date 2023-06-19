@@ -36,6 +36,12 @@ class _MyHomePageState extends State<NameDOB> {
   String maritalStatus = "";
   String email = "";
   String lookingFor = "";
+  String religion = "";
+  String caste = "";
+  String about = "";
+  String education = "";
+  String company = "";
+  String jobTitle = "";
 
   bool clickLoad = false;
 
@@ -62,7 +68,12 @@ class _MyHomePageState extends State<NameDOB> {
     if(_userDetailModel.status == 1){
       firstName.text = _userDetailModel.data![0].firstName.toString();
       lastName.text = _userDetailModel.data![0].lastName.toString();
-      intialdateval.text = _userDetailModel.data![0].birthDate.toString().substring(0,10);
+      if(_userDetailModel.data![0].birthDate == null){
+        intialdateval.text = "";
+      }else {
+        intialdateval.text =
+            _userDetailModel.data![0].birthDate.toString().substring(0, 10).replaceAll("-", "/");
+      }
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
       city = _userDetailModel.data![0].city.toString();
@@ -70,6 +81,12 @@ class _MyHomePageState extends State<NameDOB> {
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
       email = _userDetailModel.data![0].email.toString();
+      religion = _userDetailModel.data![0].religion.toString();
+      caste = _userDetailModel.data![0].caste.toString();
+      about = _userDetailModel.data![0].about.toString();
+      education = _userDetailModel.data![0].education.toString();
+      company = _userDetailModel.data![0].company.toString();
+      jobTitle = _userDetailModel.data![0].jobTitle.toString();
       setState(() {
 
       });
@@ -81,8 +98,15 @@ class _MyHomePageState extends State<NameDOB> {
       clickLoad = true;
     });
     _preferences = await SharedPreferences.getInstance();
+    // Define the input date format
+    DateFormat inputFormat = DateFormat("dd/MM/yyyy");
+    // Parse the input date string
+    DateTime dateTime = inputFormat.parse(intialdateval.text);
+    DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+    String outputDate = outputFormat.format(dateTime);
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName.text,
-        lastName.text, intialdateval.text.replaceAll("/", "-"), gender, country, city, height, weight, maritalStatus, email, lookingFor);
+        lastName.text,outputDate, gender, country, city, height, weight, maritalStatus, email, lookingFor,
+        religion, caste, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('HeightWeight');
@@ -317,7 +341,15 @@ class _MyHomePageState extends State<NameDOB> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                         updateUser();
+                          if(firstName.text.isEmpty) {
+                            Toaster.show(context, "Pelase Enter First Name");
+                          }else if (lastName.text.isEmpty){
+                            Toaster.show(context, "Pelase Enter surname");
+                          }else if (intialdateval.text.isEmpty){
+                            Toaster.show(context, "Pelase Enter Date of Birth");
+                          }else {
+                            updateUser();
+                          }
 
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(

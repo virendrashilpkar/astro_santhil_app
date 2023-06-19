@@ -243,11 +243,19 @@ class _MyHomePageState extends State<AddPhotos> {
 
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  child: _list != null ? Image.network(
+                                  child: _viewImageModel.status == 1 ?
+                                       Container(
+                                        child: index >= 0  && index < _list.length ?Image.network(
                                     "${_list![index].image}",fit: BoxFit.cover,
                                     height: itemHeight,
                                     width: itemWidth,
-                                  ):imagelist[index] == null ? Image.asset(
+                                  ):Image.asset(
+                                          "assets/add_photos.png",
+                                          fit: BoxFit.cover,
+                                          // height: itemHeight,
+                                        ),
+                                       )     // width: itemWidth,
+                                      :imagelist[index] == null ? Image.asset(
                                     "assets/add_photos.png",
                                     fit: BoxFit.cover,
                                     // height: itemHeight,

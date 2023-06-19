@@ -7,6 +7,7 @@ import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shadiapp/view/PhoneLogin/PhoneLogin.dart';
 import 'package:shadiapp/view/accountrecover/AccountRecover.dart';
 import 'package:shadiapp/view/addphotos/AddPhotos.dart';
+import 'package:shadiapp/view/cast/cast.dart';
 import 'package:shadiapp/view/countrycity/CountryCity.dart';
 import 'package:shadiapp/view/enablelocation/EnableLocation.dart';
 import 'package:shadiapp/view/forgotpassword/ForgotPassword.dart';
@@ -57,6 +58,9 @@ class CustomRoute {
         case "CountryCity":
         // ignore: prefer_const_constructors
           return CountryCity();
+        case "Caste":
+        // ignore: prefer_const_constructors
+          return Cast();
         case "NameDOB":
         // ignore: prefer_const_constructors
           return NameDOB();

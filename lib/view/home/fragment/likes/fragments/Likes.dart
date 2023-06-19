@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/Models/view_like_sent_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/match/Match.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Likes extends StatefulWidget {
   @override
@@ -9,6 +13,27 @@ class Likes extends StatefulWidget {
 }
 
 class _LikesState extends State<Likes> {
+
+  late SharedPreferences _preferences;
+  late ViewLikeSentModel _likeSentModel;
+  late List<Datum> _list = [];
+  bool isLoad = false;
+
+  Future<void> viewLike() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _likeSentModel = await Services.ViewLike(_preferences.getString(ShadiApp.userId).toString());
+    if(_likeSentModel.status == 1){
+      for(var i = 0; i <  _likeSentModel.data!.length; i++){
+        _list = _likeSentModel.data ?? <Datum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
     "https://w0.peakpx.com/wallpaper/396/511/HD-wallpaper-bong-angel-bengali.jpg",
@@ -25,6 +50,12 @@ class _LikesState extends State<Likes> {
     "https://w0.peakpx.com/wallpaper/862/303/HD-wallpaper-jisoo-blackpink-blackpink-jisoo-k-pop.jpg",
     "https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",
   ];
+
+  @override
+  void initState() {
+    viewLike();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -34,7 +65,12 @@ class _LikesState extends State<Likes> {
     final double itemWidth = size.width / 2;
   return Scaffold(
     backgroundColor: CommonColors.themeblack,
-    body: Container(
+    body: isLoad ? Center(
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: 3.0,
+      ),
+    ):Container(
       margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -43,8 +79,9 @@ class _LikesState extends State<Likes> {
             mainAxisSpacing: 15.0,
             childAspectRatio: (itemWidth / itemHeight),
           ),
-          itemCount: images.length,
+          itemCount: _list.length,
           itemBuilder: (context, index){
+            Datum data = _list[index];
             return InkWell(
               onTap: (){
                 Navigator.of(context).push(
@@ -65,7 +102,7 @@ class _LikesState extends State<Likes> {
                   child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: NetworkImage(images[index]),
+                              image: NetworkImage(data.image.toString()),
                               fit: BoxFit.fill)
                       ),
                       child: Column(
@@ -93,7 +130,7 @@ class _LikesState extends State<Likes> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          child: Text("Ana, 24",
+                                          child: Text("${data.name}, ${data.age}",
                                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
                                                 fontSize: 14),),
                                         ),

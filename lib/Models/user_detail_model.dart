@@ -11,7 +11,7 @@ String userDetailModelToJson(UserDetailModel data) => json.encode(data.toJson())
 class UserDetailModel {
   int? status;
   String? meesage;
-  List<Datum>? data;
+  List<detailDatum>? data;
 
   UserDetailModel({
     this.status,
@@ -22,113 +22,129 @@ class UserDetailModel {
   factory UserDetailModel.fromJson(Map<String, dynamic> json) => UserDetailModel(
     status: json["status"],
     meesage: json["meesage"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? [] : List<detailDatum>.from(json["data"]!.map((x) => detailDatum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "meesage": meesage,
-    "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 
-class Datum {
+class detailDatum {
   String? id;
   String? firstName;
   String? lastName;
-  DateTime? birthDate;
-  String? phone;
-  String? gender;
-  String? city;
-  String? height;
-  String? weight;
   String? email;
-  String? about;
-  String? maritalStatus;
-  String? country;
-  Location? location;
+  DateTime? birthDate;
+  int? age;
+  String? phone;
   String? plan;
-  String? covidVaccine;
-  String? pets;
-  String? dietaryPreference;
-  String? educationLevel;
-  String? sleepingHabits;
-  String? socialMedia;
-  String? workout;
+  String? city;
+  String? country;
+  String? gender;
+  String? height;
+  String? maritalStatus;
+  String? weight;
+  Location? location;
+  String? lookingFor;
+  String? religion;
+  String? caste;
+  String? about;
+  String? company;
+  String? education;
+  String? jobTitle;
+  int? maxAge;
+  int? maxHeight;
+  int? minAge;
+  int? minHeight;
 
-  Datum({
+  detailDatum({
     this.id,
     this.firstName,
     this.lastName,
-    this.birthDate,
-    this.phone,
-    this.gender,
-    this.city,
-    this.height,
-    this.weight,
     this.email,
-    this.about,
-    this.maritalStatus,
-    this.country,
-    this.location,
+    this.birthDate,
+    this.age,
+    this.phone,
     this.plan,
-    this.covidVaccine,
-    this.pets,
-    this.dietaryPreference,
-    this.educationLevel,
-    this.sleepingHabits,
-    this.socialMedia,
-    this.workout,
+    this.city,
+    this.country,
+    this.gender,
+    this.height,
+    this.maritalStatus,
+    this.weight,
+    this.location,
+    this.lookingFor,
+    this.religion,
+    this.caste,
+    this.about,
+    this.company,
+    this.education,
+    this.jobTitle,
+    this.maxHeight,
+    this.maxAge,
+    this.minHeight,
+    this.minAge
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory detailDatum.fromJson(Map<String, dynamic> json) => detailDatum(
     id: json["_id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    birthDate: DateTime.parse(json["birth_date"]),
-    phone: json["phone"],
-    gender: json["gender"],
-    city: json["city"],
-    height: json["height"],
-    weight: json["weight"],
     email: json["email"],
-    about: json["about"],
-    maritalStatus: json["marital_status"],
-    country: json["country"],
-    location: Location.fromJson(json["location"]),
+    birthDate: json["birth_date"] == "" ? null : DateTime.parse(json["birth_date"]),
+    age: json["age"],
+    phone: json["phone"],
     plan: json["plan"],
-    covidVaccine: json["covid_vaccine"],
-    pets: json["pets"],
-    dietaryPreference: json["dietary_preference"],
-    educationLevel: json["education_level"],
-    sleepingHabits: json["sleeping_habits"],
-    socialMedia: json["social_media"],
-    workout: json["workout"],
+    city: json["city"],
+    country: json["country"],
+    gender: json["gender"],
+    height: json["height"],
+    maritalStatus: json["marital_status"],
+    weight: json["weight"],
+    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    lookingFor: json["looking_for"],
+    religion: json["religion"],
+    caste: json["caste"],
+    about: json["about"],
+    company: json["company"],
+    education: json["education"],
+    jobTitle: json["job_title"],
+    maxAge: json["maxAge"],
+    maxHeight: json["maxHeight"],
+    minAge: json["minAge"],
+    minHeight: json["minHeight"],
   );
 
   Map<String, dynamic> toJson() => {
     "_id": id,
     "first_name": firstName,
     "last_name": lastName,
-    "birth_date": "${birthDate?.year.toString().padLeft(4, '0')}-${birthDate?.month.toString().padLeft(2, '0')}-${birthDate?.day.toString().padLeft(2, '0')}",
-    "phone": phone,
-    "gender": gender,
-    "city": city,
-    "height": height,
-    "weight": weight,
     "email": email,
-    "about": about,
-    "marital_status": maritalStatus,
-    "country": country,
-    "location": location?.toJson(),
+    "birth_date": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+    "age":age,
+    "phone": phone,
     "plan": plan,
-    "covid_vaccine": covidVaccine,
-    "pets": pets,
-    "dietary_preference": dietaryPreference,
-    "education_level": educationLevel,
-    "sleeping_habits": sleepingHabits,
-    "social_media": socialMedia,
-    "workout": workout,
+    "city": city,
+    "country": country,
+    "gender": gender,
+    "height": height,
+    "marital_status": maritalStatus,
+    "weight": weight,
+    "location": location?.toJson(),
+    "looking_for": lookingFor,
+    "religion": religion,
+    "caste": caste,
+    "about": about,
+    "company": company,
+    "education": education,
+    "job_title": jobTitle,
+    "maxAge": maxAge,
+    "maxHeight": maxHeight,
+    "minAge": minAge,
+    "minHeight": minHeight,
   };
 }
 
@@ -143,11 +159,11 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) => Location(
     type: json["type"],
-    coordinates: List<double>.from(json["coordinates"].map((x) => x.toDouble())),
+    coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x?.toDouble())),
   );
 
   Map<String, dynamic> toJson() => {
     "type": type,
-    "coordinates": List<dynamic>.from(coordinates!.map((x) => x)),
+    "coordinates": coordinates == null ? [] : List<dynamic>.from(coordinates!.map((x) => x)),
   };
 }

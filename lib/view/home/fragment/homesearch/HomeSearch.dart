@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/like_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_list_model.dart';
+import 'package:shadiapp/Models/user_view_preference_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
@@ -26,18 +28,24 @@ class _MyHomePageState extends State<HomeSearch> {
   String T = "";
   SharedPreferences? _preferences;
   late UserListModel _userListModel;
+  late UserViewPreferenceModel _viewPreferenceModel;
+  late LikeModel _likeModel;
   late UserDetailModel _userDetailModel = UserDetailModel();
   List<UserDatum> _userList = [];
+  List<PrefsDatum> intrest = [];
   bool clickLoad = false;
   bool isLoad = false;
 
   String name = "";
+  String lastName = "";
   String age = "";
   String place = "";
+  String country = "";
   String height = "";
   String weight = "";
-  String region = "";
+  String religion = "";
   String maratialStatus = "";
+  String type = "";
 
   Future CheckUserConnection() async {
     try {
@@ -79,8 +87,10 @@ class _MyHomePageState extends State<HomeSearch> {
     _userDetailModel = await Services.UserDetailMethod(id);
     if(_userDetailModel.status == 1){
       name = _userDetailModel.data![0].firstName.toString();
-
+      lastName = _userDetailModel.data![0].lastName.toString();
+      age = _userDetailModel.data![0].age.toString();
       place = _userDetailModel.data![0].city.toString();
+      country = _userDetailModel.data![0].country.toString();
       height = _userDetailModel.data![0].height.toString();
       weight = _userDetailModel.data![0].weight.toString();
       maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -89,6 +99,28 @@ class _MyHomePageState extends State<HomeSearch> {
    setState(() {
      clickLoad = false;
    });
+  }
+
+  Future<void> userViewPreference(String id) async {
+    _viewPreferenceModel = await Services.ViewUserPreference(id);
+    if(_viewPreferenceModel.status == 1){
+      for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
+        intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
+      }
+    }
+    setState(() {
+
+    });
+  }
+
+  Future<void> like(String id, String type) async {
+    _preferences = await SharedPreferences.getInstance();
+    _likeModel = await Services.LikeMethod(_preferences!.getString(ShadiApp.userId).toString(), id, type);
+    if(_likeModel.status == 1){
+      Toaster.show(context, _likeModel.message.toString());
+    }else{
+      Toaster.show(context, _likeModel.message.toString());
+    }
   }
 
   @override
@@ -265,21 +297,26 @@ class _MyHomePageState extends State<HomeSearch> {
               content: Text("Liked"),
               duration: Duration(milliseconds: 500),
             ));
+            print("objectLike");
+            type = "like";
           },
           nopeAction: () {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Nope"),
               duration: Duration(milliseconds: 500),
             ));
+            type = "disLike";
           },
           superlikeAction: () {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Superliked"),
               duration: Duration(milliseconds: 500),
             ));
+            type = "superLike";
           },
           onSlideUpdate: (SlideRegion? region) async {
             print("Region $region");
+            print("type $type");
             // Toaster.show(context, "Region $region");
           }));
     }
@@ -292,7 +329,7 @@ class _MyHomePageState extends State<HomeSearch> {
   }
 
 
-  void showProfile(BuildContext context,SwipeItem item, String image){
+  void showProfile(SwipeItem item, String image, String id){
     showBottomSheet(
       context: context,
       backgroundColor: CommonColors.themeblack,
@@ -300,264 +337,8 @@ class _MyHomePageState extends State<HomeSearch> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      builder: (BuildContext context) {
-        return clickLoad ? Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 3.0,
-          ),
-        ): StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState){
-            double rating = 3.5;
-            List<String> about = [
-              'Loving',
-              'Caring',
-              'Humoristic',
-              'Spontanious',
-            ];
-            List<String> intrest = [
-              'Reading',
-              'Reading',
-              'Reading',
-              'Reading',
-            ];
-            return Container(
-              height: MediaQuery.of(context).size.height-60,
-              width: MediaQuery.of(context).size.width,
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: MediaQuery.of(context).padding.top+60,
-                            ),
-                            Container(
-
-                                child:  ClipRRect(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  child: Image.network("${image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
-                                )
-                            ),
-                            new SizedBox(height: 15,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "${name}  ${age}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                                new SizedBox(width: 15,),
-                                SizedBox(
-                                  height: 25,
-                                  width: 25,
-                                  child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
-                                )
-                              ],
-                            ),
-                            new SizedBox(height: 11,),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              // margin: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                "${place}\n"
-                                    "${height} | "
-                                    "${weight} | "
-                                    "${region} | "
-                                    "${maratialStatus}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-
-                            new SizedBox(height: 14,),
-                            Row(
-                              children: [
-                                Container(
-                                  height:24,
-                                  decoration: BoxDecoration(
-                                    color:CommonColors.yellow,
-                                    border: Border.all(
-                                        width: 1.0
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(32.0) //                 <--- border radius here
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 9,vertical: 0),
-                                  alignment: Alignment.center,
-                                  child: Text("GOLD",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
-                                ),
-                                Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                                    child: new StarRating(
-                                      color: CommonColors.yellow,
-                                      rating: rating,
-                                      size:24,
-                                      onRatingChanged: (rating) => setState(() => rating = rating),
-                                    )
-                                )
-                              ],
-                            ),
-                            new SizedBox(height: 11,),
-
-                            Row(
-                              children: [
-                                Container(
-                                  height:23,
-                                  // width: 120,
-                                  decoration: BoxDecoration(
-                                    color:CommonColors.buttonorg,
-                                    border: Border.all(
-                                        width: 1.0
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(32.0) //                 <--- border radius here
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Within 3 months",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
-                                ),
-                              ],
-                            ),
-                            new SizedBox(height: 40,),
-                            new Container(height: 1,width: double.infinity,color: Colors.white,),
-                            new SizedBox(height: 40,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                            ),
-                            new SizedBox(height: 10,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("I am a gentle lady who loves to have fun, i sleep early and loves to sing before i sleep which is quite unormal tough. I have a farm somewhere",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
-                            ),
-                            new SizedBox(height: 10,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Wrap(
-                                children: [
-                                  ...List.generate(
-                                    about.length,
-                                        (index) => GestureDetector(
-                                      child: Container(
-                                          margin: const EdgeInsets.only(right: 5,top:5),
-                                          decoration: BoxDecoration(
-                                            color: CommonColors.buttonorg,
-                                            borderRadius: BorderRadius.circular(65),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            new SizedBox(height: 40,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                            ),
-                            new SizedBox(height: 20,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Wrap(
-                                children: [
-                                  ...List.generate(
-                                    intrest.length,
-                                        (index) => GestureDetector(
-                                      child: Container(
-                                          margin: const EdgeInsets.only(right: 5,top:5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.white),
-                                            // color: CommonColors.buttonorg,
-                                            borderRadius: BorderRadius.circular(65),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text("${intrest[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            new SizedBox(height: 40,),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                            ),
-                            new SizedBox(height: 20,),
-                          ],
-                        ),
-                      ),
-
-                      Customlayout(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: 'Libra',),
-                      Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: 'Master degree',),
-                      Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: 'Not added',),
-                      Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: 'Not added',),
-                      Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: 'Add',),
-
-                      new SizedBox(height: 40,),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        alignment: Alignment.centerLeft,
-                        child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                      ),
-                      new SizedBox(height: 20,),
-                      Customlayout(icon: 'assets/pet_icon.png',tittle: 'Pets',status: 'Dog',),
-                      Customlayout(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: 'On special occasions',),
-                      Customlayout(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: 'Non-smoker',),
-                      Customlayout(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: 'Often',),
-                      Customlayout(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: 'Not added',),
-                      Customlayout(icon: 'assets/social_bottom.png',tittle: 'Social media',status: 'Socially active',),
-                      Customlayout(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: 'Early bird',),
-                      new SizedBox(height: 40,),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        alignment: Alignment.center,
-                        child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                      ),
-                      new SizedBox(height: 60,),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
+      builder: (context) {
+        return  ShowBottomSheet(image, id);
       },
     );
   }
@@ -656,6 +437,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           _matchEngine.currentItem?.nope();
+                                          like(_userList![index].id.toString(), "disLike");
                                         },
                                         child: Container(
                                           height: 50,
@@ -678,6 +460,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           _matchEngine!.currentItem?.superLike();
+                                          like(_userList![index].id.toString(), "superLike");
                                         },
                                         child: Container(
                                           height: 50,
@@ -701,6 +484,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                         onTap:(){
                                           print("like");
                                           _matchEngine!.currentItem?.like();
+                                          like(_userList![index].id.toString(), "like");
                                         },
                                         child: Container(
                                           height: 50,
@@ -739,7 +523,8 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_userList[index].firstName}   ${_userList[index].age}",
+                                                          "${_userList[index].firstName} ${_userList[index].lastName}"
+                                                              "  ${_userList[index].age}",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 20,
@@ -759,7 +544,8 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_userList[index].lastName}",
+                                                          "${_userList[index].city} | "
+                                                          "${_userList[index].country} | ",
                                                           style: TextStyle(
                                                             color: CommonColors.lightblue,
                                                             fontSize: 14,
@@ -780,9 +566,9 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_userList[index].height ?? "height"} | "
-                                                              "${_userList[index].weight} | "
-                                                              "${_userList[index].height ?? "religion"} | "
+                                                          "${_userList[index].height?.replaceAll(".", "`") } | "
+                                                              "${_userList[index].weight}kg | "
+                                                              "hindu |"
                                                               "${_userList[index].maritalStatus}",
                                                           style: TextStyle(
                                                             color: CommonColors.white,
@@ -804,8 +590,9 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           SwipeItem item = _swipeItems[index];
-                                          showProfile(context,item, _userList![index].image.toString());
-                                          userDetail(_userList![index].id.toString());
+                                          showProfile(item, _userList![index].image.toString(),_userList![index].id.toString());
+                                          // userDetail();
+                                          // userViewPreference(_userList![index].id.toString());
                                           },
                                         child: Container(
                                           height: 29,
@@ -842,6 +629,7 @@ class _MyHomePageState extends State<HomeSearch> {
                     },
                     itemChanged: (SwipeItem item, int index) {
                       print("item: ${_userList![index].firstName}, index: $index");
+                      like(_userList![index-1].id.toString(), type);
                     },
                     leftSwipeAllowed: true,
                     rightSwipeAllowed: true,
@@ -1120,4 +908,331 @@ class _MyHomePageState extends State<HomeSearch> {
               ]))
     );
   }
+}
+
+class ShowBottomSheet extends StatefulWidget {
+
+  String image = "";
+  String id = "";
+  ShowBottomSheet(this.image, this.id);
+
+  @override
+  State<StatefulWidget> createState() => _BottomSheetState();
+}
+
+class _BottomSheetState extends State<ShowBottomSheet> {
+
+  SharedPreferences? _preferences;
+  late UserViewPreferenceModel _viewPreferenceModel;
+  late UserDetailModel _userDetailModel = UserDetailModel();
+  List<PrefsDatum> intrest = [];
+  bool clickLoad = false;
+  bool isLoad = false;
+
+  String name = "";
+  String lastName = "";
+  String age = "";
+  String place = "";
+  String country = "";
+  String height = "";
+  String weight = "";
+  String religion = "";
+  String maratialStatus = "";
+
+  Future<void> userDetail() async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod(widget.id);
+    if(_userDetailModel.status == 1){
+      name = _userDetailModel.data![0].firstName.toString();
+      lastName = _userDetailModel.data![0].lastName.toString();
+      age = _userDetailModel.data![0].age.toString();
+      place = _userDetailModel.data![0].city.toString();
+      country = _userDetailModel.data![0].country.toString();
+      height = _userDetailModel.data![0].height.toString();
+      weight = _userDetailModel.data![0].weight.toString();
+      maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
+    }
+
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+  Future<void> userViewPreference() async {
+    _viewPreferenceModel = await Services.ViewUserPreference(widget.id);
+    if(_viewPreferenceModel.status == 1){
+      for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
+        intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
+      }
+    }
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    userDetail();
+    userViewPreference();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState){
+        double rating = 3.5;
+        List<String> about = [
+          'Loving',
+          'Caring',
+          'Humoristic',
+          'Spontanious',
+        ];
+        return  clickLoad == true ? Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 3.0,
+          ),
+        ):Container(
+          height: MediaQuery.of(context).size.height-60,
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).padding.top+60,
+                        ),
+                        Container(
+
+                            child:  ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image.network("${widget.image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                            )
+                        ),
+                        new SizedBox(height: 15,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              alignment: Alignment.topLeft,
+                              // margin: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                "${name} ${lastName} ${age}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            new SizedBox(width: 15,),
+                            SizedBox(
+                              height: 25,
+                              width: 25,
+                              child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
+                            )
+                          ],
+                        ),
+                        new SizedBox(height: 11,),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          // margin: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            "${place} | ${country} \n"
+                                "${height.replaceAll(".", "`")} | "
+                                "${weight}kg | "
+                                "hindu  | "
+                                " ${maratialStatus}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+
+                        new SizedBox(height: 14,),
+                        Row(
+                          children: [
+                            Container(
+                              height:24,
+                              decoration: BoxDecoration(
+                                color:CommonColors.yellow,
+                                border: Border.all(
+                                    width: 1.0
+                                ),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(32.0) //                 <--- border radius here
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 9,vertical: 0),
+                              alignment: Alignment.center,
+                              child: Text("GOLD",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                            ),
+                            Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                child: new StarRating(
+                                  color: CommonColors.yellow,
+                                  rating: rating,
+                                  size:24,
+                                  onRatingChanged: (rating) => setState(() => rating = rating),
+                                )
+                            )
+                          ],
+                        ),
+                        new SizedBox(height: 11,),
+
+                        Row(
+                          children: [
+                            Container(
+                              height:23,
+                              // width: 120,
+                              decoration: BoxDecoration(
+                                color:CommonColors.buttonorg,
+                                border: Border.all(
+                                    width: 1.0
+                                ),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(32.0) //                 <--- border radius here
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
+                              alignment: Alignment.centerLeft,
+                              child: Text("Within 3 months",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                            ),
+                          ],
+                        ),
+                        new SizedBox(height: 40,),
+                        new Container(height: 1,width: double.infinity,color: Colors.white,),
+                        new SizedBox(height: 40,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                        ),
+                        new SizedBox(height: 10,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text("I am a gentle lady who loves to have fun, i sleep early and loves to sing before i sleep which is quite unormal tough. I have a farm somewhere",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                        ),
+                        new SizedBox(height: 10,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(
+                            children: [
+                              ...List.generate(
+                                about.length,
+                                    (index) => GestureDetector(
+                                  child: Container(
+                                      margin: const EdgeInsets.only(right: 5,top:5),
+                                      decoration: BoxDecoration(
+                                        color: CommonColors.buttonorg,
+                                        borderRadius: BorderRadius.circular(65),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
+                                        ],
+                                      )
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        new SizedBox(height: 40,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                        ),
+                        new SizedBox(height: 20,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(
+                            children: [
+                              ...List.generate(
+                                intrest.length,
+                                    (index) => GestureDetector(
+                                  child: Container(
+                                      margin: const EdgeInsets.only(right: 5,top:5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.white),
+                                        // color: CommonColors.buttonorg,
+                                        borderRadius: BorderRadius.circular(65),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text("${intrest[index].preference}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                                        ],
+                                      )
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        new SizedBox(height: 40,),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                        ),
+                        new SizedBox(height: 20,),
+                      ],
+                    ),
+                  ),
+
+                  Customlayout(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: 'Libra',),
+                  Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: 'Master degree',),
+                  Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: 'Not added',),
+                  Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: 'Not added',),
+                  Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: 'Add',),
+
+                  new SizedBox(height: 40,),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  ),
+                  new SizedBox(height: 20,),
+                  Customlayout(icon: 'assets/pet_icon.png',tittle: 'Pets',status: 'Dog',),
+                  Customlayout(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: 'On special occasions',),
+                  Customlayout(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: 'Non-smoker',),
+                  Customlayout(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: 'Often',),
+                  Customlayout(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: 'Not added',),
+                  Customlayout(icon: 'assets/social_bottom.png',tittle: 'Social media',status: 'Socially active',),
+                  Customlayout(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: 'Early bird',),
+                  new SizedBox(height: 40,),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    alignment: Alignment.center,
+                    child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  ),
+                  new SizedBox(height: 60,),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

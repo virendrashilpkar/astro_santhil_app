@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/age_height_range_model.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +22,16 @@ class _MyHomePageState extends State<Settings> {
 
   bool ActiveConnection = false;
   String T = "";
+  late UserDetailModel _userDetailModel;
+  late SharedPreferences _preferences;
+  late AgeHeightRangeModel _rangeModel;
+  String email = "";
+  String phone = "";
+  String minAge = "";
+  String maxAge = "";
+  String minHeight = "";
+  String maxHeight = "";
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -40,8 +52,33 @@ class _MyHomePageState extends State<Settings> {
 
   List<File?> imagelist = List.filled(6, null);
 
+  Future<void> userDetail() async {
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
+    if(_userDetailModel.status == 1){
+      email = _userDetailModel.data![0].email.toString();
+      phone = _userDetailModel.data![0].phone.toString();
+      minAge = _userDetailModel.data![0].minAge.toString();
+      maxAge = _userDetailModel.data![0].maxAge.toString();
+      minHeight = _userDetailModel.data![0].minHeight.toString();
+      maxHeight = _userDetailModel.data![0].maxHeight.toString();
+
+      setState(() {
+
+      });
+    }
+  }
+
+  Future<void> rangeSet() async {
+    _preferences = await SharedPreferences.getInstance();
+    _rangeModel = await Services.RangeSet(_preferences.getString(ShadiApp.userId).toString(),
+        _currentRangeValues.start.toInt(), _currentRangeValues.end.toInt(), _currentheightValues.start.toInt(),
+        _currentheightValues.end.toInt());
+  }
+
   @override
   void initState() {
+    userDetail();
     CheckUserConnection();
     super.initState();
   }
@@ -76,9 +113,10 @@ class _MyHomePageState extends State<Settings> {
   List<int> selectedIndex = [];
   bool GoGlobal = false;
   bool ischeck = false;
+  // double value1 = minAge as double;
   TextEditingController tagsearch = TextEditingController();
-  RangeValues _currentRangeValues = const RangeValues(18, 29);
-  RangeValues _currentheightValues = const RangeValues(0, 10);
+  RangeValues _currentRangeValues =  RangeValues(18, 29);
+  RangeValues _currentheightValues =  RangeValues(0, 10);
 
   void navigateUser(BuildContext context) async{
     SharedPreferences _preferences = await SharedPreferences.getInstance();
@@ -326,7 +364,7 @@ class _MyHomePageState extends State<Settings> {
                     ),
                     Spacer(),
                     new Container(
-                      child: new Text("8801640630118",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                      child: new Text(phone,style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                     ),
                     // new SizedBox(width: 20,),
                   ],
@@ -348,7 +386,7 @@ class _MyHomePageState extends State<Settings> {
                     ),
                     Spacer(),
                     new Container(
-                      child: new Text("Sofia@gmail.com",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                      child: new Text(email,style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                     ),
                     // new SizedBox(width: 20,),
                   ],
@@ -1206,6 +1244,42 @@ class _MyHomePageState extends State<Settings> {
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
                           Navigator.of(context).pushNamed("EnableLocation");
+                        },splashColor: Colors.blue.withOpacity(0.2),
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              new SizedBox(height: 20,),
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: CommonColors.buttonorg,
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(25)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+
+                        Expanded(
+                            child: Center(
+                              child: Text("Update Setting".toUpperCase(), style: TextStyle(
+                                  color: Colors.white, fontSize: 20,fontWeight: FontWeight.w900),),
+                            )),
+                      ],
+                    ),
+                    SizedBox.expand(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(onTap: () {
+
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

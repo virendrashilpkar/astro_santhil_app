@@ -244,8 +244,11 @@ class _MyHomePageState extends State<PhoneLogin> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        LoginMethod();
-
+                        if(phone.text.isEmpty){
+                          Toaster.show(context, "Pelase Enter Your Phone Number");
+                        }else {
+                          LoginMethod();
+                        }
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

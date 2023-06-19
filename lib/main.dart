@@ -74,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 void navigateUser(BuildContext context) async{
   SharedPreferences _preferences = await SharedPreferences.getInstance();
-  String? status = "${_preferences.getString(ShadiApp.userId)}";
-  if (status.isNotEmpty) {
+  bool? status = _preferences.getBool(ShadiApp.status);
+  if (status == true) {
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Home()), (route) => false);
@@ -85,4 +85,5 @@ void navigateUser(BuildContext context) async{
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => ChooseReg()), (route) => false);
   }
+
 }

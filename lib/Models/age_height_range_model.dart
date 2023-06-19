@@ -1,25 +1,25 @@
 // To parse this JSON data, do
 //
-//     final updateUserModel = updateUserModelFromJson(jsonString);
+//     final ageHeightRangeModel = ageHeightRangeModelFromJson(jsonString);
 
 import 'dart:convert';
 
-UpdateUserModel updateUserModelFromJson(String str) => UpdateUserModel.fromJson(json.decode(str));
+AgeHeightRangeModel ageHeightRangeModelFromJson(String str) => AgeHeightRangeModel.fromJson(json.decode(str));
 
-String updateUserModelToJson(UpdateUserModel data) => json.encode(data.toJson());
+String ageHeightRangeModelToJson(AgeHeightRangeModel data) => json.encode(data.toJson());
 
-class UpdateUserModel {
+class AgeHeightRangeModel {
   int? status;
   String? message;
   Data? data;
 
-  UpdateUserModel({
+  AgeHeightRangeModel({
     this.status,
     this.message,
     this.data,
   });
 
-  factory UpdateUserModel.fromJson(Map<String, dynamic> json) => UpdateUserModel(
+  factory AgeHeightRangeModel.fromJson(Map<String, dynamic> json) => AgeHeightRangeModel(
     status: json["status"],
     message: json["message"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
@@ -35,7 +35,8 @@ class UpdateUserModel {
 class Data {
   String? countryCode;
   String? image;
-  String? about;
+  String? managedBy;
+  int? heightRange;
   String? id;
   String? firstName;
   String? lastName;
@@ -61,11 +62,18 @@ class Data {
   Location? location;
   String? lookingFor;
   String? religion;
+  String? caste;
+  String? about;
+  String? company;
+  String? education;
+  String? jobTitle;
+  int? ageRange;
 
   Data({
     this.countryCode,
     this.image,
-    this.about,
+    this.managedBy,
+    this.heightRange,
     this.id,
     this.firstName,
     this.lastName,
@@ -91,17 +99,24 @@ class Data {
     this.location,
     this.lookingFor,
     this.religion,
+    this.caste,
+    this.about,
+    this.company,
+    this.education,
+    this.jobTitle,
+    this.ageRange,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     countryCode: json["country_code"],
     image: json["image"],
-    about: json["about"],
+    managedBy: json["managedBy"],
+    heightRange: json["heightRange"],
     id: json["_id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
     email: json["email"],
-    birthDate: json["birth_date"] == "" ? null : DateTime.parse(json["birth_date"]),
+    birthDate: json["birth_date"] == null ? null : DateTime.parse(json["birth_date"]),
     phone: json["phone"],
     createdBy: json["created_by"],
     token: json["token"],
@@ -122,17 +137,24 @@ class Data {
     location: json["location"] == null ? null : Location.fromJson(json["location"]),
     lookingFor: json["looking_for"],
     religion: json["religion"],
+    caste: json["caste"],
+    about: json["about"],
+    company: json["company"],
+    education: json["education"],
+    jobTitle: json["job_title"],
+    ageRange: json["ageRange"],
   );
 
   Map<String, dynamic> toJson() => {
     "country_code": countryCode,
     "image": image,
-    "about": about,
+    "managedBy": managedBy,
+    "heightRange": heightRange,
     "_id": id,
     "first_name": firstName,
     "last_name": lastName,
     "email": email,
-    "birth_date": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+    "birth_date": birthDate?.toIso8601String(),
     "phone": phone,
     "created_by": createdBy,
     "token": token,
@@ -153,6 +175,12 @@ class Data {
     "location": location?.toJson(),
     "looking_for": lookingFor,
     "religion": religion,
+    "caste": caste,
+    "about": about,
+    "company": company,
+    "education": education,
+    "job_title": jobTitle,
+    "ageRange": ageRange,
   };
 }
 

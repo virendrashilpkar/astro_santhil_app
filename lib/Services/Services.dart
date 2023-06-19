@@ -1,9 +1,10 @@
-
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:shadiapp/Models/age_height_range_model.dart';
+import 'package:shadiapp/Models/like_model.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
@@ -12,67 +13,70 @@ import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_list_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
+import 'package:shadiapp/Models/user_view_preference_model.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
+import 'package:shadiapp/Models/view_like_sent_model.dart';
+import 'package:shadiapp/Models/view_profile_model.dart';
 
 class Services {
+  static String BaseUrl = "http://52.63.253.231:4000/api/v1/";
 
-  static String BaseUrl = "http://192.168.2.2:4000/api/v1/";
-
-  static String Login = BaseUrl+"login";
-  static String OtpVerify = BaseUrl+"otp-verify";
-  static String UserDetail = BaseUrl+"userDetails";
-  static String UserUpdate = BaseUrl+"update";
-  static String UploadImge = BaseUrl+"user/uploadImage/";
-  static String ViewImage = BaseUrl+"user/images";
-  static String PrefList = BaseUrl+"user/preference";
-  static String AddPrefs = BaseUrl+"user/addpreference";
-  static String UserList = BaseUrl+"users/list";
+  static String Login = BaseUrl + "login";
+  static String OtpVerify = BaseUrl + "otp-verify";
+  static String UserDetail = BaseUrl + "userDetails";
+  static String UserUpdate = BaseUrl + "update";
+  static String UploadImge = BaseUrl + "user/uploadImage/";
+  static String ViewImage = BaseUrl + "user/images";
+  static String PrefList = BaseUrl + "user/preference";
+  static String AddPrefs = BaseUrl + "user/addpreference";
+  static String UserList = BaseUrl + "users/list";
+  static String ViewPrefs = BaseUrl + "user/preferenceList";
+  static String LikeApi = BaseUrl + "user/creatematch";
+  static String ViewProfile = BaseUrl + "profile";
+  static String LikeView = BaseUrl + "sent/req";
+  static String SetRange = BaseUrl + "set/range";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
-    final params = {
-      "phone" : phone
-    };
-    print("PhoneLoginParams "+params.toString());
+    final params = {"phone": phone};
+    print("PhoneLoginParams " + params.toString());
     http.Response response = await http.post(Uri.parse(Login), body: params);
-    print("PhoneLoginResponse"+response.body);
+    print("PhoneLoginResponse" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       PhoneLoginModel user = PhoneLoginModel.fromJson(data);
       return user;
-    }else {
+    } else {
       print(response.body);
       throw Exception('Failed');
     }
   }
 
-  static Future<OtpVerifyModel> Otp(String Id, String otp) async{
-    final params = {
-      "userId" : Id,
-      "otp": otp
-    };
+  static Future<OtpVerifyModel> Otp(String Id, String otp) async {
+    final params = {"userId": Id, "otp": otp};
     print("OtpVerifyParams ${params.toString()}");
-    http.Response response = await http.post(Uri.parse(OtpVerify), body: params);
+    http.Response response =
+        await http.post(Uri.parse(OtpVerify), body: params);
     print("OtpVerifyResponse ${response.body}");
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       OtpVerifyModel user = OtpVerifyModel.fromJson(data);
       return user;
-    }else {
-      print("ErrorOtpVerifyResponse ${response.body}");
-      throw Exception('Failed');
+    } else {
+      var data = jsonDecode(response.body);
+      OtpVerifyModel user = OtpVerifyModel.fromJson(data);
+      return user;
     }
   }
 
-  static Future<UserDetailModel> UserDetailMethod(String uId) async{
-
+  static Future<UserDetailModel> UserDetailMethod(String uId) async {
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(UserDetail),
     );
 
-    request.fields  ["userId"] = uId;
+    request.fields["userId"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("UserDetailMethodParams ${request.fields}");
@@ -81,50 +85,68 @@ class Services {
       var data = json.decode(response2.body);
       UserDetailModel user = UserDetailModel.fromJson(data);
       return user;
-    }else {
+    } else {
       throw Exception('Failed');
     }
   }
 
-  static Future<UpdateUserModel> UpdateUser(String uId, String firstName, String lastName, String birthDate, String gender,
-      String country, String city, String height, String weight, String maritalStatus, String email, String lookinFor) async {
-
+  static Future<UpdateUserModel> UpdateUser(
+      String uId,
+      String firstName,
+      String lastName,
+      String birthDate,
+      String gender,
+      String country,
+      String city,
+      String height,
+      String weight,
+      String maritalStatus,
+      String email,
+      String lookinFor,
+      String religion,
+      String caste,
+      String about,
+      String education,
+      String company,
+      String jobTitle) async {
     final params = {
-      "userId" : uId,
-      "first_name" : firstName,
-      "last_name" : lastName,
-      "birth_date" : birthDate,
-      "gender" : gender,
-      "country" : country,
-      "city" : city,
-      "height" : height,
-      "weight" : weight,
-      "marital_status" : maritalStatus,
-      "email" : email,
-      "looking_for" : lookinFor,
-
+      "userId": uId,
+      "first_name": firstName,
+      "last_name": lastName,
+      "birth_date": birthDate,
+      "gender": gender,
+      "country": country,
+      "city": city,
+      "height": height,
+      "weight": weight,
+      "marital_status": maritalStatus,
+      "email": email,
+      "looking_for": lookinFor,
+      "religion": religion,
+      "caste": caste,
+      "education": education,
+      "job_title": jobTitle,
+      "company": company
     };
 
-    print("UpdateUserParams "+params.toString());
-    http.Response response = await http.post(Uri.parse(UserUpdate), body: params);
-    print("UpdateUserResponse"+response.body);
+    print("UpdateUserParams " + params.toString());
+    http.Response response =
+        await http.post(Uri.parse(UserUpdate), body: params);
+    print("UpdateUserResponse" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       UpdateUserModel user = UpdateUserModel.fromJson(data);
       return user;
-    }else {
+    } else {
       print(response.body);
       throw Exception('Failed');
     }
   }
 
   static Future<UploadImageModel> ImageUpload(File image, String uId) async {
-
-    var request = new http.MultipartRequest(
-        "POST",
-        Uri.parse("${UploadImge}${uId}")
-    );
+    var request =
+        new http.MultipartRequest("POST", Uri.parse("${UploadImge}${uId}"));
 
     var file = await http.MultipartFile.fromPath("fileUrl", image.path);
     request.files.add(file);
@@ -133,25 +155,24 @@ class Services {
     var response2 = await http.Response.fromStream(response);
 
     print(response.toString());
-    print("ImageUpload "+response2.body);
+    print("ImageUpload " + response2.body);
 
-    if (response2.statusCode == 200){
+    if (response2.statusCode == 200) {
       var data = json.decode(response2.body);
       UploadImageModel user = UploadImageModel.fromJson(data);
       return user;
-    }else{
+    } else {
       throw Exception('Failed');
     }
   }
 
   static Future<ViewImageModel> ImageView(String uId) async {
-
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(ViewImage),
     );
 
-    request.fields  ["userId"] = uId;
+    request.fields["userId"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("ImageViewParams ${request.fields}");
@@ -160,19 +181,18 @@ class Services {
       var data = json.decode(response2.body);
       ViewImageModel user = ViewImageModel.fromJson(data);
       return user;
-    }else {
+    } else {
       throw Exception('Failed');
     }
   }
 
   static Future<PreferenceListModel> PrefView(String uId) async {
-
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(PrefList),
     );
 
-    request.fields  ["userId"] = uId;
+    request.fields["userId"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("ImageViewParams ${request.fields}");
@@ -181,40 +201,36 @@ class Services {
       var data = json.decode(response2.body);
       PreferenceListModel user = PreferenceListModel.fromJson(data);
       return user;
-    }else {
+    } else {
       throw Exception('Failed');
     }
   }
 
-  static Future<AddPreferenceModel> AddPrefsMethod(String uId, preferenceId) async {
+  static Future<AddPreferenceModel> AddPrefsMethod(
+      String uId, preferenceId) async {
+    final params = {"userId": uId, "preferenceId": preferenceId};
 
-    final params = {
-      "userId" : uId,
-      "preferenceId": preferenceId
-    };
-
-    print("AddPrefsMethodParams "+params.toString());
+    print("AddPrefsMethodParams " + params.toString());
     http.Response response = await http.post(Uri.parse(AddPrefs), body: params);
-    print("AddPrefsMethodResponse"+response.body);
+    print("AddPrefsMethodResponse" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       AddPreferenceModel user = AddPreferenceModel.fromJson(data);
       return user;
-    }else {
+    } else {
       print(response.body);
       throw Exception('Failed');
     }
   }
 
   static Future<UserListModel> GetUserMethod(String uId) async {
-
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(UserList),
     );
 
-    request.fields  ["id"] = uId;
+    request.fields["id"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("GetUserMethodParams ${request.fields}");
@@ -223,7 +239,104 @@ class Services {
       var data = json.decode(response2.body);
       UserListModel user = UserListModel.fromJson(data);
       return user;
-    }else {
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<UserViewPreferenceModel> ViewUserPreference(String uId) async {
+    var request = http.MultipartRequest(
+      'GET',
+      Uri.parse(ViewPrefs),
+    );
+
+    request.fields["userId"] = uId;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("ViewPreferenceParams ${request.fields}");
+    print("ViewPreferenceResponse ${response2.body}");
+    if (response2.statusCode == 200) {
+      var data = json.decode(response2.body);
+      UserViewPreferenceModel user = UserViewPreferenceModel.fromJson(data);
+      return user;
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<LikeModel> LikeMethod(
+      String senderId, String receiverId, String type) async {
+    final params = {"sender": senderId, "receiver": receiverId, "type": type};
+
+    print("LikeMethodParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(LikeApi), body: params);
+    print("LikeMethodResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      LikeModel user = LikeModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<ViewProfileModel> ProfileView(String id) async {
+    final params = {"id": id};
+
+    print("ProfileViewParams " + params.toString());
+    http.Response response =
+        await http.post(Uri.parse(ViewProfile), body: params);
+    print("ProfileViewResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      ViewProfileModel user = ViewProfileModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<ViewLikeSentModel> ViewLike(String id) async {
+    final params = {"id": id};
+
+    print("ViewLikeParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(LikeView), body: params);
+    print("ViewLikeResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      ViewLikeSentModel user = ViewLikeSentModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<AgeHeightRangeModel> RangeSet(
+      String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
+    final params = {
+      "id": id,
+      "minAge": minAge,
+      "maxAge": maxAge,
+      "minHeight": minHeight,
+      "maxHeight": maxHeight
+    };
+
+    print("RangeSetParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(SetRange), body: params);
+    print("RangeSetResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      AgeHeightRangeModel user = AgeHeightRangeModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
       throw Exception('Failed');
     }
   }

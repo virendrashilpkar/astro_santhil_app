@@ -47,7 +47,7 @@ class _MyHomePageState extends State<Intrests> {
 
   List<File?> imagelist = List.filled(6, null);
   // List<File?> imagelist=[null,null,null,null,null,null];
-  List<Datum> prefList = [];
+  List<prefsDatum> prefList = [];
 
   Future<void> viewPrefs() async {
     isLoad = true;
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<Intrests> {
     _preferenceListModel = await Services.PrefView("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_preferenceListModel.status == 1){
       for(var i = 0; i < _preferenceListModel.data!.length; i++){
-        prefList = _preferenceListModel.data ?? <Datum> [];
+        prefList = _preferenceListModel.data ?? <prefsDatum> [];
       }
     }
     isLoad = false;

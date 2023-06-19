@@ -11,7 +11,7 @@ String preferenceListModelToJson(PreferenceListModel data) => json.encode(data.t
 class PreferenceListModel {
   int? status;
   String? message;
-  List<Datum>? data;
+  List<prefsDatum>? data;
 
   PreferenceListModel({
     this.status,
@@ -22,7 +22,7 @@ class PreferenceListModel {
   factory PreferenceListModel.fromJson(Map<String, dynamic> json) => PreferenceListModel(
     status: json["status"],
     message: json["message"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: List<prefsDatum>.from(json["data"].map((x) => prefsDatum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +32,7 @@ class PreferenceListModel {
   };
 }
 
-class Datum {
+class prefsDatum {
   String? id;
   String? title;
   DateTime? createdAt;
@@ -41,7 +41,7 @@ class Datum {
   String? icon;
   bool? isActive;
 
-  Datum({
+  prefsDatum({
     this.id,
     this.title,
     this.createdAt,
@@ -51,7 +51,7 @@ class Datum {
     this.isActive,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory prefsDatum.fromJson(Map<String, dynamic> json) => prefsDatum(
     id: json["_id"],
     title: json["title"],
     createdAt: DateTime.parse(json["createdAt"]),

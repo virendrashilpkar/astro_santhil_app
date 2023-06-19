@@ -31,6 +31,12 @@ class _MyHomePageState extends State<LookingFor> {
   String weight = "";
   String email = "";
   String lookingFor = "";
+  String religion = "";
+  String caste = "";
+  String about = "";
+  String education = "";
+  String company = "";
+  String jobTitle = "";
 
   bool clickLoad = false;
 
@@ -56,6 +62,7 @@ class _MyHomePageState extends State<LookingFor> {
   List<String> maritalStatuses = [
     'Marital status',
     'Single',
+    'unmarried'
     'Married',
     'Divorced',
     'Widowed',
@@ -75,13 +82,29 @@ class _MyHomePageState extends State<LookingFor> {
       city = _userDetailModel.data![0].city.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
-      Maritalstatus = _userDetailModel.data![0].maritalStatus.toString();
+      if(_userDetailModel.data![0].maritalStatus == "null"){
+        Maritalstatus = "Marital status";
+      }else {
+        Maritalstatus = _userDetailModel.data![0].maritalStatus.toString();
+      }
       email = _userDetailModel.data![0].email.toString();
+      lookingFor = _userDetailModel.data![0].lookingFor.toString();
       if(gender == "male"){
         youarevalue = "Man";
       }else if(gender == "female"){
         youarevalue = "Woman";
       }
+      if (lookingFor == "female"){
+        lookingvalue == "Woman";
+      } else if (lookingFor == "male"){
+        lookingvalue == "Man";
+      }
+      religion = _userDetailModel.data![0].religion.toString();
+      caste = _userDetailModel.data![0].caste.toString();
+      about = _userDetailModel.data![0].about.toString();
+      education = _userDetailModel.data![0].education.toString();
+      company = _userDetailModel.data![0].company.toString();
+      jobTitle = _userDetailModel.data![0].jobTitle.toString();
       setState(() {
 
       });
@@ -95,7 +118,8 @@ class _MyHomePageState extends State<LookingFor> {
     print("sdfhghdsfhgdf ${lookingFor}");
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city, height, weight, Maritalstatus, email, lookingFor);
+        lastName, birthDate, gender, country, city, height, weight, Maritalstatus, email, lookingFor,
+        religion, caste, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('AddPhotos');
@@ -391,7 +415,16 @@ class _MyHomePageState extends State<LookingFor> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                         updateUser();
+                          if(youarevalue == ""){
+                            Toaster.show(context, "Pelase Select your gender");
+                          }else if (lookingvalue == ""){
+                            Toaster.show(context, "Pelase select looking for");
+                          }else if(Maritalstatus == "Marital status"){
+                            Toaster.show(context, "Pelase Select marital status");
+                          }
+                          else {
+                            updateUser();
+                          }
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

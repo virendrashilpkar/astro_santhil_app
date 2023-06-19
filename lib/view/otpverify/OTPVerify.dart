@@ -56,23 +56,31 @@ class _MyHomePageState extends State<OTPVerify> {
   }
 
   Future<void> OtpVerify() async {
-    setState(() {
-      clickLoad = true;
-    });
     otp = otp1.text+otp2.text+otp3.text+otp4.text;
-    otpVerifyModel = await Services.Otp(_preferences!.getString(ShadiApp.userId).toString(), otp.toString());
-    if(otpVerifyModel.status == 1){
-      Navigator.of(context).pushNamed('CountryCity');
-      Toaster.show(context, otpVerifyModel.massege.toString());
-    }else{
-      Toaster.show(context, otpVerifyModel.massege.toString());
+    if (otp.isEmpty){
+      Toaster.show(context, "Pelase Enter your otp");
+    }else {
+      _preferences = await SharedPreferences.getInstance();
+      setState(() {
+        clickLoad = true;
+      });
+
+      otpVerifyModel = await Services.Otp(
+          _preferences!.getString(ShadiApp.userId).toString(), otp.toString());
+      if (otpVerifyModel.status == 1) {
+        Navigator.of(context).pushNamed('CountryCity');
+        Toaster.show(context, otpVerifyModel.massege.toString());
+        _preferences?.setBool(ShadiApp.status, true);
+      } else {
+        Toaster.show(context, otpVerifyModel.massege.toString());
+      }
+      setState(() {
+        clickLoad = false;
+      });
     }
-    setState(() {
-      clickLoad = false;
-    });
   }
 
-  Future<void> LoginMethod() async {
+  Future<void>  LoginMethod() async {
     setState(() {
       clickLoad = true;
     });
@@ -92,7 +100,7 @@ class _MyHomePageState extends State<OTPVerify> {
   TextEditingController otp3 = TextEditingController();
   TextEditingController otp4 = TextEditingController();
   TextEditingController otp5 = TextEditingController();
-  String? otp;
+  String otp = "";
   final _formKey = GlobalKey<FormState>();
   String _dialCode = '+1'; // default dial code
   String _phoneNumber="";
@@ -296,45 +304,45 @@ class _MyHomePageState extends State<OTPVerify> {
                           },
                         ),
                       ),
-                      SizedBox(width: 20,),
-                      Expanded(
-                        flex: 3,
-                        child: TextFormField(
-                          keyboardType: TextInputType.phone,
-                          textAlign: TextAlign.center,
-                          textInputAction: TextInputAction.done,
-                          maxLength: 1,
-                          controller: otp5,
-                          decoration: InputDecoration(
-                            hintText: '0',
-                            counterText: "",
-                            hintStyle: new TextStyle(color: Colors.grey,fontSize: 29),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.cyan),
-                            ),
-                          ),
-                          style: new TextStyle(color: Colors.white,fontSize: 29),
-                          validator: (value) {
-                            // if (value!.isEmpty) {
-                            //   return 'Please enter your phone number';
-                            // }
-                            // return null;
-                          },
-                          onChanged: (value){
-                            if(value.isEmpty){
-                              FocusScope.of(context).previousFocus();
-                            }else{
-                              FocusScope.of(context).unfocus();
-                            }
-                          },
-                          onSaved: (value) {
-                            // _phoneNumber = value!;
-                          },
-                        ),
-                      ),
+                      // SizedBox(width: 20,),
+                      // Expanded(
+                      //   flex: 3,
+                      //   child: TextFormField(
+                      //     keyboardType: TextInputType.phone,
+                      //     textAlign: TextAlign.center,
+                      //     textInputAction: TextInputAction.done,
+                      //     maxLength: 1,
+                      //     controller: otp5,
+                      //     decoration: InputDecoration(
+                      //       hintText: '0',
+                      //       counterText: "",
+                      //       hintStyle: new TextStyle(color: Colors.grey,fontSize: 29),
+                      //       enabledBorder: UnderlineInputBorder(
+                      //         borderSide: BorderSide(color: Colors.white),
+                      //       ),
+                      //       focusedBorder: UnderlineInputBorder(
+                      //         borderSide: BorderSide(color: Colors.cyan),
+                      //       ),
+                      //     ),
+                      //     style: new TextStyle(color: Colors.white,fontSize: 29),
+                      //     validator: (value) {
+                      //       // if (value!.isEmpty) {
+                      //       //   return 'Please enter your phone number';
+                      //       // }
+                      //       // return null;
+                      //     },
+                      //     onChanged: (value){
+                      //       if(value.isEmpty){
+                      //         FocusScope.of(context).previousFocus();
+                      //       }else{
+                      //         FocusScope.of(context).unfocus();
+                      //       }
+                      //     },
+                      //     onSaved: (value) {
+                      //       // _phoneNumber = value!;
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
@@ -374,7 +382,7 @@ class _MyHomePageState extends State<OTPVerify> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                       OtpVerify();
+                          OtpVerify();
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

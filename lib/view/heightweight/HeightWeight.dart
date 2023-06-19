@@ -33,6 +33,12 @@ class _MyHomePageState extends State<HeightWeight> {
   String maritalStatus = "";
   String email = "";
   String lookingFor = "";
+  String religion = "";
+  String caste = "";
+  String about = "";
+  String education = "";
+  String company = "";
+  String jobTitle = "";
 
   bool clickLoad = false;
 
@@ -67,6 +73,11 @@ class _MyHomePageState extends State<HeightWeight> {
       height.text = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
       email = _userDetailModel.data![0].email.toString();
+      religion = _userDetailModel.data![0].religion.toString();
+      about = _userDetailModel.data![0].about.toString();
+      education = _userDetailModel.data![0].education.toString();
+      company = _userDetailModel.data![0].company.toString();
+      jobTitle = _userDetailModel.data![0].jobTitle.toString();
       setState(() {
 
       });
@@ -80,7 +91,8 @@ class _MyHomePageState extends State<HeightWeight> {
 
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city, height.text, weight.text, maritalStatus, email, lookingFor);
+        lastName, birthDate, gender, country, city, height.text, weight.text, maritalStatus, email,
+        lookingFor, religion, caste, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('LookingFor');
@@ -289,8 +301,13 @@ class _MyHomePageState extends State<HeightWeight> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-
-                          updateUser();
+                          if(height.text.isEmpty){
+                            Toaster.show(context, "Pelase Enter your height");
+                          }else if(weight.text.isEmpty){
+                            Toaster.show(context, "Pelase Enter your weight");
+                          }else {
+                            updateUser();
+                          }
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

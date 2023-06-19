@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/view_profile_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
@@ -19,6 +22,10 @@ class _MyHomePageState extends State<Profile> {
 
   bool ActiveConnection = false;
   String T = "";
+  late ViewProfileModel _viewProfileModel = ViewProfileModel();
+  late SharedPreferences _preferences;
+  bool clickLoad = false;
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -35,12 +42,27 @@ class _MyHomePageState extends State<Profile> {
       // });
     }
   }
+
+  Future<void> viewProfile() async {
+    clickLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _viewProfileModel = await Services.ProfileView(_preferences.getString(ShadiApp.userId).toString());
+    if(_viewProfileModel.status ==1){
+
+    }
+    clickLoad = false;
+    setState(() {
+
+    });
+  }
+
   late double _scrollPosition;
   late ScrollController _scrollController;
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+    viewProfile();
     CheckUserConnection();
     super.initState();
   }
@@ -74,7 +96,12 @@ class _MyHomePageState extends State<Profile> {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: clickLoad ? Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 3.0,
+          ),
+        ):SingleChildScrollView(
             child: Column(
               children: [
                 new SizedBox(
@@ -121,7 +148,8 @@ class _MyHomePageState extends State<Profile> {
                       new Positioned(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(90.0),
-                            child: Image.network("https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",fit: BoxFit.cover,height: 180,width: 180,),
+                            child: Image.network(_viewProfileModel.data![0].image.toString(),
+                              fit: BoxFit.cover,height: 180,width: 180,),
                           )
                       ),
                       new Positioned(
@@ -175,7 +203,8 @@ class _MyHomePageState extends State<Profile> {
                                                                 ),
                                                                 child: ClipRRect(
                                                                   borderRadius: BorderRadius.circular(66.0),
-                                                                  child: Image.network("https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",fit: BoxFit.cover,height: 180,width: 180,),
+                                                                  child: Image.network(_viewProfileModel.data![0].image.toString(),
+                                                                    fit: BoxFit.cover,height: 180,width: 180,),
                                                                 ),
                                                               ),
                                                               new Positioned(
@@ -506,7 +535,8 @@ class _MyHomePageState extends State<Profile> {
                             });
                       },
                       child: new Container(
-                        child: Text("Noor Jahan",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
+                        child: Text("${_viewProfileModel.data![0].firstName}"
+                            " ${_viewProfileModel.data![0].lastName.toString()}",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
                       ),
                     ),
 
@@ -520,7 +550,8 @@ class _MyHomePageState extends State<Profile> {
                 ),
                 new SizedBox(height: 5,),
                 new Container(
-                  child: Text("Copenhagen, Denmark",style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
+                  child: Text("${_viewProfileModel.data![0].city}, ${_viewProfileModel.data![0].country}",
+                    style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
                 ),
                 new SizedBox(height: 15,),
                 Container(

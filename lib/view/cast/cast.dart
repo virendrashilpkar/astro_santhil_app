@@ -6,16 +6,15 @@ import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
-import 'package:shadiapp/view/cast/cast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CountryCity extends StatefulWidget {
+class Cast extends StatefulWidget {
   @override
-  State<CountryCity> createState() => _MyHomePageState();
+  State<Cast> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<CountryCity> {
+class _MyHomePageState extends State<Cast> {
 
   bool ActiveConnection = false;
   SharedPreferences? _preferences;
@@ -26,17 +25,18 @@ class _MyHomePageState extends State<CountryCity> {
   String lastName = "";
   String birthDate = "";
   String gender = "";
+  String country = "";
+  String city = "";
   String height = "";
   String weight = "";
   String maritalStatus = "";
   String email = "";
   String lookingFor = "";
-  String religion = "";
-  String caste = "";
   String about = "";
   String education = "";
   String company = "";
   String jobTitle = "";
+
   bool clickLoad = false;
 
   Future CheckUserConnection() async {
@@ -79,22 +79,22 @@ class _MyHomePageState extends State<CountryCity> {
         birthDate = _userDetailModel.data![0].birthDate.toString();
       }
       gender = _userDetailModel.data![0].gender.toString();
-      if (_userDetailModel.data![0].country == ""){
-        country = "Select country";
-      }else {
-        country = _userDetailModel.data![0].country.toString();
-      }
-      if(_userDetailModel.data![0].city == ""){
-        city = "Select city";
-      }else {
-        city = _userDetailModel.data![0].city.toString();
-      }
+      country = _userDetailModel.data![0].country.toString();
+      city = _userDetailModel.data![0].city.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
       email = _userDetailModel.data![0].email.toString();
-      religion = _userDetailModel.data![0].religion.toString();
-      caste = _userDetailModel.data![0].caste.toString();
+      if (_userDetailModel.data![0].religion == null) {
+        religion = "Select religion";
+      }else {
+        religion = _userDetailModel.data![0].religion.toString();
+      }
+      if (_userDetailModel.data![0].caste == null){
+        cast = "Select cast";
+      }else {
+        cast = _userDetailModel.data![0].caste.toString();
+      }
       about = _userDetailModel.data![0].about.toString();
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
@@ -112,12 +112,11 @@ class _MyHomePageState extends State<CountryCity> {
 
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city, height, weight, maritalStatus, email, lookingFor,
-        religion, caste, about, education, company, jobTitle);
+        lastName, birthDate, gender, country, city, height, weight, maritalStatus, email, lookingFor, religion,
+        cast, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Cast()));
+      Navigator.of(context).pushNamed('NameDOB');
     }else{
       Toaster.show(context, _updateUserModel.message.toString());
     }
@@ -128,13 +127,13 @@ class _MyHomePageState extends State<CountryCity> {
 
   @override
   void initState() {
-    // userDetail();
+    userDetail();
     CheckUserConnection();
     super.initState();
   }
 
-  String country = 'Select country';
-  String city = 'Select city';
+  String religion = 'Select religion';
+  String cast = 'Select cast';
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +165,7 @@ class _MyHomePageState extends State<CountryCity> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'I live in',
+                'Religion',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -186,7 +185,7 @@ class _MyHomePageState extends State<CountryCity> {
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
               child: DropdownButton<String>(
-                value: country.isNotEmpty ? country : null,
+                value: religion,
                 underline: Container(
                   // height: 1,
                   // margin:const EdgeInsets.only(top: 20),
@@ -196,21 +195,21 @@ class _MyHomePageState extends State<CountryCity> {
                 style: TextStyle(color:Colors.white,fontSize: 16),
                 onChanged: (newValue) {
                   setState(() {
-                    country = newValue!;
+                    religion = newValue!;
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select country', 'india', 'pakistan', 'china'].map((String value) {
+                  return ['Select religion', 'Hindu', 'Muslim', 'Sikh'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: TextStyle(color:country == 'Select country' ? Colors.grey:  Colors.white,fontSize: 16),),
+                      child: Text(value,style: TextStyle(color:religion == 'Select religion' ? Colors.grey:  Colors.white,fontSize: 16),),
                     );
                   }).toList();
                 },
                 iconSize: 24,
                 icon: Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select country', 'india', 'pakistan', 'china'] // add your own dial codes
+                items: <String>['Select religion', 'Hindu', 'Muslim', 'Sikh'] // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -224,7 +223,7 @@ class _MyHomePageState extends State<CountryCity> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'City',
+                'Cast',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -244,7 +243,7 @@ class _MyHomePageState extends State<CountryCity> {
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
               child: DropdownButton<String>(
-                value: city,
+                value: cast,
                 underline: Container(
                   // height: 1,
                   // margin:const EdgeInsets.only(top: 20),
@@ -254,21 +253,21 @@ class _MyHomePageState extends State<CountryCity> {
                 style: TextStyle(color: Colors.white,fontSize: 16),
                 onChanged: (newValue) {
                   setState(() {
-                    city = newValue!;
+                    cast = newValue!;
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select city', 'indore', 'bhopal', 'guna'].map((String value) {
+                  return ['Select cast', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
+                      child: Text(value,style: TextStyle(color:cast == 'Select cast' ? Colors.grey : Colors.white,fontSize: 16),),
                     );
                   }).toList();
                 },
                 iconSize: 24,
                 icon: Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select city', 'indore', 'bhopal', 'guna'] // add your own dial codes
+                items: <String>['Select cast', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -282,7 +281,7 @@ class _MyHomePageState extends State<CountryCity> {
               alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
               child: Text(
-                'This will appear on Shadi-App, however you can choose to hide or show your country and city.',
+                'This will appear on Shadi-App, however you can choose to hide or show your religion and cast.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 13,
@@ -314,7 +313,7 @@ class _MyHomePageState extends State<CountryCity> {
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
+                              color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),
@@ -322,12 +321,12 @@ class _MyHomePageState extends State<CountryCity> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        if (country == "Select country"){
-                          Toaster.show(context, "Pelase select country");
+                        if (religion == "Select religion"){
+                          Toaster.show(context, "Pelase select religion");
 
                         }else{
-                          if(city == "Select city"){
-                            Toaster.show(context, "Pelase select city");
+                          if(cast == "Select cast"){
+                            Toaster.show(context, "Pelase select cast");
                           }else {
                             updateUser();
                           }

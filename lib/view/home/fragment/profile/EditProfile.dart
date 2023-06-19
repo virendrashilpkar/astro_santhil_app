@@ -4,7 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/preference_list_model.dart';
+import 'package:shadiapp/Models/upload_image_model.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_update_model.dart';
+import 'package:shadiapp/Models/user_view_preference_model.dart';
+import 'package:shadiapp/Models/view_image_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
+import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
@@ -18,7 +27,33 @@ class EditProfile extends StatefulWidget {
 class _MyHomePageState extends State<EditProfile> with SingleTickerProviderStateMixin{
 
   bool ActiveConnection = false;
+  bool isLoad = false;
+  bool clickLoad = false;
   String T = "";
+  List<Datum> _list = [];
+  List<PrefsDatum> intrest = [];
+  late SharedPreferences _preferences;
+  late ViewImageModel _viewImageModel;
+  late UploadImageModel _uploadImageModel;
+  late UserViewPreferenceModel _viewPreferenceModel;
+  late UserDetailModel _userDetailModel;
+  late UpdateUserModel _updateUserModel;
+  late PreferenceListModel _preferenceListModel;
+  String firstName = "";
+  String lastName = "";
+  String dateOfBirth = "";
+  String gender = "";
+  String height = "";
+  String weight = "";
+  String maritalStatus = "";
+  String email = "";
+  String lookingFor = "";
+  String religion = "";
+  TextEditingController about = TextEditingController();
+  TextEditingController jobTitle = TextEditingController();
+  TextEditingController company = TextEditingController();
+  TextEditingController education = TextEditingController();
+
   Future CheckUserConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -36,6 +71,120 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     }
   }
   String youarevalue="";
+
+  Future<void> viewImage() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_viewImageModel.status == 1) {
+      for(var i = 0; i < _viewImageModel.data!.length; i++){
+        _list = _viewImageModel.data ?? <Datum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
+  Future<void> uploadImage(File image) async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _uploadImageModel = await Services.ImageUpload(image, "${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_uploadImageModel.status == 1){
+      Toaster.show(context, _uploadImageModel.message.toString());
+
+    }else{
+      Toaster.show(context, _uploadImageModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+  Future<void> userDetail() async {
+    _preferences = await SharedPreferences.getInstance();
+    _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
+    if(_userDetailModel.status == 1){
+      firstName = _userDetailModel.data![0].firstName.toString();
+      lastName = _userDetailModel.data![0].lastName.toString();
+      dateOfBirth = _userDetailModel.data![0].birthDate.toString();
+      gender = _userDetailModel.data![0].gender.toString();
+      country = _userDetailModel.data![0].country.toString();
+      city = _userDetailModel.data![0].city.toString();
+      weight = _userDetailModel.data![0].weight.toString();
+      height = _userDetailModel.data![0].height.toString();
+      maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
+      email = _userDetailModel.data![0].email.toString();
+      religion = _userDetailModel.data![0].religion.toString();
+      caste = _userDetailModel.data![0].caste.toString();
+      about.text = _userDetailModel.data![0].about.toString();
+      education.text = _userDetailModel.data![0].education.toString();
+      company.text = _userDetailModel.data![0].company.toString();
+      jobTitle.text = _userDetailModel.data![0].jobTitle.toString();
+
+      setState(() {
+
+      });
+    }
+  }
+
+  Future<void> updateUser() async {
+    setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
+        lastName, dateOfBirth, gender, country, city, height, weight, maritalStatus, email, lookingFor,
+        religion, caste, about.text, education.text, company.text, jobTitle.text);
+    if(_updateUserModel.status == 1){
+      Toaster.show(context, _updateUserModel.message.toString());
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => Profile()));
+    }else{
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+  List<prefsDatum> prefList = [];
+
+  Future<void> viewPrefs() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _preferenceListModel = await Services.PrefView("${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(_preferenceListModel.status == 1){
+      for(var i = 0; i < _preferenceListModel.data!.length; i++){
+        prefList = _preferenceListModel.data ?? <prefsDatum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
+  Future<void> userViewPreference() async {
+    _preferences = await SharedPreferences.getInstance();
+    _viewPreferenceModel = await Services.ViewUserPreference(_preferences.getString(ShadiApp.userId).toString());
+    if(_viewPreferenceModel.status == 1){
+      for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
+        intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
+      }
+      intrest.forEach((element) {
+        if (prefList.contains(element)){
+          print("ahsdjfsdhfjshfs ${element.preference}");
+        }
+      });
+    }
+    setState(() {
+
+    });
+  }
 
   List<File?> imagelist = List.filled(6, null);
   // List<File?> imagelist=[null,null,null,null,null,null];
@@ -90,6 +239,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   @override
   void initState() {
     CheckUserConnection();
+    viewImage();
+    userDetail();
+    viewPrefs();
+    userViewPreference();
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
@@ -134,6 +287,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     if (pickedFile != null) {
       setState((){
         imagelist[index] = File(pickedFile.path);
+        uploadImage(File(pickedFile.path));
       });
     }
   }
@@ -146,6 +300,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     if (pickedFile != null) {
       setState((){
         imagelist[index] = File(pickedFile.path);
+        uploadImage(File(pickedFile.path));
       });
 
     }
@@ -270,7 +425,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         new SizedBox(height: 10,),
                         new Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
-                          child: new GridView.count(
+                          child: isLoad ? Center(
+
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3.0,
+                            ),
+                          ):new GridView.count(
                             crossAxisCount: 3,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
@@ -299,7 +460,18 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
                                     ClipRRect(
                                         borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
-                                        child: imagelist[index] == null ? Image.asset(
+                                        child: _viewImageModel.status == 1 ?
+                                        Container(
+                                          child: index >= 0  && index < _list.length ?Image.network(
+                                            "${_list![index].image}",fit: BoxFit.cover,
+                                            height: itemHeight,
+                                            width: itemWidth,
+                                          ):Image.asset(
+                                            "assets/add_photos2.png",
+                                            fit: BoxFit.cover,
+                                            // height: itemHeight,
+                                          ),
+                                        ) : imagelist[index] == null ? Image.asset(
                                           "assets/add_photos2.png",
                                           fit: BoxFit.cover,
                                           // height: itemHeight,
@@ -390,7 +562,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-
+                        clickLoad ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3.0,
+                          ),
+                        ): Container(),
                         new SizedBox(height: 10,),
                         Container(
                           alignment: Alignment.centerLeft,
@@ -533,6 +710,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             borderRadius: const BorderRadius.all(Radius.circular(17)),
                           ),
                           child: TextFormField(
+                            controller: about,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
@@ -725,51 +903,65 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
                         new SizedBox(height: 10,),
-                        Container(
+                        isLoad ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3.0,
+                          ),
+                        ):Container(
                           margin: const EdgeInsets.symmetric(horizontal: 27),
                           alignment: Alignment.centerLeft,
                           child: Wrap(
                             children: [
                               ...List.generate(
-                                tags.length,
-                                    (index) => GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if(selectedIndex.length!=4){
-                                        selectedIndex.add(index);
-                                      }else{
-                                        Toaster.show(context, "You can select only 4");
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.white),
-                                        color: selectedIndex.contains(index) ? CommonColors.buttonorg : null,
-                                        borderRadius: BorderRadius.circular(65),
-                                      ),
-                                      padding: EdgeInsets.all(8),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          new SizedBox(width: 5,),
-                                          Text("${tags[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
-                                          new SizedBox(width: 5,),
-                                          // new SizedBox(
-                                          //   child: InkWell(onTap: (){
-                                          //     setState(() {
-                                          //       selectedIndex.remove(index);
-                                          //     });
-                                          //   },child: Padding(
-                                          //     padding: const EdgeInsets.all(0.0),
-                                          //     child: Icon(Icons.close,color: Colors.white,),
-                                          //   )),
-                                          // )
-                                        ],
-                                      )
-                                  ),
-                                ),
+                                prefList.length,
+                                    (index){
+                                  if(prefList[index] != intrest){
+                                    if(selectedIndex.length!=4){
+                                      selectedIndex.add(index);
+                                    }else{
+                                      Toaster.show(context, "You can select only 4");
+                                    }
+                                  }
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if(selectedIndex.length!=4){
+                                          selectedIndex.add(index);
+                                        }else{
+                                          Toaster.show(context, "You can select only 4");
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                        margin: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.white),
+                                          color: selectedIndex.contains(index) ? CommonColors.buttonorg : null,
+                                          borderRadius: BorderRadius.circular(65),
+                                        ),
+                                        padding: EdgeInsets.all(8),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            new SizedBox(width: 5,),
+                                            Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
+                                            new SizedBox(width: 5,),
+                                            // new SizedBox(
+                                            //   child: InkWell(onTap: (){
+                                            //     setState(() {
+                                            //       selectedIndex.remove(index);
+                                            //     });
+                                            //   },child: Padding(
+                                            //     padding: const EdgeInsets.all(0.0),
+                                            //     child: Icon(Icons.close,color: Colors.white,),
+                                            //   )),
+                                            // )
+                                          ],
+                                        )
+                                    ),
+                                  );
+                                    },
                               )
                             ],
                           ),
@@ -1042,6 +1234,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: jobTitle,
                             keyboardType: TextInputType.name,
                             textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
@@ -1074,6 +1267,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: company,
                             keyboardType: TextInputType.name,
                             textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
@@ -1106,6 +1300,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: education,
                             keyboardType: TextInputType.name,
                             textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
@@ -1278,57 +1473,65 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             children: [
                               ...List.generate(
                                 regions.length,
-                                    (index) => GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if(ischeckregion==index){
+                                    (index){
+                                      if(regions[index]!="$religion"){
                                         ischeckregion=100;
                                       }else{
                                         ischeckregion=index;
                                       }
-                                      // if(selectedIndexregion.length!=4){
-                                      //   selectedIndexregion.add(index);
-                                      // }else{
-                                      //   Toaster.show(context, "You can select only 4");
-                                      // }
-                                    });
-                                  },
-                                  child: Container(
-                                      margin: const EdgeInsets.all(3),
-                                      // decoration: BoxDecoration(
-                                      //   border: Border.all(color: Colors.white),
-                                      //   color: selectedIndexregion.contains(index) ? CommonColors.buttonorg : null,
-                                      //   borderRadius: BorderRadius.circular(65),
-                                      // ),
-                                      padding: EdgeInsets.all(3),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ischeckregion==index ? new Container(
-                                      height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: CommonColors.blueloc,
-                                            borderRadius: BorderRadius.circular(3)
-                                        ),
-                                        child: Icon(Icons.check,size: 20,color: Colors.white,),
-                                      ):
-                                          new Container(
-                                            height: 20,
-                                            width: 20,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(3)
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if(ischeckregion==index){
+                                          ischeckregion=100;
+                                        }else{
+                                          ischeckregion=index;
+                                        }
+                                        // if(selectedIndexregion.length!=4){
+                                        //   selectedIndexregion.add(index);
+                                        // }else{
+                                        //   Toaster.show(context, "You can select only 4");
+                                        // }
+                                      });
+                                    },
+                                    child: Container(
+                                        margin: const EdgeInsets.all(3),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: Colors.white),
+                                        //   color: selectedIndexregion.contains(index) ? CommonColors.buttonorg : null,
+                                        //   borderRadius: BorderRadius.circular(65),
+                                        // ),
+                                        padding: EdgeInsets.all(3),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ischeckregion==index ? new Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                  color: CommonColors.blueloc,
+                                                  borderRadius: BorderRadius.circular(3)
+                                              ),
+                                              child: Icon(Icons.check,size: 20,color: Colors.white,),
+                                            ):
+                                            new Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(3)
+                                              ),
                                             ),
-                                          ),
-                                          new SizedBox(width: 5,),
-                                          new Container(
-                                            child: new Text("${regions[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                ),
+                                            new SizedBox(width: 5,),
+                                            new Container(
+                                              child: new Text("${regions[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                            ),
+                                          ],
+                                        )
+                                    ),
+                                  );
+                                    },
                               )
                             ],
                           ),
@@ -1388,7 +1591,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               });
                             },
                             selectedItemBuilder: (BuildContext context) {
-                              return ['Select Caste', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
+                              return ['Select Caste', 'punjabi', 'gujrati', 'bangali','Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value,style: TextStyle(color: caste== "Select Caste" ?CommonColors.edittextblack : Colors.white,fontSize: 16),),
@@ -1398,7 +1601,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             iconSize: 20,
                             icon: Icon(Icons.arrow_forward_ios,color: caste=="Select Caste"? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
-                            items: <String>['Select Caste', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
+                            items: <String>['Select Caste', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -1840,7 +2043,49 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
                         new SizedBox(height: 40,),
-
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: CommonColors.buttonorg,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(25)),
+                          ),
+                          child: Stack(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  clickLoad ? Expanded(
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 3.0,
+                                        ),
+                                      )
+                                  ):
+                                  Expanded(
+                                      child: Center(
+                                        child: Text("Update", style: TextStyle(
+                                          color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
+                                      )),
+                                ],
+                              ),
+                              SizedBox.expand(
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: InkWell(onTap: () {
+                                    updateUser();
+                                  },splashColor: Colors.blue.withOpacity(0.2),
+                                    customBorder: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        new SizedBox(height: 40,),
                       ],
                     ),
                   ),
