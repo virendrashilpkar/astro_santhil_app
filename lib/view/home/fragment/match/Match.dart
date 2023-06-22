@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/view/home/Home.dart';
 
 class Match extends StatefulWidget {
   @override
@@ -124,6 +125,10 @@ class _MatchState extends State<Match> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: InkWell(
+                            onTap: (){
+                              Navigator.pushReplacement(context,
+                                  MaterialPageRoute(builder: (context) => Home()));
+                            },
                           ),
                         ),
                       ),

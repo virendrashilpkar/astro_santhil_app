@@ -84,10 +84,6 @@ class _LikesState extends State<Likes> {
             Datum data = _list[index];
             return InkWell(
               onTap: (){
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => Match()
-                    )
-                );
               },
               child: Container(
                 height: 168,

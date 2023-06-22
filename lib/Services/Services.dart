@@ -5,8 +5,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shadiapp/Models/age_height_range_model.dart';
 import 'package:shadiapp/Models/like_model.dart';
+import 'package:shadiapp/Models/my_matches_model.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
+import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
@@ -35,6 +37,8 @@ class Services {
   static String ViewProfile = BaseUrl + "profile";
   static String LikeView = BaseUrl + "sent/req";
   static String SetRange = BaseUrl + "set/range";
+  static String MyMatches = BaseUrl + "own/matches";
+  static String ListPlan = BaseUrl + "plan/list";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
     final params = {"phone": phone};
@@ -317,8 +321,7 @@ class Services {
     }
   }
 
-  static Future<AgeHeightRangeModel> RangeSet(
-      String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
+  static Future<AgeHeightRangeModel> RangeSet(String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
     final params = {
       "id": id,
       "minAge": minAge,
@@ -334,6 +337,40 @@ class Services {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       AgeHeightRangeModel user = AgeHeightRangeModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<MyMatchesModel> MyMatchesList(String id) async {
+    final params = {
+      "id": id,
+    };
+
+    print("MyMatchesListParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(MyMatches), body: params);
+    print("MyMatchesListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      MyMatchesModel user = MyMatchesModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<PlanListModel> PlanList() async {
+
+    http.Response response = await http.get(Uri.parse(ListPlan));
+    print("PlanListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      PlanListModel user = PlanListModel.fromJson(data);
       return user;
     } else {
       print(response.body);

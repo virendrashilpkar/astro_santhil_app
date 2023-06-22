@@ -11,7 +11,7 @@ String likeModelToJson(LikeModel data) => json.encode(data.toJson());
 class LikeModel {
   int? status;
   String? message;
-  Data? data;
+  List<Datum>? data;
 
   LikeModel({
     this.status,
@@ -22,17 +22,17 @@ class LikeModel {
   factory LikeModel.fromJson(Map<String, dynamic> json) => LikeModel(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "message": message,
-    "data": data?.toJson(),
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 
-class Data {
+class Datum {
   String? id;
   String? type;
   String? sender;
@@ -42,7 +42,7 @@ class Data {
   DateTime? updatedAt;
   int? v;
 
-  Data({
+  Datum({
     this.id,
     this.type,
     this.sender,
@@ -53,7 +53,7 @@ class Data {
     this.v,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["_id"],
     type: json["type"],
     sender: json["sender"],
