@@ -4,10 +4,17 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shadiapp/Models/age_height_range_model.dart';
+import 'package:shadiapp/Models/city_list_model.dart';
+import 'package:shadiapp/Models/country_list_model.dart';
+import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/like_model.dart';
+import 'package:shadiapp/Models/my_matches_model.dart';
+import 'package:shadiapp/Models/new_matches_model.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
+import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
+import 'package:shadiapp/Models/top_picks_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
@@ -35,6 +42,13 @@ class Services {
   static String ViewProfile = BaseUrl + "profile";
   static String LikeView = BaseUrl + "sent/req";
   static String SetRange = BaseUrl + "set/range";
+  static String MyMatches = BaseUrl + "own/matches";
+  static String ListPlan = BaseUrl + "plan/list";
+  static String TopPicks = BaseUrl + "top/pics";
+  static String NewMatch = BaseUrl + "new/match";
+  static String Country = BaseUrl + "country/list";
+  static String City = BaseUrl + "city/list";
+  static String ImageDelete = BaseUrl + "user/delete/image";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
     final params = {"phone": phone};
@@ -56,7 +70,7 @@ class Services {
     final params = {"userId": Id, "otp": otp};
     print("OtpVerifyParams ${params.toString()}");
     http.Response response =
-        await http.post(Uri.parse(OtpVerify), body: params);
+    await http.post(Uri.parse(OtpVerify), body: params);
     print("OtpVerifyResponse ${response.body}");
 
     if (response.statusCode == 200) {
@@ -131,7 +145,7 @@ class Services {
 
     print("UpdateUserParams " + params.toString());
     http.Response response =
-        await http.post(Uri.parse(UserUpdate), body: params);
+    await http.post(Uri.parse(UserUpdate), body: params);
     print("UpdateUserResponse" + response.body);
 
     if (response.statusCode == 200) {
@@ -146,7 +160,7 @@ class Services {
 
   static Future<UploadImageModel> ImageUpload(File image, String uId) async {
     var request =
-        new http.MultipartRequest("POST", Uri.parse("${UploadImge}${uId}"));
+    new http.MultipartRequest("POST", Uri.parse("${UploadImge}${uId}"));
 
     var file = await http.MultipartFile.fromPath("fileUrl", image.path);
     request.files.add(file);
@@ -287,7 +301,7 @@ class Services {
 
     print("ProfileViewParams " + params.toString());
     http.Response response =
-        await http.post(Uri.parse(ViewProfile), body: params);
+    await http.post(Uri.parse(ViewProfile), body: params);
     print("ProfileViewResponse" + response.body);
 
     if (response.statusCode == 200) {
@@ -317,8 +331,7 @@ class Services {
     }
   }
 
-  static Future<AgeHeightRangeModel> RangeSet(
-      String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
+  static Future<AgeHeightRangeModel> RangeSet(String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
     final params = {
       "id": id,
       "minAge": minAge,
@@ -334,6 +347,134 @@ class Services {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       AgeHeightRangeModel user = AgeHeightRangeModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<MyMatchesModel> MyMatchesList(String id) async {
+    final params = {
+      "id": id,
+    };
+
+    print("MyMatchesListParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(MyMatches), body: params);
+    print("MyMatchesListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      MyMatchesModel user = MyMatchesModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<PlanListModel> PlanList() async {
+
+    http.Response response = await http.get(Uri.parse(ListPlan));
+    print("PlanListResponse" + response.body);
+    print("PlanListResponse ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      PlanListModel user = PlanListModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<TopPicksModel> TopPicksList(String id) async {
+    final params = {
+      "userId": id,
+    };
+
+    print("TopPicksListParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(TopPicks), body: params);
+    print("TopPicksListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      TopPicksModel user = TopPicksModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<NewMatchesModel> NewMatchesList(String id) async {
+    final params = {
+      "id": id,
+    };
+
+    print("NewMatchesListParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(NewMatch), body: params);
+    print("NewMatchesListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      NewMatchesModel user = NewMatchesModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<CountryListModel> CountryList() async {
+
+    http.Response response = await http.post(Uri.parse(Country));
+    print("CountryListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      CountryListModel user = CountryListModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<CItyListModel> CityList(String name) async {
+
+    final params = {
+      "name": name
+    };
+
+    print("CityListResponse $params");
+    http.Response response = await http.post(Uri.parse(City), body: params);
+    print("CityListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      CItyListModel user = CItyListModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<DeleteImageModel> DeleteImage(String imageId) async {
+
+    final params = {
+      "id": imageId
+    };
+
+    print("DeleteImageResponse $params");
+    http.Response response = await http.delete(Uri.parse(ImageDelete), body: params);
+    print("DeleteImageResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      DeleteImageModel user = DeleteImageModel.fromJson(data);
       return user;
     } else {
       print(response.body);

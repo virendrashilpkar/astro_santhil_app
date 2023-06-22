@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/Models/top_picks_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TopPicks extends StatefulWidget {
   @override
@@ -8,6 +12,28 @@ class TopPicks extends StatefulWidget {
 }
 
 class _TopPicks extends State<TopPicks> {
+
+  late SharedPreferences _preferences;
+  late TopPicksModel _topPicksModel;
+  List<Datum> _list = [];
+  bool isLoad = false;
+
+  Future<void> topPicks() async {
+    setState(() {
+      isLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _topPicksModel = await Services.TopPicksList(_preferences.getString(ShadiApp.userId).toString());
+    if(_topPicksModel.status == 1){
+      for(var i = 0; i < _topPicksModel.data!.length; i++){
+        _list = _topPicksModel.data ?? <Datum> [];
+      }
+    }
+    setState(() {
+      isLoad = false;
+    });
+  }
+
   var images = [
     "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
     "https://w0.peakpx.com/wallpaper/396/511/HD-wallpaper-bong-angel-bengali.jpg",
@@ -24,6 +50,13 @@ class _TopPicks extends State<TopPicks> {
     "https://w0.peakpx.com/wallpaper/862/303/HD-wallpaper-jisoo-blackpink-blackpink-jisoo-k-pop.jpg",
     "https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",
   ];
+
+  @override
+  void initState() {
+   topPicks();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -33,7 +66,12 @@ class _TopPicks extends State<TopPicks> {
     final double itemWidth = size.width / 2;
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: Container(
+      body: isLoad ? Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3.0,
+        ),
+      ):Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -42,8 +80,9 @@ class _TopPicks extends State<TopPicks> {
                 mainAxisSpacing: 15.0,
               childAspectRatio: (itemWidth / itemHeight),
             ),
-            itemCount: images.length,
+            itemCount: _list.length,
             itemBuilder: (context, index){
+              Datum data = _list[index];
               return Container(
                 child: Container(
                   decoration: BoxDecoration(
@@ -57,7 +96,7 @@ class _TopPicks extends State<TopPicks> {
                     child: Container(
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: NetworkImage(images[index]),
+                                image: NetworkImage(data.image.toString()),
                                 fit: BoxFit.fill)
                         ),
                         child: Column(
@@ -83,7 +122,7 @@ class _TopPicks extends State<TopPicks> {
                                   child: Row(
                                     children: [
                                       Container(
-                                        child: Text("Ana, 24",
+                                        child: Text("${data.name}, ${data.age}",
                                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
                                               fontSize: 14),),
                                       ),

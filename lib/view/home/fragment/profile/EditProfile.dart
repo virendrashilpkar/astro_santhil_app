@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
@@ -39,6 +40,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   late UserDetailModel _userDetailModel;
   late UpdateUserModel _updateUserModel;
   late PreferenceListModel _preferenceListModel;
+  late DeleteImageModel _deleteImageModel;
   String firstName = "";
   String lastName = "";
   String dateOfBirth = "";
@@ -101,6 +103,21 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     }
     setState(() {
       clickLoad = false;
+    });
+  }
+
+  Future<void> deleteImage(String imageId) async {
+    isLoad = true;
+    _deleteImageModel = await Services.DeleteImage(imageId);
+    if(_deleteImageModel.status == 1){
+      Toaster.show(context, _deleteImageModel.message.toString());
+      viewImage();
+    }else{
+      Toaster.show(context, _deleteImageModel.message.toString());
+    }
+    isLoad = false;
+    setState(() {
+
     });
   }
 
@@ -460,17 +477,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
                                     ClipRRect(
                                         borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
-                                        child: _viewImageModel.status == 1 ?
-                                        Container(
-                                          child: index >= 0  && index < _list.length ?Image.network(
-                                            "${_list![index].image}",fit: BoxFit.cover,
-                                            height: itemHeight,
-                                            width: itemWidth,
-                                          ):Image.asset(
-                                            "assets/add_photos2.png",
-                                            fit: BoxFit.cover,
-                                            // height: itemHeight,
-                                          ),
+                                        child: index >= 0  && index < _list.length ?
+                                        Image.network(
+                                          "${_list![index].image}",fit: BoxFit.cover,
+                                          height: itemHeight,
+                                          width: itemWidth,
                                         ) : imagelist[index] == null ? Image.asset(
                                           "assets/add_photos2.png",
                                           fit: BoxFit.cover,
@@ -517,6 +528,46 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           ),
                                         ),
                                       ),),
+                                    SizedBox.expand(
+                                      child: Material(
+                                        type: MaterialType.transparency,
+                                        child: InkWell(onTap: () {
+                                          _pickedImage(index);
+                                        },splashColor: Colors.blue.withOpacity(0.2),
+                                          customBorder: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // if(_list[index] != null)
+                                      index >= 0  && index < _list.length ? new Positioned(
+                                      right:0,
+                                      top:0,
+                                      child: SizedBox(
+                                        height:30,
+                                        width:30,
+                                        child: Material(
+                                          type: MaterialType.transparency,
+                                          child: InkWell(onTap: () {
+                                            setState((){
+                                              deleteImage(_list[index].id.toString());
+                                              // _list[index].image=null;
+                                            });
+                                          },splashColor: Colors.blue.withOpacity(0.2),
+                                            customBorder: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(15),
+                                            ),
+                                            child:  Container(
+                                                decoration: BoxDecoration(
+                                                  // color: Colors.white,
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                ),
+                                                child: Icon(Icons.close,color: Colors.white,)),
+                                          ),
+                                        ),
+                                      ),):
+                                      Container(),
 
                                   ],
                                 ),
@@ -947,16 +998,16 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                             new SizedBox(width: 5,),
                                             Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
                                             new SizedBox(width: 5,),
-                                            // new SizedBox(
-                                            //   child: InkWell(onTap: (){
-                                            //     setState(() {
-                                            //       selectedIndex.remove(index);
-                                            //     });
-                                            //   },child: Padding(
-                                            //     padding: const EdgeInsets.all(0.0),
-                                            //     child: Icon(Icons.close,color: Colors.white,),
-                                            //   )),
-                                            // )
+                                           selectedIndex.contains(index) ? new SizedBox(
+                                              child: InkWell(onTap: (){
+                                                setState(() {
+                                                  selectedIndex.remove(index);
+                                                });
+                                              },child: Padding(
+                                                padding: const EdgeInsets.all(0.0),
+                                                child: Icon(Icons.close,color: Colors.white,),
+                                              )),
+                                            ): Container()
                                           ],
                                         )
                                     ),
@@ -1372,7 +1423,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               });
                             },
                             selectedItemBuilder: (BuildContext context) {
-                              return ['Select country', 'india', 'pakistan', 'china'].map((String value) {
+                              return ['Select country', 'India', 'pakistan', 'china'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
@@ -1382,7 +1433,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             iconSize: 24,
                             icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
-                            items: <String>['Select country', 'india', 'pakistan', 'china'] // add your own dial codes
+                            items: <String>['Select country', 'India', 'pakistan', 'china'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -1417,7 +1468,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               });
                             },
                             selectedItemBuilder: (BuildContext context) {
-                              return ['Select city', 'indore', 'bhopal', 'guna'].map((String value) {
+                              return ['Select city', 'Indore', 'bhopal', 'guna'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value,style: TextStyle(color: city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
@@ -1427,7 +1478,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             iconSize: 24,
                             icon: Icon(Icons.arrow_forward_ios,color: city == 'Select city' ? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
-                            items: <String>['Select city', 'indore', 'bhopal', 'guna'] // add your own dial codes
+                            items: <String>['Select city', 'Indore', 'bhopal', 'guna'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,

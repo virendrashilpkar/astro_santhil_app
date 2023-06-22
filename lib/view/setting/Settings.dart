@@ -27,10 +27,12 @@ class _MyHomePageState extends State<Settings> {
   late AgeHeightRangeModel _rangeModel;
   String email = "";
   String phone = "";
-  String minAge = "";
-  String maxAge = "";
-  String minHeight = "";
-  String maxHeight = "";
+  int? minAge;
+  int? maxAge;
+  int? minHeight;
+  int? maxHeight;
+  bool isLoad = false;
+  bool clickLoad = false;
 
   Future CheckUserConnection() async {
     try {
@@ -53,27 +55,41 @@ class _MyHomePageState extends State<Settings> {
   List<File?> imagelist = List.filled(6, null);
 
   Future<void> userDetail() async {
+    isLoad = true;
     _preferences = await SharedPreferences.getInstance();
     _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
     if(_userDetailModel.status == 1){
       email = _userDetailModel.data![0].email.toString();
       phone = _userDetailModel.data![0].phone.toString();
-      minAge = _userDetailModel.data![0].minAge.toString();
-      maxAge = _userDetailModel.data![0].maxAge.toString();
-      minHeight = _userDetailModel.data![0].minHeight.toString();
-      maxHeight = _userDetailModel.data![0].maxHeight.toString();
-
-      setState(() {
-
-      });
+      minAge = _userDetailModel.data![0].minAge;
+      maxAge = _userDetailModel.data![0].maxAge;
+      minHeight = _userDetailModel.data![0].minHeight;
+      maxHeight = _userDetailModel.data![0].maxHeight;
+      _currentRangeValues =  RangeValues(minAge?.toDouble() ?? 18, maxAge?.toDouble() ?? 30);
+      _currentheightValues =  RangeValues(minHeight?.toDouble() ??0, maxHeight?.toDouble() ??10);
     }
+    isLoad = false;
+
+    setState(() {
+
+    });
   }
 
   Future<void> rangeSet() async {
+    clickLoad = true;
     _preferences = await SharedPreferences.getInstance();
     _rangeModel = await Services.RangeSet(_preferences.getString(ShadiApp.userId).toString(),
-        _currentRangeValues.start.toInt(), _currentRangeValues.end.toInt(), _currentheightValues.start.toInt(),
-        _currentheightValues.end.toInt());
+        int.parse(_currentRangeValues.start.toString()), int.parse(_currentRangeValues.end.toString()),
+        int.parse(_currentheightValues.start.toString()), int.parse(_currentheightValues.end.toString()));
+    if(_rangeModel.status == 1){
+      Toaster.show(context, _rangeModel.message.toString());
+    }else{
+      Toaster.show(context, _rangeModel.message.toString());
+    }
+    clickLoad = false;
+    setState(() {
+
+    });
   }
 
   @override
@@ -115,8 +131,8 @@ class _MyHomePageState extends State<Settings> {
   bool ischeck = false;
   // double value1 = minAge as double;
   TextEditingController tagsearch = TextEditingController();
-  RangeValues _currentRangeValues =  RangeValues(18, 29);
-  RangeValues _currentheightValues =  RangeValues(0, 10);
+  late RangeValues _currentRangeValues;
+  late RangeValues _currentheightValues;
 
   void navigateUser(BuildContext context) async{
     SharedPreferences _preferences = await SharedPreferences.getInstance();
@@ -133,7 +149,12 @@ class _MyHomePageState extends State<Settings> {
 
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: SingleChildScrollView(
+      body: isLoad ? Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3.0,
+        ),
+      ):SingleChildScrollView(
         child: Center(
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -1267,7 +1288,14 @@ class _MyHomePageState extends State<Settings> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-
+                        clickLoad ? Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3.0,
+                              ),
+                            )
+                        ):
                         Expanded(
                             child: Center(
                               child: Text("Update Setting".toUpperCase(), style: TextStyle(
@@ -1279,7 +1307,7 @@ class _MyHomePageState extends State<Settings> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-
+                          rangeSet();
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

@@ -1,25 +1,25 @@
 // To parse this JSON data, do
 //
-//     final likeModel = likeModelFromJson(jsonString);
+//     final countryListModel = countryListModelFromJson(jsonString);
 
 import 'dart:convert';
 
-LikeModel likeModelFromJson(String str) => LikeModel.fromJson(json.decode(str));
+CountryListModel countryListModelFromJson(String str) => CountryListModel.fromJson(json.decode(str));
 
-String likeModelToJson(LikeModel data) => json.encode(data.toJson());
+String countryListModelToJson(CountryListModel data) => json.encode(data.toJson());
 
-class LikeModel {
-  int? status;
+class CountryListModel {
+  bool? status;
   String? message;
   List<Datum>? data;
 
-  LikeModel({
+  CountryListModel({
     this.status,
     this.message,
     this.data,
   });
 
-  factory LikeModel.fromJson(Map<String, dynamic> json) => LikeModel(
+  factory CountryListModel.fromJson(Map<String, dynamic> json) => CountryListModel(
     status: json["status"],
     message: json["message"],
     data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
@@ -34,20 +34,16 @@ class LikeModel {
 
 class Datum {
   String? id;
-  String? type;
-  String? sender;
-  String? receiver;
-  bool? matched;
+  String? name;
+  String? countryCode;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? v;
 
   Datum({
     this.id,
-    this.type,
-    this.sender,
-    this.receiver,
-    this.matched,
+    this.name,
+    this.countryCode,
     this.createdAt,
     this.updatedAt,
     this.v,
@@ -55,10 +51,8 @@ class Datum {
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["_id"],
-    type: json["type"],
-    sender: json["sender"],
-    receiver: json["receiver"],
-    matched: json["matched"],
+    name: json["name"],
+    countryCode: json["countryCode"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
     v: json["__v"],
@@ -66,10 +60,8 @@ class Datum {
 
   Map<String, dynamic> toJson() => {
     "_id": id,
-    "type": type,
-    "sender": sender,
-    "receiver": receiver,
-    "matched": matched,
+    "name": name,
+    "countryCode": countryCode,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
     "__v": v,

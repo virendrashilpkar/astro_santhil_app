@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
 import 'package:shadiapp/Services/Services.dart';
@@ -24,9 +25,11 @@ class _MyHomePageState extends State<AddPhotos> {
   SharedPreferences? _preferences;
   late UploadImageModel _uploadImageModel;
   late ViewImageModel _viewImageModel;
+  late DeleteImageModel _deleteImageModel;
 
   bool clickLoad = false;
   bool isLoad = false;
+  bool deleteLoad = false;
 
   Future CheckUserConnection() async {
     try {
@@ -78,6 +81,21 @@ class _MyHomePageState extends State<AddPhotos> {
       }
     }
     isLoad = false;
+    setState(() {
+
+    });
+  }
+
+  Future<void> deleteImage(String imageId) async {
+    deleteLoad = true;
+    _deleteImageModel = await Services.DeleteImage(imageId);
+    if(_deleteImageModel.status == 1){
+      Toaster.show(context, _deleteImageModel.message.toString());
+      viewImage();
+    }else{
+      Toaster.show(context, _deleteImageModel.message.toString());
+    }
+    deleteLoad = false;
     setState(() {
 
     });
@@ -156,13 +174,13 @@ class _MyHomePageState extends State<AddPhotos> {
 
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: SingleChildScrollView(
-        child: isLoad ? Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 3.0,
-          ),
-        ):Center(
+      body: isLoad ? Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3.0,
+        ),
+      ):SingleChildScrollView(
+        child: Center(
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             // crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +232,12 @@ class _MyHomePageState extends State<AddPhotos> {
               new SizedBox(height: 10,),
               new Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: new GridView.count(
+                child: deleteLoad ? Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3.0,
+                  ),
+                ):new GridView.count(
                   crossAxisCount: 3,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
@@ -301,6 +324,46 @@ class _MyHomePageState extends State<AddPhotos> {
                                     ),
                                   ),
                                 ),),
+
+                                SizedBox.expand(
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: InkWell(onTap: () {
+                                      _pickedImage(index);
+                                    },splashColor: Colors.blue.withOpacity(0.2),
+                                      customBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                               // if(_list[index] != null)
+                                 index >= 0  && index < _list.length ?new Positioned(
+                                  right:0,
+                                  top:0,
+                                  child: SizedBox(
+                                    height:30,
+                                  width:30,
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: InkWell(onTap: () {
+                                      setState((){
+                                        deleteImage(_list[index].id.toString());
+                                        // _list[index].image=null;
+                                      });
+                                    },splashColor: Colors.blue.withOpacity(0.2),
+                                      customBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child:  Container(
+                                          decoration: BoxDecoration(
+                                            // color: Colors.white,
+                                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                          ),
+                                          child: Icon(Icons.close,color: Colors.white,)),
+                                    ),
+                                  ),
+                                ),):Container(),
 
                               ],
                             ),

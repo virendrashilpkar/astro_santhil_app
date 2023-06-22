@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
-import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
+import 'package:shadiapp/Models/new_matches_model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -18,6 +20,11 @@ class MatchPro extends StatefulWidget {
 class _MyHomePageState extends State<MatchPro> {
 
   bool ActiveConnection = false;
+  late SharedPreferences _preferences;
+  late NewMatchesModel _newMatchesModel;
+  bool isLoad = false;
+  List<Datum> _list = [];
+
   String T = "";
   Future CheckUserConnection() async {
     try {
@@ -36,9 +43,25 @@ class _MyHomePageState extends State<MatchPro> {
     }
   }
 
+  Future<void> match() async {
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
+    if(_newMatchesModel.status == 200){
+      for(var i = 0; i < _newMatchesModel.data!.length; i++){
+        _list = _newMatchesModel.data ?? <Datum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
   @override
   void initState() {
     CheckUserConnection();
+    match();
     super.initState();
   }
 
@@ -95,14 +118,20 @@ class _MyHomePageState extends State<MatchPro> {
               new Container(
                 height: MediaQuery.of(context).size.width/2,
                 width: MediaQuery.of(context).size.width,
-                child: Row(
+                child: isLoad ? Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3.0,
+                  ),
+                ):Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: colorList.length,
+                      itemCount: _list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx,index){
+                        Datum data = _list[index];
                         return selectindex==index ? InkWell(
                           onTap: (){
                             setState(() {
@@ -130,7 +159,7 @@ class _MyHomePageState extends State<MatchPro> {
                                       padding: const EdgeInsets.all(10),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(15.0),
-                                        child: Image.network("https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",fit: BoxFit.cover,height: 180,width: 180,),
+                                        child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
                                       ),
                                     ),
                                   ),
@@ -148,7 +177,7 @@ class _MyHomePageState extends State<MatchPro> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("${packagetittle[index]}",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                                          Text("${data.plan}",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
                                         ],
                                       )
                                   ),

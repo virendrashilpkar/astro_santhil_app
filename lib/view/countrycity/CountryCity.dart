@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/city_list_model.dart';
+import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
@@ -21,6 +23,8 @@ class _MyHomePageState extends State<CountryCity> {
   SharedPreferences? _preferences;
   late UserDetailModel _userDetailModel;
   late UpdateUserModel _updateUserModel;
+  late CountryListModel _countryListModel;
+  late CItyListModel _cItyListModel;
   String T = "";
   String firstName = "";
   String lastName = "";
@@ -38,6 +42,14 @@ class _MyHomePageState extends State<CountryCity> {
   String company = "";
   String jobTitle = "";
   bool clickLoad = false;
+  bool isLoad = false;
+
+  List<String> countryList = [
+    "Select country"
+  ];
+  List<String> cityList = [
+    "Select country"
+  ];
 
   Future CheckUserConnection() async {
     try {
@@ -105,6 +117,35 @@ class _MyHomePageState extends State<CountryCity> {
     }
   }
 
+  Future<void> ListCountry() async {
+    isLoad = true;
+    _countryListModel = await Services.CountryList();
+    if (_countryListModel.status == true){
+      for(var i = 0; i < _countryListModel.data!.length; i++){
+        countryList.add(_countryListModel.data![i].name.toString());
+      }
+    }
+    isLoad = false;
+    setState(() {
+      country = _userDetailModel.data?[0].country ?? "Select country";
+      ListCity(country);
+    });
+  }
+
+  Future<void> ListCity(String name) async {
+    isLoad = true;
+    _cItyListModel = await Services.CityList(name);
+    if(_cItyListModel.status == true){
+      for(var i = 0; i < _cItyListModel.data!.length; i++){
+        cityList.add(_cItyListModel.data![i].name.toString());
+      }
+    }
+    isLoad = false;
+    setState(() {
+
+    });
+  }
+
   Future<void> updateUser() async {
     setState(() {
       clickLoad = true;
@@ -128,7 +169,8 @@ class _MyHomePageState extends State<CountryCity> {
 
   @override
   void initState() {
-    // userDetail();
+    userDetail();
+    ListCountry();
     CheckUserConnection();
     super.initState();
   }
@@ -140,7 +182,12 @@ class _MyHomePageState extends State<CountryCity> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: Center(
+      body: isLoad ? Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3.0,
+        ),
+      ): Center(
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +233,7 @@ class _MyHomePageState extends State<CountryCity> {
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
               child: DropdownButton<String>(
-                value: country.isNotEmpty ? country : null,
+                value: country,
                 underline: Container(
                   // height: 1,
                   // margin:const EdgeInsets.only(top: 20),
@@ -197,10 +244,14 @@ class _MyHomePageState extends State<CountryCity> {
                 onChanged: (newValue) {
                   setState(() {
                     country = newValue!;
+                    city = "Select city";
+                    cityList.clear();
+                    cityList.add("Select city");
+                    ListCity(country);
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select country', 'india', 'pakistan', 'china'].map((String value) {
+                  return countryList.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value,style: TextStyle(color:country == 'Select country' ? Colors.grey:  Colors.white,fontSize: 16),),
@@ -210,7 +261,7 @@ class _MyHomePageState extends State<CountryCity> {
                 iconSize: 24,
                 icon: Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select country', 'india', 'pakistan', 'china'] // add your own dial codes
+                items: countryList // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -258,7 +309,7 @@ class _MyHomePageState extends State<CountryCity> {
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select city', 'indore', 'bhopal', 'guna'].map((String value) {
+                  return cityList.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
@@ -268,7 +319,7 @@ class _MyHomePageState extends State<CountryCity> {
                 iconSize: 24,
                 icon: Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select city', 'indore', 'bhopal', 'guna'] // add your own dial codes
+                items: cityList // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -314,7 +365,7 @@ class _MyHomePageState extends State<CountryCity> {
                       Expanded(
                           child: Center(
                             child: Text("Continue", style: TextStyle(
-                                color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
+                              color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),),
                           )),
                     ],
                   ),

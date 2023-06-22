@@ -1,25 +1,25 @@
 // To parse this JSON data, do
 //
-//     final likeModel = likeModelFromJson(jsonString);
+//     final newMatchesModel = newMatchesModelFromJson(jsonString);
 
 import 'dart:convert';
 
-LikeModel likeModelFromJson(String str) => LikeModel.fromJson(json.decode(str));
+NewMatchesModel newMatchesModelFromJson(String str) => NewMatchesModel.fromJson(json.decode(str));
 
-String likeModelToJson(LikeModel data) => json.encode(data.toJson());
+String newMatchesModelToJson(NewMatchesModel data) => json.encode(data.toJson());
 
-class LikeModel {
+class NewMatchesModel {
   int? status;
   String? message;
   List<Datum>? data;
 
-  LikeModel({
+  NewMatchesModel({
     this.status,
     this.message,
     this.data,
   });
 
-  factory LikeModel.fromJson(Map<String, dynamic> json) => LikeModel(
+  factory NewMatchesModel.fromJson(Map<String, dynamic> json) => NewMatchesModel(
     status: json["status"],
     message: json["message"],
     data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
@@ -33,45 +33,41 @@ class LikeModel {
 }
 
 class Datum {
-  String? id;
   String? type;
-  String? sender;
-  String? receiver;
-  bool? matched;
   DateTime? createdAt;
-  DateTime? updatedAt;
-  int? v;
+  String? id;
+  String? firstName;
+  int? age;
+  String? plan;
+  String? image;
 
   Datum({
-    this.id,
     this.type,
-    this.sender,
-    this.receiver,
-    this.matched,
     this.createdAt,
-    this.updatedAt,
-    this.v,
+    this.id,
+    this.firstName,
+    this.age,
+    this.plan,
+    this.image,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    id: json["_id"],
     type: json["type"],
-    sender: json["sender"],
-    receiver: json["receiver"],
-    matched: json["matched"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-    v: json["__v"],
+    id: json["_id"],
+    firstName: json["first_name"],
+    age: json["age"],
+    plan: json["plan"],
+    image: json["image"],
   );
 
   Map<String, dynamic> toJson() => {
-    "_id": id,
     "type": type,
-    "sender": sender,
-    "receiver": receiver,
-    "matched": matched,
     "createdAt": createdAt?.toIso8601String(),
-    "updatedAt": updatedAt?.toIso8601String(),
-    "__v": v,
+    "_id": id,
+    "first_name": firstName,
+    "age": age,
+    "plan": plan,
+    "image": image,
   };
 }

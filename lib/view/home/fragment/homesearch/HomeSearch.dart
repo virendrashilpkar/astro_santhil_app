@@ -12,6 +12,7 @@ import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
+import 'package:shadiapp/view/home/fragment/match/Match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -31,6 +32,7 @@ class _MyHomePageState extends State<HomeSearch> {
   late UserViewPreferenceModel _viewPreferenceModel;
   late LikeModel _likeModel;
   late UserDetailModel _userDetailModel = UserDetailModel();
+  late PersistentBottomSheetController _bottomSheetController; // instance variable
   List<UserDatum> _userList = [];
   List<PrefsDatum> intrest = [];
   bool clickLoad = false;
@@ -117,6 +119,13 @@ class _MyHomePageState extends State<HomeSearch> {
     _preferences = await SharedPreferences.getInstance();
     _likeModel = await Services.LikeMethod(_preferences!.getString(ShadiApp.userId).toString(), id, type);
     if(_likeModel.status == 1){
+      if (_likeModel.data![0].matched == true) {
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Match()
+            )
+        );
+
+      }
       Toaster.show(context, _likeModel.message.toString());
     }else{
       Toaster.show(context, _likeModel.message.toString());
@@ -367,6 +376,7 @@ class _MyHomePageState extends State<HomeSearch> {
                   child: SwipeCards(
                     matchEngine: _matchEngine,
                     itemBuilder: (BuildContext context, int index) {
+                      UserDatum datum =  _userList[index];
                       return  Stack(
                         alignment: Alignment.bottomCenter,
                         children: [
@@ -621,12 +631,6 @@ class _MyHomePageState extends State<HomeSearch> {
                         ],
                       );
                     },
-                    onStackFinished: () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Stack Finished"),
-                        duration: Duration(milliseconds: 500),
-                      ));
-                    },
                     itemChanged: (SwipeItem item, int index) {
                       print("item: ${_userList![index].firstName}, index: $index");
                       like(_userList![index-1].id.toString(), type);
@@ -659,6 +663,12 @@ class _MyHomePageState extends State<HomeSearch> {
                       // ),
                       child: Text('Super Like',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.white)),
                     ),
+                    onStackFinished: () {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Stack Finished"),
+                        duration: Duration(milliseconds: 500),
+                      ));
+                    },
                   ),
                 ),
                 // Align(
@@ -1014,12 +1024,27 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                         Container(
                           height: MediaQuery.of(context).padding.top+60,
                         ),
-                        Container(
-
-                            child:  ClipRRect(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: Image.network("${widget.image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                        Stack(
+                          children: [
+                            Container(
+                                child:  ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: Image.network("${widget.image}",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                                )
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                },
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white,
+                                ),
+                              ),
                             )
+                          ],
                         ),
                         new SizedBox(height: 15,),
                         Row(

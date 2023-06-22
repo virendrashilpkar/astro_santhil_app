@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/view_profile_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
-import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -23,8 +23,11 @@ class _MyHomePageState extends State<Profile> {
   bool ActiveConnection = false;
   String T = "";
   late ViewProfileModel _viewProfileModel = ViewProfileModel();
+  late PlanListModel _planListModel;
   late SharedPreferences _preferences;
+  List<planDatum> _list = [];
   bool clickLoad = false;
+  bool isLoad = false;
 
   Future CheckUserConnection() async {
     try {
@@ -56,13 +59,30 @@ class _MyHomePageState extends State<Profile> {
     });
   }
 
+  Future<void> planList() async {
+    setState(() {
+      isLoad = true;
+    });
+    _planListModel = await Services.PlanList();
+    if(_planListModel.status ==1){
+      for (var i = 0; i < _planListModel.data!.length; i++){
+        _list = _planListModel.data ?? <planDatum> [];
+      }
+    }
+    setState(() {
+      isLoad = false;
+    });
+  }
+
   late double _scrollPosition;
   late ScrollController _scrollController;
+
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     viewProfile();
+    planList();
     CheckUserConnection();
     super.initState();
   }
@@ -91,6 +111,7 @@ class _MyHomePageState extends State<Profile> {
   List<String> vipdialog = ["12","3","1"];
   List<String> vipdialogkr = ["kr 40.33/mo","kr 40.33/mo","kr 40.33/mo"];
   List<String> vipdialogkr2 = ["kr. 139","kr. 139","kr. 139"];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -681,7 +702,7 @@ class _MyHomePageState extends State<Profile> {
                         child: ListView.builder(
                           physics: const AlwaysScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: packagetittle.length,
+                          itemCount: _list.length,
                           scrollDirection: Axis.horizontal,
                           controller: _scrollController,
                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -730,7 +751,7 @@ class _MyHomePageState extends State<Profile> {
                                             ),
                                             new SizedBox(height: 10,),
                                             new Container(
-                                              child: Text("${packagetittle[index]}",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                                              child: Text("${_list[index].name}",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
                                             )
                                           ],
                                         ),
