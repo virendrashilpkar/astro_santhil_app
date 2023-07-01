@@ -102,7 +102,6 @@ class _MyHomePageState extends State<HomeSearch> {
      clickLoad = false;
    });
   }
-
   Future<void> userViewPreference(String id) async {
     _viewPreferenceModel = await Services.ViewUserPreference(id);
     if(_viewPreferenceModel.status == 1){
