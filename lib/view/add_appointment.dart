@@ -327,6 +327,11 @@ class _AddAppointmentState extends State<AddAppointment> {
                                  )
                                ),
                               Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(bottom: 10.0),
+                                child: Text("Image"),
+                              ),
+                              Container(
                                 margin: EdgeInsets.only(bottom: 10.0),
                                 child: Text("Name"),
                               ),

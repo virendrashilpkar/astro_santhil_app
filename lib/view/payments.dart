@@ -33,9 +33,10 @@ class _PaymentsState extends State<Payments>{
   late PaymentViewModel _paymentViewModel = PaymentViewModel();
   List<Body> _list = [];
   DateTime? fromDate;
-  String? selectedFromDate;
+  String selectedFromDate = "";
   DateTime? toDate;
-  String? selectedToDate;
+  String selectedToDate = "";
+  bool isLoad = false;
 
   void fromdateMethod() async {
     fromDate = await showDatePicker(
@@ -90,6 +91,9 @@ class _PaymentsState extends State<Payments>{
   }
 
   Future<void> payment() async {
+    setState(() {
+      isLoad = true;
+    });
     _paymentViewModel = await Services.paymentList(selectedFromDate.toString(), selectedToDate.toString());
     if(_paymentViewModel.status == true){
       for(var i = 0; i < _paymentViewModel.body!.length; i++){
@@ -97,7 +101,7 @@ class _PaymentsState extends State<Payments>{
       }
     }
     setState(() {
-      
+      isLoad = false;
     });
   }
 
@@ -117,7 +121,7 @@ class _PaymentsState extends State<Payments>{
           ),
         child: SafeArea(
           child: SingleChildScrollView(
-            // physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             child: Column(
               children: [
                 ConstrainedBox(
@@ -186,7 +190,7 @@ class _PaymentsState extends State<Payments>{
                             ),
                             child: Row(
                               children: [
-                                Text(selectedFromDate != null ? "${selectedFromDate}":
+                                Text(selectedFromDate.isNotEmpty ? "${selectedFromDate}":
                                   "(DD/MM/YYYY)", style: TextStyle(color: Colors.white),),
                                 Container(
                                   margin: EdgeInsets.only(left: 11.0),
@@ -220,7 +224,7 @@ class _PaymentsState extends State<Payments>{
                             ),
                             child: Row(
                               children: [
-                                Text(selectedToDate != null ? "${selectedToDate}":
+                                Text(selectedToDate.isNotEmpty ? "${selectedToDate}":
                                 "(DD/MM/YYYY)", style: TextStyle(color: Colors.white),),
                                 Container(
                                   margin: EdgeInsets.only(left: 11.0),
@@ -261,7 +265,7 @@ class _PaymentsState extends State<Payments>{
                   ),
                   child: Column(
                     children: [
-                      Text("Rs.${_paymentViewModel.totalFees ?? "4,180.20"}", style: TextStyle(fontSize: 32.33, fontWeight: FontWeight.w600)),
+                      Text("Rs.${_paymentViewModel.totalFees ??""}", style: TextStyle(fontSize: 32.33, fontWeight: FontWeight.w600)),
                       Container(
                         margin: EdgeInsets.only(top: 10.0),
                         decoration: BoxDecoration(
@@ -290,14 +294,30 @@ class _PaymentsState extends State<Payments>{
                     color: Colors.white,
                     height: MediaQuery.of(context).size.height/2,
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(top: 26.93),
+                    padding: EdgeInsets.only(top: 26.93, bottom: 70),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text("LATEST PAYMENT HISTORY", style: TextStyle(color: Color(0xff019AD6), fontSize: 16.16),),
                         Expanded(
-                          child: Container(
+                          child: selectedFromDate.isEmpty ? Center(
+                              child: Text(
+                                "Select From Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                              )
+                          ): selectedToDate.isEmpty ? Center(
+                              child: Text(
+                                "Select To Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                              )
+                          ):isLoad ? Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ): _paymentViewModel.status == false ? Center(
+                            child: Text(
+                              _paymentViewModel.msg.toString(), style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                            ),
+                          ):Container(
                             padding: EdgeInsets.only(left: 10.0, top: 21.53, right: 10.0),
                             child: ListView.builder(
                                 itemCount: _list.length,
@@ -361,29 +381,29 @@ class _PaymentsState extends State<Payments>{
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             Text("${_body.name ?? "Name"}"),
-                                                            Row(
-                                                              children: [
-                                                                Text("Payment Status"),
-                                                                Container(
-                                                                  height: 8.0,
-                                                                  width: 8.0,
-                                                                  margin: EdgeInsets.only(left: 5.0),
-                                                                  decoration: BoxDecoration(
-                                                                      shape: BoxShape.circle,
-                                                                      gradient: LinearGradient(
-                                                                          colors: [
-                                                                            Color(0xffFF3D3D),
-                                                                            Color(0xffFF663D)
-                                                                          ],
-                                                                          begin: const FractionalOffset(0.0, 0.0),
-                                                                          end: const FractionalOffset(0.0, 1.0),
-                                                                          stops: [0.0, 1.0],
-                                                                          tileMode: TileMode.clamp
-                                                                      )
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            )
+                                                            // Row(
+                                                            //   children: [
+                                                            //     Text("Payment Status"),
+                                                            //     Container(
+                                                            //       height: 8.0,
+                                                            //       width: 8.0,
+                                                            //       margin: EdgeInsets.only(left: 5.0),
+                                                            //       decoration: BoxDecoration(
+                                                            //           shape: BoxShape.circle,
+                                                            //           gradient: LinearGradient(
+                                                            //               colors: [
+                                                            //                 Color(0xffFF3D3D),
+                                                            //                 Color(0xffFF663D)
+                                                            //               ],
+                                                            //               begin: const FractionalOffset(0.0, 0.0),
+                                                            //               end: const FractionalOffset(0.0, 1.0),
+                                                            //               stops: [0.0, 1.0],
+                                                            //               tileMode: TileMode.clamp
+                                                            //           )
+                                                            //       ),
+                                                            //     )
+                                                            //   ],
+                                                            // )
                                                           ],
                                                         ),
                                                       ),
@@ -403,37 +423,37 @@ class _PaymentsState extends State<Payments>{
                                                     margin: EdgeInsets.only(top: 20.0),
                                                     child: Row(
                                                       children: [
-                                                        Container(
-                                                          child: Column(
-                                                            children: [
-                                                              Image.asset("assets/status_ic.png"),
-                                                              Container(
-                                                                  margin: EdgeInsets.only(top: 5.0),
-                                                                  child: Text("Status", style: TextStyle(fontSize: 12.0),))
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                                          child: Column(
-                                                            children: [
-                                                              Image.asset("assets/edit_ic.png"),
-                                                              Container(
-                                                                  margin: EdgeInsets.only(top: 5.0),
-                                                                  child: Text("Edit", style: TextStyle(fontSize: 12.0),))
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          child: Column(
-                                                            children: [
-                                                              Image.asset("assets/delete_ic.png"),
-                                                              Container(
-                                                                  margin: EdgeInsets.only(top: 5.0),
-                                                                  child: Text("Delete", style: TextStyle(fontSize: 12.0),))
-                                                            ],
-                                                          ),
-                                                        ),
+                                                        // Container(
+                                                        //   child: Column(
+                                                        //     children: [
+                                                        //       Image.asset("assets/status_ic.png"),
+                                                        //       Container(
+                                                        //           margin: EdgeInsets.only(top: 5.0),
+                                                        //           child: Text("Status", style: TextStyle(fontSize: 12.0),))
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
+                                                        // Container(
+                                                        //   margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                                        //   child: Column(
+                                                        //     children: [
+                                                        //       Image.asset("assets/edit_ic.png"),
+                                                        //       Container(
+                                                        //           margin: EdgeInsets.only(top: 5.0),
+                                                        //           child: Text("Edit", style: TextStyle(fontSize: 12.0),))
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
+                                                        // Container(
+                                                        //   child: Column(
+                                                        //     children: [
+                                                        //       Image.asset("assets/delete_ic.png"),
+                                                        //       Container(
+                                                        //           margin: EdgeInsets.only(top: 5.0),
+                                                        //           child: Text("Delete", style: TextStyle(fontSize: 12.0),))
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
                                                         Spacer(),
                                                         Container(
                                                           child: Text("Rs.${_body.fees ?? "2,030.80"}"),

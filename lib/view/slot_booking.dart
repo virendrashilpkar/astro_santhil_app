@@ -33,6 +33,7 @@ class _SlotBookingState extends State<SlotBooking> {
   String selectedCustomer_id = "";
   String selectTimes = "Select Slot";
   String dropdownValue = 'Select Customer';
+  bool clickLoad = false;
 
   List <String> spinnerItems = [
     'Select Customer',
@@ -86,6 +87,9 @@ class _SlotBookingState extends State<SlotBooking> {
   }
 
   Future<void> addAppointment() async {
+    setState(() {
+      clickLoad = true;
+    });
     _addAppointmentModel = await Services.addAppointment(selectedCustomer_id, today.toString().substring(0,10),
         selectTimes, msg.text, fees.text, _radioSelected.toString());
 
@@ -100,6 +104,9 @@ class _SlotBookingState extends State<SlotBooking> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
+    setState(() {
+      clickLoad = false;
+    });
   }
 
   @override
@@ -169,31 +176,31 @@ class _SlotBookingState extends State<SlotBooking> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Image.asset("assets/back_arrow_ic.png",
-                              color: Colors.black,),
-                            ),
-                            Spacer(),
-                            Image.asset("assets/send_ic.png",
-                            color: Colors.black,),
-                            SizedBox(width: 10.0,),
-                            Image.asset("assets/fav_ic.png",
-                            color: Colors.black,)
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+                      //   child: Row(
+                      //     children: [
+                      //       InkWell(
+                      //         onTap: () {
+                      //           Navigator.pop(context);
+                      //         },
+                      //         child: Image.asset("assets/back_arrow_ic.png",
+                      //         color: Colors.black,),
+                      //       ),
+                      //       Spacer(),
+                      //       Image.asset("assets/send_ic.png",
+                      //       color: Colors.black,),
+                      //       SizedBox(width: 10.0,),
+                      //       Image.asset("assets/fav_ic.png",
+                      //       color: Colors.black,)
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(
-                        height: 40,
+                        height: 20,
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                        margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -243,16 +250,16 @@ class _SlotBookingState extends State<SlotBooking> {
                                 }).toList(),
                               )
                             ),
-                            Row(
-                              children: [
-                                Text("General Practitioner", style: TextStyle(fontSize: 16.82, color: Color(0xffB2B9C4)),),
-                                Spacer(),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10.0),
-                                    child: Text("See All Reviews",
-                                      style: TextStyle(fontSize: 12.62, color: Color(0xffB2B9C4)),))
-                              ],
-                            )
+                            // Row(
+                            //   children: [
+                            //     Text("General Practitioner", style: TextStyle(fontSize: 16.82, color: Color(0xffB2B9C4)),),
+                            //     Spacer(),
+                            //     Container(
+                            //       margin: EdgeInsets.only(top: 10.0),
+                            //         child: Text("See All Reviews",
+                            //           style: TextStyle(fontSize: 12.62, color: Color(0xffB2B9C4)),))
+                            //   ],
+                            // )
                           ],
                         ),
                       ),
@@ -322,6 +329,8 @@ class _SlotBookingState extends State<SlotBooking> {
                             decoration: InputDecoration(
                               isDense: true,
                               hintText: 'Fees',
+                              prefixText: "\u{20B9}",
+                              prefixStyle: TextStyle(color: Colors.black),
                               hintStyle: const TextStyle(
                                 fontSize: 14.0,
                                 color: Color(0xff6C7480),
@@ -364,13 +373,13 @@ class _SlotBookingState extends State<SlotBooking> {
                                 });
                               },
                             ),
-                            Text('Un Paid'),
+                            Text('UnPaid'),
                           ],
                         ),
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
-                        child: Text("Messages"),
+                        child: Text("Message"),
                       ),
                       Container(
                           decoration: BoxDecoration(
@@ -404,7 +413,29 @@ class _SlotBookingState extends State<SlotBooking> {
                           children: [
                             InkWell(
                               onTap: (){
-                                addAppointment();
+                                if(dropdownValue == "Select Customer"){
+                                  Fluttertoast.showToast(msg: "Please Select Customer",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.SNACKBAR);
+                                }else if(selectTimes == "Select Slot"){
+                                  Fluttertoast.showToast(msg: "Please Select Time",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.SNACKBAR);
+                                }else if(fees.text.isEmpty){
+                                  Fluttertoast.showToast(msg: "Please Enter Fees",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.SNACKBAR);
+                                }else if(_radioSelected == 0){
+                                  Fluttertoast.showToast(msg: "Please Select Fess Type",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.SNACKBAR);
+                                }else if (msg.text.isEmpty){
+                                  Fluttertoast.showToast(msg: "Please Enter Message",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.SNACKBAR);
+                                }else {
+                                  addAppointment();
+                                }
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width/2.4,
@@ -432,7 +463,19 @@ class _SlotBookingState extends State<SlotBooking> {
                                       stops: [0.0, 1.0],
                                       tileMode: TileMode.clamp),
                                 ),
-                                child: Row(
+                                child: clickLoad ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 3.0,
+                                      ),
+                                    )
+                                  ],
+                                ):
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -447,21 +490,26 @@ class _SlotBookingState extends State<SlotBooking> {
                               ),
                             ),
                             SizedBox(width: 10.0,),
-                            Container(
-                              width: MediaQuery.of(context).size.width/2.4,
-                              height: 60,
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.only(left: 10.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Color(0xffFF663D)
+                            InkWell(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width/2.4,
+                                height: 60,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(left: 10.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Color(0xffFF663D)
+                                  ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(5.0)
+                                  )
                                 ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.0)
-                                )
+                                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                                child: Text("CANCEL"),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                              child: Text("CANCEL"),
                             )
                           ],
                         ),

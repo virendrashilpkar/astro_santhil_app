@@ -8,6 +8,7 @@ import 'package:astro_santhil_app/view/edit_appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'menu.dart';
 
@@ -146,7 +147,7 @@ class _AppointmentState extends State<Appointment> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text("Appointment Status", style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 18.0, fontWeight: FontWeight.bold
                         ),),
                       ),
                       Spacer(),
@@ -234,367 +235,382 @@ class _AppointmentState extends State<Appointment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                    colors: [
-                      Color(0xff1BBF57),
-                      Color(0xff34E389),
-                    ],)
-              ),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  physics: NeverScrollableScrollPhysics(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: (){
-                                Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => Menu()));
-                              },
-                              child: Container(
-                                child: Image.asset("assets/drawer_ic.png",
-                                  width: 22.51,
-                                  height: 20.58,),
-                              ),
-                            ),
-                            Spacer(),
-                            Container(
-                              child: Text("APPOINMENTS", style: TextStyle(color: Colors.white, fontSize: 21.61),),
-                            ),
-                            Spacer(),
-                            Container(
-                              child: InkWell(
-                                onTap: (){
-                                  Navigator.pop(context);
-                                },
-                                child: Icon(
-                                  Icons.home,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 60.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: [
+                    Color(0xff1BBF57),
+                    Color(0xff34E389),
+                  ],)
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           InkWell(
                             onTap: (){
-                              onClick("today");
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => Menu()));
                             },
                             child: Container(
-                              decoration: tab.matchAsPrefix("today") != null?BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xff019AD6),
-                                        Color(0xff30D4FD)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  border: Border.all(color: Colors.black,
-                                      width: 1.0),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ):BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xff019AD6),
-                                        Color(0xff30D4FD)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
-                              child: Text("today".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
+                              child: Image.asset("assets/drawer_ic.png",
+                                width: 22.51,
+                                height: 20.58,),
                             ),
                           ),
-                          InkWell(
-                            onTap: (){
-                              onClick("pending");
-                            },
-                            child: Container(
-                              decoration: tab.matchAsPrefix("pending") != null?BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xffFF663D),
-                                        Color(0xffFF3D3D)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  border: Border.all(color: Colors.black,
-                                      width: 1.0),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ):BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xffFF663D),
-                                        Color(0xffFF3D3D)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
-                              child: Text("Pending".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
-                            ),
+                          Spacer(),
+                          Container(
+                            child: Text("APPOINMENTS", style: TextStyle(color: Colors.white, fontSize: 21.61),),
                           ),
-                          InkWell(
-                            onTap: (){
-                              onClick("cancel");
-                            },
-                            child: Container(
-                              decoration: tab.matchAsPrefix("cancel") != null?BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xffFFBF00),
-                                        Color(0xffFF9900)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  border: Border.all(color: Colors.black,
-                                      width: 1.0),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ):BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xffFFBF00),
-                                        Color(0xffFF9900)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
+                          Spacer(),
+                          Container(
+                            child: InkWell(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Icon(
+                                Icons.home,
+                                color: Colors.white,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
-                              child: Text("Cancel".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: (){
-                              onClick("completed");
-                            },
-                            child: Container(
-                              decoration: tab.matchAsPrefix("completed") != null ? BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xff009393),
-                                        Color(0xff1C5870)
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.centerRight
-                                  ),
-                                  border: Border.all(color: Colors.black,
-                                      width: 1.0),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ): BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xff009393),
-                                        Color(0xff1C5870)
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0)
-                                  )
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
-                              child: Text("Completed".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
                             ),
                           )
                         ],
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10.0, top: 20.0, right: 10.0, bottom: 20.0),
-                        color: Colors.white,
-                        height: MediaQuery.of(context).size.height,
-                        child: _pageLoading? Center(
-                          child: CircularProgressIndicator(),
-                        ): _appointmentViewModel.status == false ?Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 80.0),
-                            child: Text("Appointment not available".toUpperCase(),
-                              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),),
+                    ),
+                    SizedBox(
+                      height: 60.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: (){
+                            onClick("today");
+                          },
+                          child: Container(
+                            decoration: tab.matchAsPrefix("today") != null?BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff019AD6),
+                                      Color(0xff30D4FD)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                border: Border.all(color: Colors.black,
+                                    width: 1.0),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ):BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff019AD6),
+                                      Color(0xff30D4FD)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
+                            child: Text("today".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
                           ),
-                        ):tab.matchAsPrefix("today") != null ?
-                        ListView.builder(
-                            itemCount: _list.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index){
-                              Body _body = _list[index];
-                              int randomNumber = _random.nextInt(5);
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 20.0),
-                                  child: Card(
-                                      color: Colors.white,
-                                      shadowColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
+                        ),
+                        InkWell(
+                          onTap: (){
+                            onClick("pending");
+                          },
+                          child: Container(
+                            decoration: tab.matchAsPrefix("pending") != null?BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xffFF663D),
+                                      Color(0xffFF3D3D)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                border: Border.all(color: Colors.black,
+                                    width: 1.0),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ):BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xffFF663D),
+                                      Color(0xffFF3D3D)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
+                            child: Text("Pending".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: (){
+                            onClick("cancel");
+                          },
+                          child: Container(
+                            decoration: tab.matchAsPrefix("cancel") != null?BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xffFFBF00),
+                                      Color(0xffFF9900)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                border: Border.all(color: Colors.black,
+                                    width: 1.0),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ):BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xffFFBF00),
+                                      Color(0xffFF9900)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
+                            child: Text("Cancel".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: (){
+                            onClick("completed");
+                          },
+                          child: Container(
+                            decoration: tab.matchAsPrefix("completed") != null ? BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff009393),
+                                      Color(0xff1C5870)
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.centerRight
+                                ),
+                                border: Border.all(color: Colors.black,
+                                    width: 1.0),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ): BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff009393),
+                                      Color(0xff1C5870)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0)
+                                )
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 13.3, vertical: 9.0),
+                            child: Text("Completed".toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 9.17),),
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 10.0, top: 20.0, right: 10.0, bottom: 150.0),
+                      color: Colors.white,
+                      height: MediaQuery.of(context).size.height,
+                      child: _pageLoading? Center(
+                        child: CircularProgressIndicator(),
+                      ): _appointmentViewModel.status == false ?Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 80.0),
+                          child: Text("Appointment not available".toUpperCase(),
+                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),),
+                        ),
+                      ):tab.matchAsPrefix("today") != null ?
+                      ListView.builder(
+                          itemCount: _list.length,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            Body _body = _list[index];
+                            int randomNumber = _random.nextInt(5);
+                            return Container(
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                child: Card(
+                                    color: Colors.white,
+                                    shadowColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)
+                                        )
+                                    ),
+                                    elevation: 10.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20.0)
                                           )
                                       ),
-                                      elevation: 10.0,
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0)
-                                            )
-                                        ),
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    width: 35,
-                                                    height: 35,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        gradient: LinearGradient(
-                                                            colors: [
-                                                              gradientColorList[randomNumber],
-                                                              gradientColorListLight[randomNumber],
-                                                            ],
-                                                            begin: const FractionalOffset(0.0, 0.0),
-                                                            end: const FractionalOffset(0.0, 1.0),
-                                                            stops: [0.0, 1.0],
-                                                            tileMode: TileMode.clamp
-                                                        )
-                                                    ),
-                                                    child: Image.asset("assets/user_ic_white.png"),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(left: 10.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(_body.name.toString()),
-                                                        Row(
-                                                          children: [
-                                                            Text("Payment Status"),
+                                        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: 35,
+                                                  height: 35,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: LinearGradient(
+                                                          colors: [
+                                                            gradientColorList[randomNumber],
+                                                            gradientColorListLight[randomNumber],
                                                           ],
-                                                        )
-                                                      ],
+                                                          begin: const FractionalOffset(0.0, 0.0),
+                                                          end: const FractionalOffset(0.0, 1.0),
+                                                          stops: [0.0, 1.0],
+                                                          tileMode: TileMode.clamp
+                                                      )
+                                                  ),
+                                                  child: Image.asset("assets/user_ic_white.png"),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(_body.name.toString()),
+                                                      Row(
+                                                        children: [
+                                                          Text("\u{20B9}"),
+                                                          Text("${_body.fees}"),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text("(${_body.date.toString().substring(0,10)})"),
+                                                      Text("(${_body.time})")
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20.0),
+                                              child: Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: (){
+                                                      updateStatusDailog(_body.id.toString());
+                                                    },
+                                                    child: Container(
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/status_ic.png",
+                                                            height: 20,
+                                                            color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Status", style: TextStyle(fontSize: 12.0),))
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: (){
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(builder: (context) => EditAppointment(_body.id.toString())));
+                                                    },
+                                                    child: Container(
+                                                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/edit_ic.png",
+                                                            height: 20,
+                                                            color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Edit", style: TextStyle(fontSize: 12.0),))
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: (){
+                                                      deleteDailog(_body.id.toString());
+                                                    },
+                                                    child: Container(
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/delete_ic.png",
+                                                            height: 20,
+                                                            color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Delete", style: TextStyle(fontSize: 12.0),))
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                   Spacer(),
-                                                  Container(
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text("(${_body.date.toString().substring(0,10)})"),
-                                                        Text("(${_body.time})")
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 20.0),
-                                                child: Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: (){
-                                                        updateStatusDailog(_body.id.toString());
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        final call = Uri.parse('tel:${_body.phone}');
+                                                        if (await canLaunchUrl(call)) {
+                                                          launchUrl(call);
+                                                        } else {
+                                                          throw 'Could not launch $call';
+                                                        }
                                                       },
-                                                      child: Container(
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/status_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Status", style: TextStyle(fontSize: 12.0),))
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        Navigator.push(context,
-                                                            MaterialPageRoute(builder: (context) => EditAppointment(_body.id.toString())));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/edit_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Edit", style: TextStyle(fontSize: 12.0),))
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        deleteDailog(_body.id.toString());
-                                                      },
-                                                      child: Container(
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/delete_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Delete", style: TextStyle(fontSize: 12.0),))
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Spacer(),
-                                                    Container(
+                                                    child: Container(
                                                       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                                       decoration: BoxDecoration(
                                                           color: Color(0xfff5f5f5),
@@ -604,151 +620,167 @@ class _AppointmentState extends State<Appointment> {
                                                       ),
                                                       child: Image.asset("assets/phone_ic.png",
                                                         color: Colors.green,),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  )
-                              );
-                            }):
-                        tab.matchAsPrefix("pending") != null ?ListView.builder(
-                            itemCount: _list.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index){
-                              Body _body = _list[index];
-                              int randomNumber = _random.nextInt(5);
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 20.0),
-                                  child: Card(
-                                      color: Colors.white,
-                                      shadowColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20.0)
-                                          )
-                                      ),
-                                      elevation: 10.0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0)
-                                            )
-                                        ),
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    width: 35,
-                                                    height: 35,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        gradient: LinearGradient(
-                                                            colors: [
-                                                              gradientColorList[randomNumber],
-                                                              gradientColorListLight[randomNumber],
-                                                            ],
-                                                            begin: const FractionalOffset(0.0, 0.0),
-                                                            end: const FractionalOffset(0.0, 1.0),
-                                                            stops: [0.0, 1.0],
-                                                            tileMode: TileMode.clamp
-                                                        )
-                                                    ),
-                                                    child: Image.asset("assets/user_ic_white.png"),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(left: 10.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(_body.name.toString()),
-                                                        Row(
-                                                          children: [
-                                                            Text("Payment Status"),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  Container(
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text("(${_body.date.toString().substring(0,10)})"),
-                                                        Text("(${_body.time})")
-                                                      ],
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 20.0),
-                                                child: Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: (){
-                                                        updateStatusDailog(_body.id.toString());
-                                                      },
-                                                      child: Container(
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/status_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Status", style: TextStyle(fontSize: 12.0),))
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                )
+                            );
+                          }):
+                      tab.matchAsPrefix("pending") != null ?ListView.builder(
+                          itemCount: _list.length,
+                          shrinkWrap: true,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            Body _body = _list[index];
+                            int randomNumber = _random.nextInt(5);
+                            return Container(
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                child: Card(
+                                    color: Colors.white,
+                                    shadowColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)
+                                        )
+                                    ),
+                                    elevation: 10.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)
+                                          )
+                                      ),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: 35,
+                                                  height: 35,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: LinearGradient(
+                                                          colors: [
+                                                            gradientColorList[randomNumber],
+                                                            gradientColorListLight[randomNumber],
                                                           ],
-                                                        ),
+                                                          begin: const FractionalOffset(0.0, 0.0),
+                                                          end: const FractionalOffset(0.0, 1.0),
+                                                          stops: [0.0, 1.0],
+                                                          tileMode: TileMode.clamp
+                                                      )
+                                                  ),
+                                                  child: Image.asset("assets/user_ic_white.png"),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(_body.name.toString()),
+                                                      Row(
+                                                        children: [
+                                                          Text("\u{20B9}${_body.fees}"),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text("(${_body.date.toString().substring(0,10)})"),
+                                                      Text("(${_body.time})")
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20.0),
+                                              child: Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: (){
+                                                      updateStatusDailog(_body.id.toString());
+                                                    },
+                                                    child: Container(
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/status_ic.png",
+                                                          height: 20,
+                                                          color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Status", style: TextStyle(fontSize: 12.0),))
+                                                        ],
                                                       ),
                                                     ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        Navigator.push(context,
-                                                            MaterialPageRoute(builder: (context) => EditAppointment(_body.id.toString())));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/edit_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Edit", style: TextStyle(fontSize: 12.0),))
-                                                          ],
-                                                        ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: (){
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(builder: (context) => EditAppointment(_body.id.toString())));
+                                                    },
+                                                    child: Container(
+                                                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/edit_ic.png",
+                                                            height: 20,
+                                                            color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Edit", style: TextStyle(fontSize: 12.0),))
+                                                        ],
                                                       ),
                                                     ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        deleteDailog(_body.id.toString());
-                                                      },
-                                                      child: Container(
-                                                        child: Column(
-                                                          children: [
-                                                            Image.asset("assets/delete_ic.png"),
-                                                            Container(
-                                                                margin: EdgeInsets.only(top: 5.0),
-                                                                child: Text("Delete", style: TextStyle(fontSize: 12.0),))
-                                                          ],
-                                                        ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: (){
+                                                      deleteDailog(_body.id.toString());
+                                                    },
+                                                    child: Container(
+                                                      child: Column(
+                                                        children: [
+                                                          Image.asset("assets/delete_ic.png",
+                                                            height: 20,
+                                                            color: Colors.black26,),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 5.0),
+                                                              child: Text("Delete", style: TextStyle(fontSize: 12.0),))
+                                                        ],
                                                       ),
                                                     ),
-                                                    Spacer(),
-                                                    Container(
+                                                  ),
+                                                  Spacer(),
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      final call = Uri.parse('tel:${_body.phone}');
+                                                      if (await canLaunchUrl(call)) {
+                                                      launchUrl(call);
+                                                      } else {
+                                                      throw 'Could not launch $call';
+                                                      }
+                                                    },
+                                                    child: Container(
                                                       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                                       decoration: BoxDecoration(
                                                           color: Color(0xfff5f5f5),
@@ -758,121 +790,131 @@ class _AppointmentState extends State<Appointment> {
                                                       ),
                                                       child: Image.asset("assets/phone_ic.png",
                                                         color: Colors.green,),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  )
-                              );
-                            }):
-                        tab.matchAsPrefix("cancel") != null ?ListView.builder(
-                            itemCount: _list.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index){
-                              Body _body = _list[index];
-                              int randomNumber = _random.nextInt(5);
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 20.0),
-                                  child: Card(
-                                      color: Colors.white,
-                                      shadowColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20.0)
-                                          )
-                                      ),
-                                      elevation: 10.0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0)
-                                            )
-                                        ),
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    width: 35,
-                                                    height: 35,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        gradient: LinearGradient(
-                                                            colors: [
-                                                              gradientColorList[randomNumber],
-                                                              gradientColorListLight[randomNumber],
-                                                            ],
-                                                            begin: const FractionalOffset(0.0, 0.0),
-                                                            end: const FractionalOffset(0.0, 1.0),
-                                                            stops: [0.0, 1.0],
-                                                            tileMode: TileMode.clamp
-                                                        )
-                                                    ),
-                                                    child: Image.asset("assets/user_ic_white.png"),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(left: 10.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(_body.name.toString()),
-                                                        Row(
-                                                          children: [
-                                                            Text("Payment Status"),
-                                                            Container(
-                                                              height: 8.0,
-                                                              width: 8.0,
-                                                              margin: EdgeInsets.only(left: 5.0),
-                                                              decoration: BoxDecoration(
-                                                                  shape: BoxShape.circle,
-                                                                  gradient: LinearGradient(
-                                                                      colors: [
-                                                                        Color(0xffFF3D3D),
-                                                                        Color(0xffFF663D)
-                                                                      ],
-                                                                      begin: const FractionalOffset(0.0, 0.0),
-                                                                      end: const FractionalOffset(0.0, 1.0),
-                                                                      stops: [0.0, 1.0],
-                                                                      tileMode: TileMode.clamp
-                                                                  )
-                                                              ),
-                                                            )
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  Container(
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text("(${_body.date.toString().substring(0,10)})"),
-                                                        Text("(${_body.time})")
-                                                      ],
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 20.0),
-                                                child: Row(
-                                                  children: [
-                                                    Spacer(),
-                                                    Container(
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                )
+                            );
+                          }):
+                      tab.matchAsPrefix("cancel") != null ?ListView.builder(
+                          itemCount: _list.length,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            Body _body = _list[index];
+                            int randomNumber = _random.nextInt(5);
+                            return Container(
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                child: Card(
+                                    color: Colors.white,
+                                    shadowColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)
+                                        )
+                                    ),
+                                    elevation: 10.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)
+                                          )
+                                      ),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: 35,
+                                                  height: 35,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: LinearGradient(
+                                                          colors: [
+                                                            gradientColorList[randomNumber],
+                                                            gradientColorListLight[randomNumber],
+                                                          ],
+                                                          begin: const FractionalOffset(0.0, 0.0),
+                                                          end: const FractionalOffset(0.0, 1.0),
+                                                          stops: [0.0, 1.0],
+                                                          tileMode: TileMode.clamp
+                                                      )
+                                                  ),
+                                                  child: Image.asset("assets/user_ic_white.png"),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(_body.name.toString()),
+                                                      Row(
+                                                        children: [
+                                                          Text("Payment Status"),
+                                                          Container(
+                                                            height: 8.0,
+                                                            width: 8.0,
+                                                            margin: EdgeInsets.only(left: 5.0),
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape.circle,
+                                                                gradient: LinearGradient(
+                                                                    colors: [
+                                                                      Color(0xffFF3D3D),
+                                                                      Color(0xffFF663D)
+                                                                    ],
+                                                                    begin: const FractionalOffset(0.0, 0.0),
+                                                                    end: const FractionalOffset(0.0, 1.0),
+                                                                    stops: [0.0, 1.0],
+                                                                    tileMode: TileMode.clamp
+                                                                )
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text("(${_body.date.toString().substring(0,10)})"),
+                                                      Text("(${_body.time})")
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20.0),
+                                              child: Row(
+                                                children: [
+                                                  Spacer(),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        final call = Uri.parse('tel:${_body.phone}');
+                                                        if (await canLaunchUrl(call)) {
+                                                          launchUrl(call);
+                                                        } else {
+                                                          throw 'Could not launch $call';
+                                                        }
+                                                      },
+                                                    child: Container(
                                                       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                                       decoration: BoxDecoration(
                                                           color: Color(0xfff5f5f5),
@@ -882,103 +924,113 @@ class _AppointmentState extends State<Appointment> {
                                                       ),
                                                       child: Image.asset("assets/phone_ic.png",
                                                         color: Colors.green,),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  )
-                              );
-                            }):
-                        tab.matchAsPrefix("completed") != null ?ListView.builder(
-                            itemCount: _list.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index){
-                              int randomNumber = _random.nextInt(5);
-                              Body _body = _list[index];
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 20.0),
-                                  child: Card(
-                                      color: Colors.white,
-                                      shadowColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20.0)
-                                          )
-                                      ),
-                                      elevation: 10.0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0)
-                                            )
-                                        ),
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    width: 35,
-                                                    height: 35,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        gradient: LinearGradient(
-                                                            colors: [
-                                                              gradientColorList[randomNumber],
-                                                              gradientColorListLight[randomNumber],
-                                                            ],
-                                                            begin: const FractionalOffset(0.0, 0.0),
-                                                            end: const FractionalOffset(0.0, 1.0),
-                                                            stops: [0.0, 1.0],
-                                                            tileMode: TileMode.clamp
-                                                        )
-                                                    ),
-                                                    child: Image.asset("assets/user_ic_white.png"),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(left: 10.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(_body.name.toString()),
-                                                        Row(
-                                                          children: [
-                                                            Text("Payment Status"),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  Container(
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text("(${_body.date.toString().substring(0,10)})"),
-                                                        Text("(${_body.time})")
-                                                      ],
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 20.0),
-                                                child: Row(
-                                                  children: [
-                                                    Spacer(),
-                                                    Container(
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                )
+                            );
+                          }):
+                      tab.matchAsPrefix("completed") != null ?ListView.builder(
+                          itemCount: _list.length,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            int randomNumber = _random.nextInt(5);
+                            Body _body = _list[index];
+                            return Container(
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                child: Card(
+                                    color: Colors.white,
+                                    shadowColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)
+                                        )
+                                    ),
+                                    elevation: 10.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)
+                                          )
+                                      ),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: 35,
+                                                  height: 35,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: LinearGradient(
+                                                          colors: [
+                                                            gradientColorList[randomNumber],
+                                                            gradientColorListLight[randomNumber],
+                                                          ],
+                                                          begin: const FractionalOffset(0.0, 0.0),
+                                                          end: const FractionalOffset(0.0, 1.0),
+                                                          stops: [0.0, 1.0],
+                                                          tileMode: TileMode.clamp
+                                                      )
+                                                  ),
+                                                  child: Image.asset("assets/user_ic_white.png"),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(left: 10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(_body.name.toString()),
+                                                      Row(
+                                                        children: [
+                                                          Text("Payment Status"),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text("(${_body.date.toString().substring(0,10)})"),
+                                                      Text("(${_body.time})")
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20.0),
+                                              child: Row(
+                                                children: [
+                                                  Spacer(),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        final call = Uri.parse('tel:${_body.phone}');
+                                                        if (await canLaunchUrl(call)) {
+                                                          launchUrl(call);
+                                                        } else {
+                                                          throw 'Could not launch $call';
+                                                        }
+                                                      },
+                                                    child: Container(
                                                       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                                       decoration: BoxDecoration(
                                                           color: Color(0xfff5f5f5),
@@ -988,27 +1040,27 @@ class _AppointmentState extends State<Appointment> {
                                                       ),
                                                       child: Image.asset("assets/phone_ic.png",
                                                         color: Colors.green,),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                      )
-                                  )
-                              );
-                            }):
-                        Container(),
-                      )
-                    ],
-                  ),
+                                      ),
+                                    )
+                                )
+                            );
+                          }):
+                      Container(),
+                    )
+                  ],
                 ),
               ),
             ),
-          ],
+          ),
+        ],
 
-        ),
       ),
     );
   }

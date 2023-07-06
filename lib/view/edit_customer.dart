@@ -3,10 +3,14 @@ import 'dart:io';
 import 'package:astro_santhil_app/models/category_model.dart';
 import 'package:astro_santhil_app/models/customer_detail_model.dart';
 import 'package:astro_santhil_app/models/sub_category_model.dart';
+import 'package:astro_santhil_app/models/update_customer_model.dart';
 import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'home.dart';
 
 class EditCustomer extends StatefulWidget {
   String id = "";
@@ -28,10 +32,12 @@ class _EditCustomerState extends State<EditCustomer> {
   String categoryId = "";
   String subCategoryId = "";
   File? image;
+  String networkImage = "";
   File? horoscopeImage;
   late CategoryModel _categoryModel;
   late SubCategoryModel _subCategoryModel;
   late CustomerDetailModel _customerDetailModel;
+  late UpdateCustomerModel _updateCustomerModel;
   TextEditingController userName = TextEditingController();
   TextEditingController place = TextEditingController();
   TextEditingController city = TextEditingController();
@@ -215,6 +221,7 @@ class _EditCustomerState extends State<EditCustomer> {
     });
     _customerDetailModel = await Services.customerDetail(widget.id);
     if(_customerDetailModel.status == true){
+      networkImage = _customerDetailModel.data![0].hImage.toString();
       userName.text = _customerDetailModel.data![0].name.toString();
       selectedGender = _customerDetailModel.data![0].gender.toString();
       place.text = _customerDetailModel.data![0].place.toString();
@@ -225,12 +232,51 @@ class _EditCustomerState extends State<EditCustomer> {
       phoneNumber.text = _customerDetailModel.data![0].phone.toString();
       birthPlace.text = _customerDetailModel.data![0].birthPlace.toString();
       text.text = _customerDetailModel.data![0].text.toString();
+      categoryId = _customerDetailModel.data![0].catId.toString();
+      subCategoryId = _customerDetailModel.data![0].subCatId.toString();
     }
     setState(() {
       isLoad = false;
     });
   }
 
+  Future<void> updateCustomer() async {
+    setState(() {
+      clickLoad = true;
+    });
+
+    File? filea;
+    if(image == null){
+      if(_customerDetailModel.data![0].hImage.toString().isEmpty){
+        Fluttertoast.showToast(msg: "Please add image");
+      }else {
+        print("bhb");
+        filea = await Services.urlToFile(
+            _customerDetailModel.data![0].hImage.toString());
+      }
+    }else{
+      filea = File(image!.path);
+      print("php");
+    }
+    _updateCustomerModel = await Services.updateCustomer(widget.id, userName.text, selectedGender, city.text,
+        dob.toString(), selectTimes, email.text, phoneNumber.text, categoryId, subCategoryId, place.text,
+        text.text, birthPlace.text, filea!);
+    if(_updateCustomerModel.status == true){
+      Fluttertoast.showToast(msg: "${_updateCustomerModel.msg}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
+    }else{
+
+      Fluttertoast.showToast(msg: "${_updateCustomerModel.msg}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR);
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
   @override
   void initState() {
     viewCustomer();
@@ -325,6 +371,11 @@ class _EditCustomerState extends State<EditCustomer> {
                                     )
                                   ),
                                 )
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(bottom: 10.0),
+                              child: Text("Image"),
                             ),
                             Container(
                               margin: EdgeInsets.only(bottom: 10.0),
@@ -835,7 +886,7 @@ class _EditCustomerState extends State<EditCustomer> {
                               children: [
                                 InkWell(
                                   onTap: (){
-
+                                    updateCustomer();
                                   },
                                   child: Container(
                                       height: 60,
@@ -863,19 +914,22 @@ class _EditCustomerState extends State<EditCustomer> {
                                               Radius.circular(5.0)
                                           )
                                       ),
-                                      child: Row(
+                                      child: clickLoad ? Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          clickLoad?Container(
-                                            width: 24,
-                                            height: 24,
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: const CircularProgressIndicator(
-                                              color: Colors.black,
-                                              strokeWidth: 3,
+                                          Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 3.0,
                                             ),
-                                          ):Text("Save Changes".toUpperCase(),
+                                          )
+                                        ],
+                                      ) : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text("Save Changes".toUpperCase(),
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: Colors.white, fontSize: 18)

@@ -1,3 +1,4 @@
+import 'package:astro_santhil_app/main.dart';
 import 'package:astro_santhil_app/view/add_appointment.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
 import 'package:astro_santhil_app/view/menu.dart';
@@ -5,6 +6,7 @@ import 'package:astro_santhil_app/view/payments.dart';
 import 'package:astro_santhil_app/view/slot_booking.dart';
 import 'package:astro_santhil_app/view/view_customer.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -40,6 +42,16 @@ class _HomeState extends State<Home>{
     AddAppointment(),
     ViewCustomer(),
   ];
+
+  void navigateUser(BuildContext context) async{
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+
+    _preferences.clear();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+            (route) => false);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,25 +90,30 @@ class _HomeState extends State<Home>{
                         ),
                       ),
                       Spacer(),
-                      Container(
-                        padding: EdgeInsets.only(left: 10.0, top: 3.49, right: 20.0, bottom: 3.49),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(20.0)),
-                          color: Color(0xff303030)
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Image.asset("assets/log_out_ic.png"),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 5.0),
-                              child: Text("Log Out", style: TextStyle(fontSize: 12.09, color: Colors.white),),
-                            )
-                          ],
+                      InkWell(
+                        onTap: (){
+                          navigateUser(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10.0, top: 3.49, right: 20.0, bottom: 3.49),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(20.0)),
+                            color: Color(0xff303030)
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Image.asset("assets/log_out_ic.png"),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 5.0),
+                                child: Text("Log Out", style: TextStyle(fontSize: 12.09, color: Colors.white),),
+                              )
+                            ],
+                          ),
                         ),
                       )
                     ],

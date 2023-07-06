@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:astro_santhil_app/models/add_appointment_model.dart';
 import 'package:astro_santhil_app/models/appointment_detai_model.dart';
 import 'package:astro_santhil_app/models/customer_name_model.dart';
+import 'package:astro_santhil_app/models/update_appointment_model.dart';
 import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
 import 'package:astro_santhil_app/view/menu.dart';
@@ -27,6 +28,7 @@ class _EditAppointmentState extends State<EditAppointment> {
 
   late CustomerNameModel _customerNameModel;
   late AddAppointmentModel _addAppointmentModel;
+  late UpdateAppointmentModel _updateAppointmentModel;
   late AppointmentDetailModel _detailModel;
   DateTime today = DateTime.now();
   PageController? _pageController;
@@ -92,18 +94,18 @@ class _EditAppointmentState extends State<EditAppointment> {
     });
   }
 
-  Future<void> addAppointment() async {
-    _addAppointmentModel = await Services.addAppointment(selectedCustomer_id, today.toString().substring(0,10),
+  Future<void> updateAppointment() async {
+    _updateAppointmentModel = await Services.updateAppointment(widget.id, today.toString().substring(0,10),
         selectTimes, msg.text, fees.text, _radioSelected.toString());
 
-    if(_addAppointmentModel.status == true){
-      Fluttertoast.showToast(msg: "${_addAppointmentModel.msg}",
+    if(_updateAppointmentModel.status == true){
+      Fluttertoast.showToast(msg: "${_updateAppointmentModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => Appointment("today")));
     }else{
-      Fluttertoast.showToast(msg: "${_addAppointmentModel.msg}",
+      Fluttertoast.showToast(msg: "${_updateAppointmentModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
@@ -431,7 +433,7 @@ class _EditAppointmentState extends State<EditAppointment> {
                           children: [
                             InkWell(
                               onTap: (){
-                                addAppointment();
+                                updateAppointment();
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width/2.4,

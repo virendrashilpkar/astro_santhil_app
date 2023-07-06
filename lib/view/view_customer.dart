@@ -5,6 +5,7 @@ import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/edit_customer.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewCustomer extends StatefulWidget {
   @override
@@ -151,26 +152,84 @@ class _ViewCustomerState extends State<ViewCustomer> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Container(
-                                              alignment: Alignment.center,
-                                              width: 35,
-                                              height: 35,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  gradient: LinearGradient(
-                                                      colors: [
-                                                        gradientColorList[randomNumber],
-                                                        gradientColorListLight[randomNumber],
-                                                      ],
-                                                      begin: const FractionalOffset(0.0, 0.0),
-                                                      end: const FractionalOffset(0.0, 1.0),
-                                                      stops: [0.0, 1.0],
-                                                      tileMode: TileMode.clamp
-                                                  )
-                                              ),
-                                              child: Image.asset("assets/user_ic_white.png"),
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        colors: [
+                                                          gradientColorList[randomNumber],
+                                                          gradientColorListLight[randomNumber],
+                                                        ],
+                                                        begin: const FractionalOffset(0.0, 0.0),
+                                                        end: const FractionalOffset(0.0, 1.0),
+                                                        stops: [0.0, 1.0],
+                                                        tileMode: TileMode.clamp
+                                                    ),
+                                                    // boxShadow: [
+                                                    //   BoxShadow(
+                                                    //     color: Colors.grey.withOpacity(0.7),
+                                                    //     spreadRadius: 1,
+                                                    //     blurRadius: 2,
+                                                    //     offset: const Offset(5, 5), // changes position of shadow
+                                                    //   ),
+                                                    // ],
+                                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                                    // color: Colors.white
+                                                ),
+                                                padding: const EdgeInsets.all(0),
+                                                child: Stack(
+                                                  children: [
+                                                    ClipRRect(
+                                                        borderRadius: BorderRadius.circular(30.0),
+                                                        child: Container(
+                                                            height: 40,
+                                                            width: 40,
+                                                            padding: const EdgeInsets.all(0),
+                                                            child: FadeInImage.assetNetwork(
+                                                              placeholder: "assets/user_ic_white.png",
+                                                              image: "${_body.hImage}",
+                                                              fit: BoxFit.cover,
+                                                            )
+
+                                                        )
+                                                    ),
+                                                    ClipRRect(
+                                                        borderRadius: BorderRadius.circular(30.0),
+                                                        child: Container(
+                                                          height: 40,
+                                                          width: 40,
+                                                        )
+                                                    ),
+                                                  ],
+                                                )
                                             ),
+
+                                        //     Container(
+                                        //       alignment: Alignment.center,
+                                        //       width: 35,
+                                        //       height: 35,
+                                        //       decoration: BoxDecoration(
+                                        //           shape: BoxShape.circle,
+                                        //           gradient: LinearGradient(
+                                        //               colors: [
+                                        //                 gradientColorList[randomNumber],
+                                        //                 gradientColorListLight[randomNumber],
+                                        //               ],
+                                        //               begin: const FractionalOffset(0.0, 0.0),
+                                        //               end: const FractionalOffset(0.0, 1.0),
+                                        //               stops: [0.0, 1.0],
+                                        //               tileMode: TileMode.clamp
+                                        //           )
+                                        //       ),
+                                        //       child: ClipRRect(
+                                        //         borderRadius: BorderRadius.circular(50.0),
+                                        //         child: _body.hImage != null ? Image.network("${_body.hImage}"):
+                                        //         Image.asset("assets/user_ic_white.png"),
+                                        //       )
+                                        // // FadeInImage.assetNetwork(
+                                        // //           placeholder: ,
+                                        // //           image: "${_body.hImage}")
+                                        //     ),
                                             Container(
-                                              margin: EdgeInsets.only(left: 10.0),
+                                              margin: EdgeInsets.only(left: 20.0),
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +268,9 @@ class _ViewCustomerState extends State<ViewCustomer> {
                                                   margin: EdgeInsets.symmetric(horizontal: 10.0),
                                                   child: Column(
                                                     children: [
-                                                      Image.asset("assets/edit_ic.png"),
+                                                      Image.asset("assets/edit_ic.png",
+                                                        height: 20,
+                                                        color: Colors.black26,),
                                                       Container(
                                                           margin: EdgeInsets.only(top: 5.0),
                                                           child: Text("Edit", style: TextStyle(fontSize: 12.0),))
@@ -218,16 +279,26 @@ class _ViewCustomerState extends State<ViewCustomer> {
                                                 ),
                                               ),
                                               Spacer(),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xfff5f5f5),
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(5.0)
-                                                    )
+                                              InkWell(
+                                                  onTap: () async {
+                                                    final call = Uri.parse('tel:${_body.phone}');
+                                                    if (await canLaunchUrl(call)) {
+                                                      launchUrl(call);
+                                                    } else {
+                                                      throw 'Could not launch $call';
+                                                    }
+                                                  },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xfff5f5f5),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5.0)
+                                                      )
+                                                  ),
+                                                  child: Image.asset("assets/phone_ic.png",
+                                                    color: Colors.green,),
                                                 ),
-                                                child: Image.asset("assets/phone_ic.png",
-                                                  color: Colors.green,),
                                               )
                                             ],
                                           ),

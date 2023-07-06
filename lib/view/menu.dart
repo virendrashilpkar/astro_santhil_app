@@ -1,6 +1,8 @@
+import 'package:astro_santhil_app/main.dart';
 import 'package:astro_santhil_app/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -8,6 +10,17 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+
+  void navigateUser(BuildContext context) async{
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+
+    _preferences.clear();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+            (route) => false);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,6 +111,16 @@ class _MenuState extends State<Menu> {
                       Fluttertoast.showToast(msg: "Coming soon");
                     },
                     child: TAbBarr(text: "My profile", icon: "assets/adim_ic.png",),
+                  ),
+                  Container(
+                    height: 1.0,
+                    color: Color(0xff3CD6CE),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      navigateUser(context);
+                    },
+                    child: TAbBarr(text: "Log Out", icon: "assets/turn_off.png",),
                   ),
                 ],
               )

@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:astro_santhil_app/models/add_appointment_model.dart';
 import 'package:astro_santhil_app/models/add_customer_model.dart';
@@ -14,11 +15,14 @@ import 'package:astro_santhil_app/models/login_model.dart';
 import 'package:astro_santhil_app/models/payment_view_model.dart';
 import 'package:astro_santhil_app/models/sub_category_model.dart';
 import 'package:astro_santhil_app/models/cancel_appointment_model.dart';
+import 'package:astro_santhil_app/models/update_appointment_model.dart';
+import 'package:astro_santhil_app/models/update_customer_model.dart';
 import 'package:astro_santhil_app/models/view_customer_model.dart';
 import 'package:http/http.dart'as http;
 import 'dart:async';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Services {
 
@@ -30,6 +34,18 @@ class Services {
   static String addCustomer = "${mainUrl}Add_customer";
   static String nameList = "${mainUrl}Customer_api";
   static String payment = "${mainUrl}Admin";
+
+  static Future<File> urlToFile(String imageUrl) async {
+    var rng = new Random();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
+    print("objectffgfgfgfg $imageUrl");
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    await file.writeAsBytes(response.bodyBytes);
+    print("objectmnbnnv ${file}");
+    return file;
+  }
 
   static Future<LoginModel> loginApi(String name, String pass) async {
     final params = {
@@ -322,6 +338,72 @@ class Services {
     } else {
       var data = jsonDecode(response.body);
       CustomerDetailModel user = CustomerDetailModel.fromJson(data);
+      return user;
+    }
+  }
+
+  static Future<UpdateAppointmentModel> updateAppointment(String id, String date, String time, String msg, String fees,
+      String fessStatus) async {
+    final params = {
+      "flag":"update_appointment",
+      "id": id,
+      "date": date,
+      "time": time,
+      "message": msg,
+      "fees": fees,
+      "fees status": fessStatus,
+    };
+    http.Response response = await http.post(Uri.parse(appointment), body: params);
+    print("updateAppointment ${params}");
+    print("updateAppointment ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UpdateAppointmentModel user = UpdateAppointmentModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      UpdateAppointmentModel user = UpdateAppointmentModel.fromJson(data);
+      return user;
+    }
+  }
+
+  static Future<UpdateCustomerModel> updateCustomer(String cId, String name, String gender, String city, String dob, String birt_time,
+      String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
+      File image) async {
+    var request = new http.MultipartRequest("POST", Uri.parse(nameList));
+    var fImage = await http.MultipartFile.fromPath("h_image", image.path);
+
+    request.fields["flag"] = "edit_customer";
+    request.fields["customer_id"] = cId;
+    request.fields["name"] = name;
+    request.fields["gender"] = gender;
+    request.fields["city"] = city;
+    request.fields["dob"] = dob;
+    request.fields["birth_time"] = birt_time;
+    request.fields["email"] = email;
+    request.fields["phone"] = phone;
+    request.fields["cat_id"] = catId;
+    request.fields["sub_cat_id"] = subCatId;
+    request.fields["place"] = place;
+    request.fields["text"] = text;
+    request.fields["birth_place"] = birthPlace;
+    request.files.add(fImage);
+
+
+
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("updateCustomer ${request.fields}");
+    print("updateCustomer ${response2.body}");
+
+    if (response2.statusCode == 200) {
+      var data = jsonDecode(response2.body);
+      UpdateCustomerModel user = UpdateCustomerModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response2.body);
+      UpdateCustomerModel user = UpdateCustomerModel.fromJson(data);
       return user;
     }
   }
