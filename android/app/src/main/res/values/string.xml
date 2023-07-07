@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Shaadiapp</string>
+<!--test mode-->
+<!--    <string name="facebook_app_id">215944121403570</string>-->
+<!--    <string name="facebook_client_token">ab99c679acead4b64e10a1aea149c836</string>-->
+<!--    live mode-->
+    <string name="facebook_app_id">846965816761018</string>
+    <string name="facebook_client_token">57ad59ec9a3e5084c52ee3a0e94219d4</string>
+
+
+</resources>

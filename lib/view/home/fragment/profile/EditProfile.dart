@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/city_list_model.dart';
+import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
@@ -31,7 +33,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   bool isLoad = false;
   bool clickLoad = false;
   String T = "";
-  List<Datum> _list = [];
+  List<ImageDatum> _list = [];
   List<PrefsDatum> intrest = [];
   late SharedPreferences _preferences;
   late ViewImageModel _viewImageModel;
@@ -80,7 +82,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_viewImageModel.status == 1) {
       for(var i = 0; i < _viewImageModel.data!.length; i++){
-        _list = _viewImageModel.data ?? <Datum> [];
+        _list = _viewImageModel.data ?? <ImageDatum> [];
       }
     }
     isLoad = false;
@@ -130,6 +132,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       dateOfBirth = _userDetailModel.data![0].birthDate.toString();
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
+      if(country!=""){
+        ListCountry();
+      }
       city = _userDetailModel.data![0].city.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
@@ -256,8 +261,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   @override
   void initState() {
     CheckUserConnection();
+    ListCountry();
     viewImage();
-    userDetail();
+    // userDetail();
     viewPrefs();
     userViewPreference();
     _tabController = TabController(length: 2, vsync: this);
@@ -330,6 +336,51 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
   String country = 'Select country';
   String city = 'Select city';
+  List<String> cityList = [
+    "Select city"
+  ];
+  List<String> countryList = [
+    "Select country"
+  ];
+  late CountryListModel _countryListModel;
+  late CItyListModel _cItyListModel;
+  Future<void> ListCity(String name) async {
+    setState(() {
+      isLoad = true;
+    });
+    cityList.clear();
+    _cItyListModel = await Services.CityList(name);
+    if(_cItyListModel.status == true){
+      cityList.add("Select city");
+      for(var i = 0; i < _cItyListModel.data!.length; i++){
+        cityList.add(_cItyListModel.data![i].name.toString());
+      }
+    }
+    setState(() {
+      isLoad = false;
+    });
+  }
+
+  Future<void> ListCountry() async {
+    isLoad = true;
+
+    _countryListModel = await Services.CountryList();
+    if (_countryListModel.status == true){
+
+      for(var i = 0; i < _countryListModel.data!.length; i++){
+        countryList.add(_countryListModel.data![i].name.toString());
+      }
+      if(country!=""){
+        ListCity(country);
+      }
+      // country = _userDetailModel.data?[0].country ?? "Select country";
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
+
+
   String caste = 'Select Caste';
   String tongue = 'Select your mother tongue';
   @override
@@ -970,8 +1021,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   if(prefList[index] != intrest){
                                     if(selectedIndex.length!=4){
                                       selectedIndex.add(index);
-                                    }else{
-                                      Toaster.show(context, "You can select only 4");
                                     }
                                   }
                                   return GestureDetector(
@@ -979,8 +1028,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       setState(() {
                                         if(selectedIndex.length!=4){
                                           selectedIndex.add(index);
-                                        }else{
-                                          Toaster.show(context, "You can select only 4");
                                         }
                                       });
                                     },

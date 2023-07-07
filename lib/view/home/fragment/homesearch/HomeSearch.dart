@@ -554,11 +554,11 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
                                                           "${_userList[index].city} | "
-                                                          "${_userList[index].country} | ",
+                                                          "${_userList[index].country}",
                                                           style: TextStyle(
                                                             color: CommonColors.lightblue,
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.w500,
+                                                            fontWeight: FontWeight.w600,
                                                           ),
                                                           textAlign: TextAlign.left,
                                                         ),
@@ -960,6 +960,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
       age = _userDetailModel.data![0].age.toString();
       place = _userDetailModel.data![0].city.toString();
       country = _userDetailModel.data![0].country.toString();
+      religion = _userDetailModel.data![0].religion.toString();
       height = _userDetailModel.data![0].height.toString();
       weight = _userDetailModel.data![0].weight.toString();
       maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -1076,10 +1077,10 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                           alignment: Alignment.topLeft,
                           // margin: const EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            "${place} | ${country} \n"
-                                "${height.replaceAll(".", "`")} | "
-                                "${weight}kg | "
-                                "hindu  | "
+                            "${place},${country} \n"
+                                " ${height.replaceAll(".", "`")},"
+                                " ${weight}kg,"
+                                " ${religion},"
                                 " ${maratialStatus}",
                             style: TextStyle(
                               color: Colors.white,

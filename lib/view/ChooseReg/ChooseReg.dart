@@ -1,10 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
-import 'package:shadiapp/view/accountrecover/AccountRecover.dart';
-import 'package:shadiapp/view/problemauth/ProblemAuth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/otp_verify_model.dart';
+import 'package:shadiapp/Models/phone_login_Model.dart';
+import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 
 class ChooseReg extends StatefulWidget {
   @override
@@ -35,11 +40,122 @@ class _MyHomePageState extends State<ChooseReg> {
   @override
   void initState() {
     CheckUserConnection();
+    getAsync();
     super.initState();
     // Future.delayed(Duration(seconds: 4), () {
     //   navigateUser(context);
     // });
   }
+
+
+  Future<Null> faceBookLogin() async {
+    setState(() {
+      isload=false;
+    });
+    // Create an instance of FacebookLogin
+    final fb = FacebookLogin();
+
+// Log in
+    final res = await fb.logIn(permissions: [
+      FacebookPermission.publicProfile,
+      FacebookPermission.email,
+    ]);
+
+// Check result status
+    switch (res.status) {
+      case FacebookLoginStatus.success:
+      // Logged in
+      // Send access token to server for validation and auth
+        final FacebookAccessToken? accessToken = res.accessToken;
+        print('Access token: ${accessToken?.token}');
+        // Get profile data
+        final profile = await fb.getUserProfile();
+        print('Hello, ${profile?.name}! You ID: ${profile?.userId}');
+        // Get user profile image url
+        final imageUrl = await fb.getProfileImageUrl(width: 100);
+        print('Your profile image: $imageUrl');
+        // Get email (since we request email permission)
+        final email = await fb.getUserEmail();
+        // But user can decline permission
+        if (email != null)
+          print('And your email is $email');
+        break;
+      case FacebookLoginStatus.cancel:
+      // User cancel log in
+        break;
+      case FacebookLoginStatus.error:
+      // Log in failed
+        print('Error while log in: ${res.error}');
+        break;
+    }
+    setState(() {
+      isload=true;
+    });
+  }
+
+
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  bool isload=true;
+  Future<void> _handleSignIn() async {
+    setState(() {
+      isload=false;
+    });
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if(googleUser != null) {
+        // Successful sign-in
+        // You can access the user's information through the `googleUser` object
+        googleUser.authentication.then((googleKey){
+          GoogleLoginMethod("${googleKey.idToken}");
+          // print('accessToken: ${googleKey.accessToken}');
+          // print('idToken: ${googleKey.idToken}');
+          // print('displayName: ${_googleSignIn.currentUser?.displayName}');
+        });
+      }else {
+        // Sign-in process canceled by the user
+        print('Sign-in canceled');
+      }
+    }catch(error) {
+      // Error occurred during sign-in
+      print('Error signing in with Google: $error');
+    }
+    setState(() {
+      isload=true;
+    });
+  }
+  getAsync() async {
+    try{
+      _preferences = await SharedPreferences.getInstance();
+      setState(() {
+
+      });
+    }catch (e) {
+      print(e);
+    }
+  }
+  SharedPreferences? _preferences;
+  bool clickLoad=false;
+  late OtpVerifyModel otpVerifyModel;
+  Future<void> GoogleLoginMethod(String token) async {
+    setState(() {
+      clickLoad = true;
+    });
+    otpVerifyModel = await Services.GoogleCrdentials(token);
+    if(otpVerifyModel.status == 1){
+      _preferences?.setString(ShadiApp.userId,otpVerifyModel.data?.id ?? "");
+      _preferences?.setBool(ShadiApp.status, true);
+      Toaster.show(context, otpVerifyModel.massege.toString());
+      Navigator.of(context).pushNamed('CountryCity');
+    }else{
+      Toaster.show(context, otpVerifyModel.massege.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
 
   final Uri toLaunch = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
   Future<void> _launchInBrowser(Uri url) async {
@@ -153,7 +269,11 @@ class _MyHomePageState extends State<ChooseReg> {
                   SizedBox.expand(
                     child: Material(
                       type: MaterialType.transparency,
-                      child: InkWell(onTap: () {},splashColor: Colors.blue.withOpacity(0.2),
+                      child: InkWell(onTap: () {
+                        if(isload) {
+                          _handleSignIn();
+                        }
+                      },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -206,7 +326,11 @@ class _MyHomePageState extends State<ChooseReg> {
                   SizedBox.expand(
                     child: Material(
                       type: MaterialType.transparency,
-                      child: InkWell(onTap: () {},splashColor: Colors.blue.withOpacity(0.2),
+                      child: InkWell(onTap: () {
+                        if(isload) {
+                          faceBookLogin();
+                        }
+                      },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),

@@ -1,6 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/Models/matchlist.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shadiapp/Services/Services.dart';
+
+
 
 class Chat extends StatefulWidget {
   @override
@@ -23,6 +32,60 @@ class _ChatState extends State <Chat> {
     "https://w0.peakpx.com/wallpaper/862/303/HD-wallpaper-jisoo-blackpink-blackpink-jisoo-k-pop.jpg",
     "https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",
   ];
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    getAvailableuser();
+    Getmatch();
+  }
+
+
+  List OneList = [];
+  bool isLoading = true;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late SharedPreferences _preferences;
+  String user_id="";
+
+  bool isLoad=false;
+  late MatchList matchList;
+  List<Datum> _matchList=[];
+  void Getmatch()async{
+    isLoad = true;
+    _preferences = await SharedPreferences.getInstance();
+    matchList = await Services.MatchListMethod("${_preferences?.getString(ShadiApp.userId).toString()}");
+    if(matchList.status == 200) {
+      for(var i = 0; i < matchList.data!.length; i++){
+        _matchList = matchList.data ?? <Datum> [];
+      }
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
+
+
+  void getAvailableuser() async {
+
+    _preferences = await SharedPreferences.getInstance();
+    user_id = "${_preferences?.getString(ShadiApp.userId).toString()}";
+    await _firestore
+        .collection('chatroom')
+        .get()
+        .then((value) {
+      print(value.docs);
+      OneList = value.docs;
+      isLoading = false;
+      if(mounted) {
+        setState(() {});
+      }
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +209,7 @@ class _ChatState extends State <Chat> {
                       decoration: index==0 ? BoxDecoration(
                           borderRadius: BorderRadius.all(
                               Radius.circular(15.0)),
-                        border: Border.all(color: Colors.yellow,width: 1)
+                        border: Border.all(color: Colors.yellow,width: 2)
                       ):null,
                       child: Container(
                         width: 80,
@@ -162,7 +225,7 @@ class _ChatState extends State <Chat> {
                               decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(images[index]),
-                                  fit: BoxFit.fill)
+                                  fit: BoxFit.cover)
                               ),
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -181,7 +244,7 @@ class _ChatState extends State <Chat> {
                                               children: [
                                                 Container(
                                                   child: Text("Ana, 24",
-                                                    style: TextStyle(color: Colors.white),),
+                                                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
                                                 ),
                                               ],
                                             ),
@@ -199,10 +262,40 @@ class _ChatState extends State <Chat> {
             ),
             Expanded(
               child: Container(
-                child: ListView.builder(
-                    itemCount: images.length,
+                child:
+                _matchList.isEmpty ?
+                Container(
+                  height: 500,
+                  alignment: Alignment.center,
+                  child: Center(
+                      child: Stack(
+                        children: [
+                          // Image.asset("assets/iconsnew/no_data_ic.png", width: MediaQuery.of(context).size.width / 1.5, height: MediaQuery.of(context).size.height / 2,),
+                          Positioned(
+                              bottom: 100,
+                              left: 0,
+                              right: 0,
+                              child: Center(child: Text("There is no chat available", style: const TextStyle(fontSize: 16, fontFamily: 'dubai', color: Colors.black, fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
+                          ),
+                        ],
+                      )
+                  ),
+                ) :
+                ListView.builder(
+                    itemCount: _matchList.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index){
+                      // bool isvisible=false;
+                      // String members= OneList[index]["uid1"];
+                      // String members2= OneList[index]["uid2"];
+                      // String membersn= OneList[index]["user1"];
+                      // String membersn2= OneList[index]["user2"];
+                      // String image1= OneList[index]["image1"];
+                      // String image2= OneList[index]["image2"];
+                      // String id= OneList[index]["id"];
+                      // if(members==user_id || members2==user_id){
+                      //   isvisible = true;
+                      // }
                       return Container(
                         child: Column(
                           children: [
@@ -214,7 +307,7 @@ class _ChatState extends State <Chat> {
                               onTap: (){
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder: (context) => ChatRoom(images[index])
+                                        builder: (context) => ChatRoom(_matchList[index].image ?? "",_matchList[index].id ?? "",_matchList[index].id ?? "","${_matchList[index].firstName}${_matchList[index].lastName}")
                                     )
                                 );
                               },
@@ -231,7 +324,7 @@ class _ChatState extends State <Chat> {
                                       height: 62,
                                       child: CircleAvatar(
                                         radius: 31,
-                                        backgroundImage: NetworkImage(images[index]),
+                                        backgroundImage: NetworkImage(_matchList[index].image ?? ""),
                                         backgroundColor: CommonColors.bottomgrey,
                                       ),
                                     ),
@@ -243,7 +336,7 @@ class _ChatState extends State <Chat> {
                                           children: [
                                             Container(
                                               margin: EdgeInsets.only(left: 13.0),
-                                              child: Text("Jimmy",
+                                              child: Text("${_matchList[index].firstName} ${_matchList[index].lastName}",
                                                 style: TextStyle(
                                                   color: Colors.white, fontSize: 16,
                                                     fontWeight: FontWeight.w500, fontStyle: FontStyle.normal
@@ -297,7 +390,8 @@ class _ChatState extends State <Chat> {
                           ],
                         ),
                       );
-                    }),
+                    }
+                    ),
               ),
             )
           ],

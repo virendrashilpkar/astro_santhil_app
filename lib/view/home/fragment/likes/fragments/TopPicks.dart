@@ -62,7 +62,7 @@ class _TopPicks extends State<TopPicks> {
     var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
-    final double itemHeight = (size.width / 2)+20;
+    final double itemHeight = (size.width / 2)+40;
     final double itemWidth = size.width / 2;
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
@@ -97,7 +97,7 @@ class _TopPicks extends State<TopPicks> {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: NetworkImage(data.image.toString()),
-                                fit: BoxFit.fill)
+                                fit: BoxFit.cover)
                         ),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -123,7 +123,7 @@ class _TopPicks extends State<TopPicks> {
                                     children: [
                                       Container(
                                         child: Text("${data.name}, ${data.age}",
-                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
+                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600,
                                               fontSize: 14),),
                                       ),
                                       Spacer(),

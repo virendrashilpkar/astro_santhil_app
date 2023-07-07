@@ -85,12 +85,12 @@ class _MyHomePageState extends State<Cast> {
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
       email = _userDetailModel.data![0].email.toString();
-      if (_userDetailModel.data![0].religion == null) {
+      if (_userDetailModel.data![0].religion == "") {
         religion = "Select religion";
       }else {
         religion = _userDetailModel.data![0].religion.toString();
       }
-      if (_userDetailModel.data![0].caste == null){
+      if (_userDetailModel.data![0].caste == ""){
         cast = "Select cast";
       }else {
         cast = _userDetailModel.data![0].caste.toString();

@@ -40,7 +40,7 @@ class Data {
   String? firstName;
   String? lastName;
   String? email;
-  DateTime? birthDate;
+  String? birthDate;
   String? phone;
   String? createdBy;
   String? token;
@@ -101,7 +101,7 @@ class Data {
     firstName: json["first_name"],
     lastName: json["last_name"],
     email: json["email"],
-    birthDate: json["birth_date"] == "" ? null : DateTime.parse(json["birth_date"]),
+    birthDate: json["birth_date"],
     phone: json["phone"],
     createdBy: json["created_by"],
     token: json["token"],
@@ -132,7 +132,7 @@ class Data {
     "first_name": firstName,
     "last_name": lastName,
     "email": email,
-    "birth_date": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+    "birth_date": birthDate,
     "phone": phone,
     "created_by": createdBy,
     "token": token,

@@ -48,7 +48,7 @@ class _MyHomePageState extends State<CountryCity> {
     "Select country"
   ];
   List<String> cityList = [
-    "Select country"
+    "Select city"
   ];
 
   Future CheckUserConnection() async {
@@ -96,10 +96,12 @@ class _MyHomePageState extends State<CountryCity> {
       }else {
         country = _userDetailModel.data![0].country.toString();
       }
+      // print(">>>>>>>>>>${_userDetailModel.data![0].country}");
       if(_userDetailModel.data![0].city == ""){
         city = "Select city";
       }else {
         city = _userDetailModel.data![0].city.toString();
+        cityList.add(city);
       }
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
@@ -112,38 +114,45 @@ class _MyHomePageState extends State<CountryCity> {
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
       setState(() {
-
       });
     }
   }
 
   Future<void> ListCountry() async {
     isLoad = true;
+
     _countryListModel = await Services.CountryList();
     if (_countryListModel.status == true){
+
       for(var i = 0; i < _countryListModel.data!.length; i++){
         countryList.add(_countryListModel.data![i].name.toString());
       }
+      if(country!=""){
+        ListCity(country);
+      }
+      // country = _userDetailModel.data?[0].country ?? "Select country";
     }
     isLoad = false;
     setState(() {
-      country = _userDetailModel.data?[0].country ?? "Select country";
-      ListCity(country);
     });
   }
 
   Future<void> ListCity(String name) async {
-    isLoad = true;
+    setState(() {
+      isLoad = true;
+    });
+    cityList.clear();
     _cItyListModel = await Services.CityList(name);
     if(_cItyListModel.status == true){
+      cityList.add("Select city");
       for(var i = 0; i < _cItyListModel.data!.length; i++){
         cityList.add(_cItyListModel.data![i].name.toString());
       }
     }
-    isLoad = false;
     setState(() {
-
+      isLoad = false;
     });
+
   }
 
   Future<void> updateUser() async {
@@ -180,6 +189,7 @@ class _MyHomePageState extends State<CountryCity> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: isLoad ? Center(

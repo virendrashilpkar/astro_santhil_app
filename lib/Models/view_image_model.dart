@@ -11,7 +11,7 @@ String viewImageModelToJson(ViewImageModel data) => json.encode(data.toJson());
 class ViewImageModel {
   int? status;
   String? message;
-  List<Datum>? data;
+  List<ImageDatum>? data;
 
   ViewImageModel({
     this.status,
@@ -22,7 +22,7 @@ class ViewImageModel {
   factory ViewImageModel.fromJson(Map<String, dynamic> json) => ViewImageModel(
     status: json["status"],
     message: json["message"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: List<ImageDatum>.from(json["data"].map((x) => ImageDatum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +32,7 @@ class ViewImageModel {
   };
 }
 
-class Datum {
+class ImageDatum {
   String? id;
   String? userId;
   String? image;
@@ -40,7 +40,7 @@ class Datum {
   DateTime? updatedAt;
   int? v;
 
-  Datum({
+  ImageDatum({
     this.id,
     this.userId,
     this.image,
@@ -49,7 +49,7 @@ class Datum {
     this.v,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory ImageDatum.fromJson(Map<String, dynamic> json) => ImageDatum(
     id: json["_id"],
     userId: json["userId"],
     image: json["image"],

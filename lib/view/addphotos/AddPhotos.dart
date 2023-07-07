@@ -51,7 +51,7 @@ class _MyHomePageState extends State<AddPhotos> {
   String youarevalue="";
 
   List<File?> imagelist = List.filled(6, null);
-  List<Datum> _list = [];
+  List<ImageDatum> _list = [];
   // List<File?> imagelist=[null,null,null,null,null,null];
 
   Future<void> uploadImage(File image) async {
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<AddPhotos> {
     _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_viewImageModel.status == 1) {
       for(var i = 0; i < _viewImageModel.data!.length; i++){
-        _list = _viewImageModel.data ?? <Datum> [];
+        _list = _viewImageModel.data ?? <ImageDatum> [];
       }
     }
     isLoad = false;

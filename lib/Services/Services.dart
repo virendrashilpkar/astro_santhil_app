@@ -8,6 +8,7 @@ import 'package:shadiapp/Models/city_list_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/like_model.dart';
+import 'package:shadiapp/Models/matchlist.dart';
 import 'package:shadiapp/Models/my_matches_model.dart';
 import 'package:shadiapp/Models/new_matches_model.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
@@ -29,6 +30,8 @@ class Services {
   static String BaseUrl = "http://52.63.253.231:4000/api/v1/";
 
   static String Login = BaseUrl + "login";
+  static String GoogleLogin = BaseUrl + "google/login";
+  static String match_list = BaseUrl + "own/matches";
   static String OtpVerify = BaseUrl + "otp-verify";
   static String UserDetail = BaseUrl + "userDetails";
   static String UserUpdate = BaseUrl + "update";
@@ -61,6 +64,37 @@ class Services {
       PhoneLoginModel user = PhoneLoginModel.fromJson(data);
       return user;
     } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+  static Future<OtpVerifyModel> GoogleCrdentials(String token) async {
+    final params = {"token": token};
+    print("GoogleCrdentials " + params.toString());
+    http.Response response = await http.post(Uri.parse(GoogleLogin), body: params);
+    print("GoogleCrdentials" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      OtpVerifyModel user = OtpVerifyModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+  static Future<MatchList> MatchListMethod(String user_id) async {
+    final params = {"id": user_id};
+    // final params = {"id": "6452535298f7692c6a731291"};
+    print("MatchListMethod" + params.toString());
+    http.Response response = await http.post(Uri.parse(match_list), body: params);
+    print("MatchListMethod" + response.body);
+
+    if(response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      MatchList user = MatchList.fromJson(data);
+      return user;
+    }else{
       print(response.body);
       throw Exception('Failed');
     }
@@ -458,7 +492,10 @@ class Services {
       return user;
     } else {
       print(response.body);
-      throw Exception('Failed');
+      var data = jsonDecode(response.body);
+      CItyListModel user = CItyListModel.fromJson(data);
+      return user;
+      // throw Exception('Failed');
     }
   }
 
