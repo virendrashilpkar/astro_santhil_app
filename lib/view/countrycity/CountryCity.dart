@@ -338,6 +338,22 @@ class _MyHomePageState extends State<CountryCity> {
                 }).toList(),
               ),
             ),
+            Container(
+              height: 50,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                // color: Colors.white,
+                border: Border.all(color: Colors.white),
+                borderRadius: const BorderRadius.all(Radius.circular(25)),
+              ),
+              child: InkWell(
+                onTap: (){
+
+                },
+                child: Text("select city"),
+              )
+            ),
 
             Container(
               alignment: Alignment.center,

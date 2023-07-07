@@ -437,7 +437,9 @@ class Services {
       TopPicksModel user = TopPicksModel.fromJson(data);
       return user;
     } else {
-      print(response.body);
+      var data = jsonDecode(response.body);
+      TopPicksModel user = TopPicksModel.fromJson(data);
+      return user;
       throw Exception('Failed');
     }
   }
