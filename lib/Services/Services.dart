@@ -15,6 +15,7 @@ import 'package:shadiapp/Models/otp_verify_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
+import 'package:shadiapp/Models/statelistmodel.dart';
 import 'package:shadiapp/Models/top_picks_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
@@ -51,6 +52,7 @@ class Services {
   static String NewMatch = BaseUrl + "new/match";
   static String Country = BaseUrl + "country/list";
   static String City = BaseUrl + "city/list";
+  static String State = BaseUrl + "state/list";
   static String ImageDelete = BaseUrl + "user/delete/image";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
@@ -146,6 +148,7 @@ class Services {
       String gender,
       String country,
       String city,
+      String state,
       String height,
       String weight,
       String maritalStatus,
@@ -165,6 +168,7 @@ class Services {
       "gender": gender,
       "country": country,
       "city": city,
+      "state": state,
       "height": height,
       "weight": weight,
       "marital_status": maritalStatus,
@@ -478,10 +482,35 @@ class Services {
     }
   }
 
-  static Future<CItyListModel> CityList(String name) async {
+  static Future<StateListModel> StateList(String name,String stateName) async {
 
     final params = {
-      "name": name
+      "name": name,
+      "stateName":stateName,
+    };
+
+    print("CityListResponse $params");
+    http.Response response = await http.post(Uri.parse(State), body: params);
+    print("CityListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      StateListModel user = StateListModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      var data = jsonDecode(response.body);
+      StateListModel user = StateListModel.fromJson(data);
+      return user;
+      // throw Exception('Failed');
+    }
+  }
+  static Future<CItyListModel> CityList(String name,String isoCode,String countryCode) async {
+
+    final params = {
+      "name": name,
+      "isoCode":isoCode,
+      "countryCode":countryCode
     };
 
     print("CityListResponse $params");

@@ -4,13 +4,14 @@ import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/city_list_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
+import 'package:shadiapp/Models/statelistmodel.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/cast/cast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../commonpackage/SearchChoices.dart';
 
 class CountryCity extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _MyHomePageState extends State<CountryCity> {
   late UserDetailModel _userDetailModel;
   late UpdateUserModel _updateUserModel;
   late CountryListModel _countryListModel;
+  late StateListModel _stateListModel;
   late CItyListModel _cItyListModel;
   String T = "";
   String firstName = "";
@@ -91,18 +93,18 @@ class _MyHomePageState extends State<CountryCity> {
         birthDate = _userDetailModel.data![0].birthDate.toString();
       }
       gender = _userDetailModel.data![0].gender.toString();
-      if (_userDetailModel.data![0].country == ""){
-        country = "Select country";
-      }else {
+      // if (_userDetailModel.data![0].country == ""){
+      //   country = "Select country";
+      // }else {
         country = _userDetailModel.data![0].country.toString();
-      }
+      // }
       // print(">>>>>>>>>>${_userDetailModel.data![0].country}");
-      if(_userDetailModel.data![0].city == ""){
-        city = "Select city";
-      }else {
+      // if(_userDetailModel.data![0].city == ""){
+      //   city = "Select city";
+      // }else {
         city = _userDetailModel.data![0].city.toString();
-        cityList.add(city);
-      }
+        // cityList.add(city);
+      // }
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -126,11 +128,34 @@ class _MyHomePageState extends State<CountryCity> {
 
       for(var i = 0; i < _countryListModel.data!.length; i++){
         countryList.add(_countryListModel.data![i].name.toString());
+        countryitems.add(DropdownMenuItem(
+          value: _countryListModel.data![i].name.toString(),
+          child: Text(_countryListModel.data![i].name.toString()),
+        ));
       }
-      if(country!=""){
-        ListCity(country);
-      }
+      // if(country!=""){
+      //   ListCity(country);
+      // }
       // country = _userDetailModel.data?[0].country ?? "Select country";
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
+  Future<void> Liststate(name) async {
+    isLoad = true;
+    stateitems.clear();
+    countryList.clear();
+    _stateListModel = await Services.StateList(name,"");
+    if (_stateListModel.status == true){
+
+      for(var i = 0; i < _stateListModel.data!.length; i++){
+        countryList.add(_stateListModel.data![i].name.toString());
+        stateitems.add(DropdownMenuItem(
+          value: _stateListModel.data![i].name.toString(),
+          child: Text(_stateListModel.data![i].name.toString()),
+        ));
+      }
     }
     isLoad = false;
     setState(() {
@@ -142,11 +167,24 @@ class _MyHomePageState extends State<CountryCity> {
       isLoad = true;
     });
     cityList.clear();
-    _cItyListModel = await Services.CityList(name);
+
+    cityitems.clear();
+    List<CountryData> countryDataList = _countryListModel.data!.where((user) {
+      return user.name == country;
+    }).toList();
+    List<Statedata> stateDataList = _stateListModel.data!.where((user) {
+      return user.name == state;
+    }).toList();
+
+    _cItyListModel = await Services.CityList("",stateDataList.isNotEmpty ? "${stateDataList[0]?.isoCode}":"",countryDataList.isNotEmpty ? "${countryDataList[0]?.countryCode}":"");
     if(_cItyListModel.status == true){
       cityList.add("Select city");
       for(var i = 0; i < _cItyListModel.data!.length; i++){
         cityList.add(_cItyListModel.data![i].name.toString());
+        cityitems.add(DropdownMenuItem(
+          value: _cItyListModel.data![i].name.toString(),
+          child: Text(_cItyListModel.data![i].name.toString()),
+        ));
       }
     }
     setState(() {
@@ -162,7 +200,7 @@ class _MyHomePageState extends State<CountryCity> {
 
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city, height, weight, maritalStatus, email, lookingFor,
+        lastName, birthDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor,
         religion, caste, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
@@ -176,6 +214,12 @@ class _MyHomePageState extends State<CountryCity> {
     });
   }
 
+
+  String selectedValueSingleDialog="Select country";
+  List<DropdownMenuItem> countryitems = [];
+  List<DropdownMenuItem> stateitems = [];
+  List<DropdownMenuItem> cityitems = [];
+
   @override
   void initState() {
     userDetail();
@@ -185,6 +229,7 @@ class _MyHomePageState extends State<CountryCity> {
   }
 
   String country = 'Select country';
+  String state = 'Select state';
   String city = 'Select city';
 
   @override
@@ -234,6 +279,55 @@ class _MyHomePageState extends State<CountryCity> {
             ),
             new SizedBox(height: 15,),
             Container(
+              // height: 50,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                // color: Colors.white,
+                border: Border.all(color: Colors.white),
+                borderRadius: const BorderRadius.all(Radius.circular(40)),
+              ),
+              child:
+
+              SearchChoices.single(
+                items: countryitems,
+                value: country,
+                hint: "Select country",
+                disabledHint: "Disabled",
+                searchHint: "Select country",
+                style: TextStyle(color: Colors.white),
+                underline: Container(),
+                onChanged: (value) {
+                  setState(() {
+                    country = value;
+                    city = "Select city";
+                    cityList.clear();
+                    cityList.add("Select city");
+                    state = 'Select state';
+                    city = 'Select city';
+                    Liststate(country);
+                  });
+                },
+                displayClearIcon: false,
+                isExpanded: true,
+              ),
+            ),
+            new SizedBox(height: 15,),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'State',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            new SizedBox(height: 15,),
+            Container(
               height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -242,43 +336,57 @@ class _MyHomePageState extends State<CountryCity> {
                 border: Border.all(color: Colors.white),
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
-              child: DropdownButton<String>(
-                value: country,
-                underline: Container(
-                  // height: 1,
-                  // margin:const EdgeInsets.only(top: 20),
-                  // color: Colors.white,
-                ),
-                isExpanded: true,
-                style: TextStyle(color:Colors.white,fontSize: 16),
-                onChanged: (newValue) {
+              child:
+              SearchChoices.single(
+                items: stateitems,
+                value: state,
+                hint: "Select State",
+                searchHint: "Select State",
+                style: TextStyle(color: Colors.white),
+                underline: Container(),
+                onChanged: (value) {
                   setState(() {
-                    country = newValue!;
-                    city = "Select city";
-                    cityList.clear();
-                    cityList.add("Select city");
-                    ListCity(country);
+                    state = value;
+                    city="Select city";
+                    ListCity(state);
                   });
                 },
-                selectedItemBuilder: (BuildContext context) {
-                  return countryList.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value,style: TextStyle(color:country == 'Select country' ? Colors.grey:  Colors.white,fontSize: 16),),
-                    );
-                  }).toList();
-                },
-                iconSize: 24,
-                icon: Icon(Icons.arrow_forward_ios),
-                iconDisabledColor: Colors.white,
-                items: countryList // add your own dial codes
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-                  );
-                }).toList(),
+                displayClearIcon: false,
+                isExpanded: true,
               ),
+              // DropdownButton<String>(
+              //   value: city,
+              //   underline: Container(
+              //     // height: 1,
+              //     // margin:const EdgeInsets.only(top: 20),
+              //     // color: Colors.white,
+              //   ),
+              //   isExpanded: true,
+              //   style: TextStyle(color: Colors.white,fontSize: 16),
+              //   onChanged: (newValue) {
+              //     setState(() {
+              //       city = newValue!;
+              //     });
+              //   },
+              //   selectedItemBuilder: (BuildContext context) {
+              //     return cityList.map((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
+              //       );
+              //     }).toList();
+              //   },
+              //   iconSize: 24,
+              //   icon: Icon(Icons.arrow_forward_ios),
+              //   iconDisabledColor: Colors.white,
+              //   items: cityList // add your own dial codes
+              //       .map<DropdownMenuItem<String>>((String value) {
+              //     return DropdownMenuItem<String>(
+              //       value: value,
+              //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+              //     );
+              //   }).toList(),
+              // ),
             ),
             new SizedBox(height: 15,),
             Container(
@@ -304,56 +412,72 @@ class _MyHomePageState extends State<CountryCity> {
                 border: Border.all(color: Colors.white),
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
-              child: DropdownButton<String>(
+              child:
+              SearchChoices.single(
+                items: cityitems,
                 value: city,
-                underline: Container(
-                  // height: 1,
-                  // margin:const EdgeInsets.only(top: 20),
-                  // color: Colors.white,
-                ),
-                isExpanded: true,
-                style: TextStyle(color: Colors.white,fontSize: 16),
-                onChanged: (newValue) {
+                hint: "Select city",
+                searchHint: "Select city",
+                style: TextStyle(color: Colors.white),
+                underline: Container(),
+                onChanged: (value) {
                   setState(() {
-                    city = newValue!;
+                    city = value;
                   });
                 },
-                selectedItemBuilder: (BuildContext context) {
-                  return cityList.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
-                    );
-                  }).toList();
-                },
-                iconSize: 24,
-                icon: Icon(Icons.arrow_forward_ios),
-                iconDisabledColor: Colors.white,
-                items: cityList // add your own dial codes
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-                  );
-                }).toList(),
+                displayClearIcon: false,
+                isExpanded: true,
               ),
+              // DropdownButton<String>(
+              //   value: city,
+              //   underline: Container(
+              //     // height: 1,
+              //     // margin:const EdgeInsets.only(top: 20),
+              //     // color: Colors.white,
+              //   ),
+              //   isExpanded: true,
+              //   style: TextStyle(color: Colors.white,fontSize: 16),
+              //   onChanged: (newValue) {
+              //     setState(() {
+              //       city = newValue!;
+              //     });
+              //   },
+              //   selectedItemBuilder: (BuildContext context) {
+              //     return cityList.map((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
+              //       );
+              //     }).toList();
+              //   },
+              //   iconSize: 24,
+              //   icon: Icon(Icons.arrow_forward_ios),
+              //   iconDisabledColor: Colors.white,
+              //   items: cityList // add your own dial codes
+              //       .map<DropdownMenuItem<String>>((String value) {
+              //     return DropdownMenuItem<String>(
+              //       value: value,
+              //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+              //     );
+              //   }).toList(),
+              // ),
             ),
-            Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                // color: Colors.white,
-                border: Border.all(color: Colors.white),
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-              ),
-              child: InkWell(
-                onTap: (){
-
-                },
-                child: Text("select city"),
-              )
-            ),
+            // Container(
+            //   height: 50,
+            //   margin: const EdgeInsets.symmetric(horizontal: 20),
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   decoration: BoxDecoration(
+            //     // color: Colors.white,
+            //     border: Border.all(color: Colors.white),
+            //     borderRadius: const BorderRadius.all(Radius.circular(25)),
+            //   ),
+            //   child: InkWell(
+            //     onTap: (){
+            //
+            //     },
+            //     child: Text("select city"),
+            //   )
+            // ),
 
             Container(
               alignment: Alignment.center,

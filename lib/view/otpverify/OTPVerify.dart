@@ -86,7 +86,7 @@ class _MyHomePageState extends State<OTPVerify> {
     });
     loginModel = await Services.LoginCrdentials(widget.number);
     if(loginModel.status == 1){
-      Toaster.show(context, "Otp Send Successfulluy");
+      Toaster.show(context, "Otp Send Successfully");
     }else{
       Toaster.show(context, "Something Went Wrong");
     }

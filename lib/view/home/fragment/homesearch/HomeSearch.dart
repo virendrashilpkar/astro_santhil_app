@@ -125,9 +125,9 @@ class _MyHomePageState extends State<HomeSearch> {
         );
 
       }
-      Toaster.show(context, _likeModel.message.toString());
+      // Toaster.show(context, _likeModel.message.toString());
     }else{
-      Toaster.show(context, _likeModel.message.toString());
+      // Toaster.show(context, _likeModel.message.toString());
     }
   }
 
@@ -532,12 +532,12 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
-                                                          "${_userList[index].firstName} ${_userList[index].lastName}"
+                                                          "${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}"
                                                               "  ${_userList[index].age}",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 20,
-                                                            fontWeight: FontWeight.w700,
+                                                            fontWeight: FontWeight.w900,
                                                             // height: 1.4
                                                           ),
                                                           textAlign: TextAlign.left,
@@ -554,11 +554,12 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Text(
                                                           "${_userList[index].city} | "
+                                                          "${_userList[index].state} | "
                                                           "${_userList[index].country}",
                                                           style: TextStyle(
                                                             color: CommonColors.lightblue,
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
+                                                            fontWeight: FontWeight.w800,
                                                           ),
                                                           textAlign: TextAlign.left,
                                                         ),
@@ -582,7 +583,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                           style: TextStyle(
                                                             color: CommonColors.white,
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
+                                                            fontWeight: FontWeight.w800,
                                                           ),
                                                           textAlign: TextAlign.left,
                                                         ),
@@ -943,6 +944,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
   String age = "";
   String place = "";
   String country = "";
+  String state = "";
   String height = "";
   String weight = "";
   String religion = "";
@@ -959,6 +961,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
       lastName = _userDetailModel.data![0].lastName.toString();
       age = _userDetailModel.data![0].age.toString();
       place = _userDetailModel.data![0].city.toString();
+      state = _userDetailModel.data![0].state.toString();
       country = _userDetailModel.data![0].country.toString();
       religion = _userDetailModel.data![0].religion.toString();
       height = _userDetailModel.data![0].height.toString();
@@ -1055,7 +1058,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               alignment: Alignment.topLeft,
                               // margin: const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                "${name} ${lastName} ${age}",
+                                "${name[0].toUpperCase()+name.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 26,
@@ -1077,7 +1080,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                           alignment: Alignment.topLeft,
                           // margin: const EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            "${place},${country} \n"
+                            "${place},${state},${country} \n"
                                 " ${height.replaceAll(".", "`")},"
                                 " ${weight}kg,"
                                 " ${religion},"
@@ -1095,7 +1098,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                         Row(
                           children: [
                             Container(
-                              height:24,
+                              height:26,
                               decoration: BoxDecoration(
                                 color:CommonColors.yellow,
                                 border: Border.all(
@@ -1105,16 +1108,16 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                                     Radius.circular(32.0) //                 <--- border radius here
                                 ),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 9,vertical: 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                               alignment: Alignment.center,
                               child: Text("GOLD",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                             ),
                             Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                                child: new StarRating(
+                                child: StarRating(
                                   color: CommonColors.yellow,
                                   rating: rating,
-                                  size:24,
+                                  size:26,
                                   onRatingChanged: (rating) => setState(() => rating = rating),
                                 )
                             )

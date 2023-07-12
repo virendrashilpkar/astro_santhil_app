@@ -39,7 +39,7 @@ class _MyHomePageState extends State<FreeSub> {
 
   @override
   Widget build(BuildContext context) {
-
+    final color = ModalRoute.of(context)!.settings.arguments as Color;
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: SafeArea(
@@ -47,7 +47,7 @@ class _MyHomePageState extends State<FreeSub> {
           height:MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: CommonColors.settingblue,
+              color: color,
               // border: Border.all(width: 1,color: Colors.white),
               borderRadius: BorderRadius.circular(10)
           ),

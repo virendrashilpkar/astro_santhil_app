@@ -23,7 +23,7 @@ class _MyHomePageState extends State<MatchPro> {
   late SharedPreferences _preferences;
   late NewMatchesModel _newMatchesModel;
   bool isLoad = false;
-  List<Datum> _list = [];
+  List<MatchDatum> _list = [];
 
   String T = "";
   Future CheckUserConnection() async {
@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MatchPro> {
     _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
     if(_newMatchesModel.status == 200){
       for(var i = 0; i < _newMatchesModel.data!.length; i++){
-        _list = _newMatchesModel.data ?? <Datum> [];
+        _list = _newMatchesModel.data ?? <MatchDatum> [];
       }
     }
     isLoad = false;
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MatchPro> {
                       child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
                     ),
                     new SizedBox(
-                      width: 24,
+                      width: 15,
                     ),
                     InkWell(
                       onTap: (){
@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MatchPro> {
                       itemCount: _list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx,index){
-                        Datum data = _list[index];
+                        MatchDatum data = _list[index];
                         return selectindex==index ? InkWell(
                           onTap: (){
                             setState(() {

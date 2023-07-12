@@ -1,28 +1,28 @@
 // To parse this JSON data, do
 //
-//     final cItyListModel = cItyListModelFromJson(jsonString);
+//     final stateListModel = stateListModelFromJson(jsonString);
 
 import 'dart:convert';
 
-CItyListModel cItyListModelFromJson(String str) => CItyListModel.fromJson(json.decode(str));
+StateListModel stateListModelFromJson(String str) => StateListModel.fromJson(json.decode(str));
 
-String cItyListModelToJson(CItyListModel data) => json.encode(data.toJson());
+String stateListModelToJson(StateListModel data) => json.encode(data.toJson());
 
-class CItyListModel {
+class StateListModel {
   bool? status;
   String? message;
-  List<Datum>? data;
+  List<Statedata>? data;
 
-  CItyListModel({
+  StateListModel({
     this.status,
     this.message,
     this.data,
   });
 
-  factory CItyListModel.fromJson(Map<String, dynamic> json) => CItyListModel(
+  factory StateListModel.fromJson(Map<String, dynamic> json) => StateListModel(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? [] : List<Statedata>.from(json["data"]!.map((x) => Statedata.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,35 +32,34 @@ class CItyListModel {
   };
 }
 
-class Datum {
+class Statedata {
   String? name;
+  String? isoCode;
   String? countryCode;
-  String? stateCode;
   String? latitude;
   String? longitude;
 
-  Datum({
+  Statedata({
     this.name,
+    this.isoCode,
     this.countryCode,
-    this.stateCode,
     this.latitude,
     this.longitude,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory Statedata.fromJson(Map<String, dynamic> json) => Statedata(
     name: json["name"],
+    isoCode: json["isoCode"],
     countryCode: json["countryCode"],
-    stateCode: json["stateCode"],
     latitude: json["latitude"],
     longitude: json["longitude"],
   );
 
   Map<String, dynamic> toJson() => {
     "name": name,
+    "isoCode": isoCode,
     "countryCode": countryCode,
-    "stateCode": stateCode,
     "latitude": latitude,
     "longitude": longitude,
   };
 }
-

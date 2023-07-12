@@ -136,6 +136,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
         ListCountry();
       }
       city = _userDetailModel.data![0].city.toString();
+      state = _userDetailModel.data![0].state.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -159,7 +160,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     });
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, dateOfBirth, gender, country, city, height, weight, maritalStatus, email, lookingFor,
+        lastName, dateOfBirth, gender, country, city,state ,height, weight, maritalStatus, email, lookingFor,
         religion, caste, about.text, education.text, company.text, jobTitle.text);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
@@ -263,7 +264,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     CheckUserConnection();
     ListCountry();
     viewImage();
-    // userDetail();
+    userDetail();
     viewPrefs();
     userViewPreference();
     _tabController = TabController(length: 2, vsync: this);
@@ -336,6 +337,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
   String country = 'Select country';
   String city = 'Select city';
+  String state = 'Select state';
   List<String> cityList = [
     "Select city"
   ];
@@ -349,7 +351,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       isLoad = true;
     });
     cityList.clear();
-    _cItyListModel = await Services.CityList(name);
+    _cItyListModel = await Services.CityList(name,"","");
     if(_cItyListModel.status == true){
       cityList.add("Select city");
       for(var i = 0; i < _cItyListModel.data!.length; i++){
@@ -705,8 +707,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   value:PhotoOptions,
                                   onChanged: (value){
                                     PhotoOptions = value;
-                                    setState(() {
-                                    });
+                                    setState(() {});
                                   },
                                   thumbColor: CupertinoColors.black,
                                   activeColor: CupertinoColors.white,

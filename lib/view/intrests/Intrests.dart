@@ -306,13 +306,11 @@ class _MyHomePageState extends State<Intrests> {
                     : Wrap(
                         children: [
                           ...List.generate(prefList.length, (index) {
-                            if (prefList[index] != intrest) {
-                              if (selectedIndex.length != 4) {
+                              if (prefList[index].isActive ?? false) {
                                 selectedIndex.add(index);
                               } else {
                                 // Toaster.show(context, "You can select only 4");
                               }
-                            }
                             return GestureDetector(
                               onTap: () {
                                 setState(() {

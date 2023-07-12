@@ -62,7 +62,7 @@ class _MyHomePageState extends State<AddPhotos> {
     _uploadImageModel = await Services.ImageUpload(image, "${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_uploadImageModel.status == 1){
       Toaster.show(context, _uploadImageModel.message.toString());
-
+      viewImage();
     }else{
       Toaster.show(context, _uploadImageModel.message.toString());
     }
@@ -324,7 +324,6 @@ class _MyHomePageState extends State<AddPhotos> {
                                     ),
                                   ),
                                 ),),
-
                                 SizedBox.expand(
                                   child: Material(
                                     type: MaterialType.transparency,

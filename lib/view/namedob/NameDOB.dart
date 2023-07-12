@@ -31,6 +31,7 @@ class _MyHomePageState extends State<NameDOB> {
   String gender = "";
   String country = "";
   String city = "";
+  String state = "";
   String height = "";
   String weight = "";
   String maritalStatus = "";
@@ -77,6 +78,7 @@ class _MyHomePageState extends State<NameDOB> {
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
       city = _userDetailModel.data![0].city.toString();
+      state = _userDetailModel.data![0].state.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -105,7 +107,7 @@ class _MyHomePageState extends State<NameDOB> {
     DateFormat outputFormat = DateFormat("yyyy-MM-dd");
     String outputDate = outputFormat.format(dateTime);
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName.text,
-        lastName.text,outputDate, gender, country, city, height, weight, maritalStatus, email, lookingFor,
+        lastName.text,outputDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor,
         religion, caste, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());

@@ -42,6 +42,7 @@ class detailDatum {
   String? phone;
   String? plan;
   String? city;
+  String? state;
   String? country;
   String? gender;
   String? height;
@@ -70,6 +71,7 @@ class detailDatum {
     this.phone,
     this.plan,
     this.city,
+    this.state,
     this.country,
     this.gender,
     this.height,
@@ -99,6 +101,7 @@ class detailDatum {
     phone: json["phone"],
     plan: json["plan"],
     city: json["city"],
+    state: json["state"],
     country: json["country"],
     gender: json["gender"],
     height: json["height"],
@@ -128,6 +131,7 @@ class detailDatum {
     "phone": phone,
     "plan": plan,
     "city": city,
+    "state": state,
     "country": country,
     "gender": gender,
     "height": height,

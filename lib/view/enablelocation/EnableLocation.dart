@@ -165,6 +165,7 @@ class _MyHomePageState extends State<EnableLocation> {
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
                           Toaster.show(context, "Allow for batter experience");
+                          Navigator.of(context).pushNamed("Home");
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

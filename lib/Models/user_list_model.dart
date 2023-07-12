@@ -37,6 +37,7 @@ class UserDatum {
   String? firstName;
   String? lastName;
   String? city;
+  String? state;
   String? height;
   String? weight;
   String? country;
@@ -50,6 +51,7 @@ class UserDatum {
     this.firstName,
     this.lastName,
     this.city,
+    this.state,
     this.height,
     this.weight,
     this.country,
@@ -64,6 +66,7 @@ class UserDatum {
     firstName: json["first_name"],
     lastName: json["last_name"],
     city: json["city"],
+    state: json["state"],
     height: json["height"].toString(),
     weight: json["weight"].toString(),
     country: json["country"],
@@ -78,6 +81,7 @@ class UserDatum {
     "first_name": firstName,
     "last_name": lastName,
     "city": city,
+    "state": state,
     "height": height,
     "weight": weight,
     "country": country,

@@ -11,7 +11,7 @@ String countryListModelToJson(CountryListModel data) => json.encode(data.toJson(
 class CountryListModel {
   bool? status;
   String? message;
-  List<Datum>? data;
+  List<CountryData>? data;
 
   CountryListModel({
     this.status,
@@ -22,7 +22,7 @@ class CountryListModel {
   factory CountryListModel.fromJson(Map<String, dynamic> json) => CountryListModel(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? [] : List<CountryData>.from(json["data"]!.map((x) => CountryData.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +32,7 @@ class CountryListModel {
   };
 }
 
-class Datum {
+class CountryData {
   String? id;
   String? name;
   String? countryCode;
@@ -40,7 +40,7 @@ class Datum {
   DateTime? updatedAt;
   int? v;
 
-  Datum({
+  CountryData({
     this.id,
     this.name,
     this.countryCode,
@@ -49,7 +49,7 @@ class Datum {
     this.v,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory CountryData.fromJson(Map<String, dynamic> json) => CountryData(
     id: json["_id"],
     name: json["name"],
     countryCode: json["countryCode"],

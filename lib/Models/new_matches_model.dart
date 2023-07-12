@@ -11,7 +11,7 @@ String newMatchesModelToJson(NewMatchesModel data) => json.encode(data.toJson())
 class NewMatchesModel {
   int? status;
   String? message;
-  List<Datum>? data;
+  List<MatchDatum>? data;
 
   NewMatchesModel({
     this.status,
@@ -22,7 +22,7 @@ class NewMatchesModel {
   factory NewMatchesModel.fromJson(Map<String, dynamic> json) => NewMatchesModel(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? [] : List<MatchDatum>.from(json["data"]!.map((x) => MatchDatum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +32,7 @@ class NewMatchesModel {
   };
 }
 
-class Datum {
+class MatchDatum {
   String? type;
   DateTime? createdAt;
   String? id;
@@ -41,7 +41,7 @@ class Datum {
   String? plan;
   String? image;
 
-  Datum({
+  MatchDatum({
     this.type,
     this.createdAt,
     this.id,
@@ -51,7 +51,7 @@ class Datum {
     this.image,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory MatchDatum.fromJson(Map<String, dynamic> json) => MatchDatum(
     type: json["type"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     id: json["_id"],

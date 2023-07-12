@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
@@ -54,9 +55,9 @@ class _MyHomePageState extends State<Profile> {
 
     }
     clickLoad = false;
-    setState(() {
-
-    });
+    if(mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> planList() async {
@@ -92,9 +93,9 @@ class _MyHomePageState extends State<Profile> {
     });
   }
   int currentIndex=0;
-  List<Color> colorList=[CommonColors.settingblue,CommonColors.blue,CommonColors.yellow,CommonColors.buttonorg];
+  List<Color> colorList=[CommonColors.blue,CommonColors.buttonorg,CommonColors.yellow,CommonColors.settingblue,CommonColors.settingblue];
   List<String> packagetittle=["Basic","Premium","Gold","VIP"];
-  List<String> packagedis=["0","20","25","30"];
+  List<String> packagedis=["0","20","25","30","30"];
   List<Color> colorList2=[CommonColors.blue,CommonColors.yellow];
   List<String> packagetittle2=["Premium","Gold"];
   List<String> packagedis2=["20","25"];
@@ -111,6 +112,15 @@ class _MyHomePageState extends State<Profile> {
   List<String> vipdialog = ["12","3","1"];
   List<String> vipdialogkr = ["kr 40.33/mo","kr 40.33/mo","kr 40.33/mo"];
   List<String> vipdialogkr2 = ["kr. 139","kr. 139","kr. 139"];
+
+
+
+  Color getRandomColor() {
+    Random random = Random();
+
+    return colorList[random.nextInt(5)];
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -556,16 +566,15 @@ class _MyHomePageState extends State<Profile> {
                             });
                       },
                       child: new Container(
-                        child: Text("${_viewProfileModel.data![0].firstName}"
-                            " ${_viewProfileModel.data![0].lastName.toString()}",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
+                        child: Text("${_viewProfileModel.data![0].firstName![0].toUpperCase()+_viewProfileModel.data![0].firstName!.substring(1)}"
+                            " ${_viewProfileModel.data![0].lastName![0].toUpperCase()+_viewProfileModel.data![0].lastName!.substring(1)}",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
                       ),
                     ),
-
                     new SizedBox(width: 5,),
                     SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
+                      height: 15,
+                      width: 15,
+                      child: Center(child: Image.asset("assets/blue_tick.png",height: 15,width: 15)),
                     )
                   ],
                 ),
@@ -577,8 +586,9 @@ class _MyHomePageState extends State<Profile> {
                 new SizedBox(height: 15,),
                 Container(
                   height: 50,
+                  width: 130,
                   // margin: const EdgeInsets.only(top: 15),
-                  margin: const EdgeInsets.symmetric(horizontal: 100),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     color: CommonColors.buttonorg,
                     borderRadius:
@@ -692,7 +702,7 @@ class _MyHomePageState extends State<Profile> {
                     ],
                   ),
                 ) :
-                new Container(
+                Container(
                   height: MediaQuery.of(context).size.width/2,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
@@ -712,13 +722,13 @@ class _MyHomePageState extends State<Profile> {
                                 setState(() {
                                   // parcasepackage=index;
                                   // currentIndex=index;
-                                  if(index==0){
+                                  if(_list[index].name=="BASIC"){
                                     Navigator.of(context).pushNamed("FreeSub");
-                                  }else if(index==1){
+                                  }else if(_list[index].name=="Premium"){
                                     Navigator.of(context).pushNamed("PremiumSub");
-                                  }else if(index==2){
+                                  }else if(_list[index].name=="Gold"){
                                     Navigator.of(context).pushNamed("GoldSub");
-                                  }else if(index==3){
+                                  }else if(_list[index].name=="Vip"){
                                     Navigator.of(context).pushNamed("VIPSub");
                                   }
                                 });
@@ -735,7 +745,7 @@ class _MyHomePageState extends State<Profile> {
                                         width: MediaQuery.of(context).size.width/3.5,
                                         height: MediaQuery.of(context).size.width/2-50,
                                         decoration: BoxDecoration(
-                                          color:colorList[index],
+                                          color:getRandomColor(),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(17.0) //                 <--- border radius here
                                           ),
@@ -747,7 +757,7 @@ class _MyHomePageState extends State<Profile> {
                                             new SizedBox(
                                               height: 47,
                                               width: 36,
-                                              child: Image.asset("assets/drop_pro.png",fit: BoxFit.cover,),
+                                              child: Image.network("${_list[index].icon}",fit: BoxFit.cover,),
                                             ),
                                             new SizedBox(height: 10,),
                                             new Container(
@@ -769,7 +779,7 @@ class _MyHomePageState extends State<Profile> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text("Save ${packagedis[index]}%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                                              Text("Save ${10}%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
                                             ],
                                           )
                                       ),
@@ -788,7 +798,7 @@ class _MyHomePageState extends State<Profile> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      for(int i = 0; i < packagedis.length; i++)
+                      for(int i = 0; i < _list.length; i++)
                         Container(
                             height: 10, width: 10,
                             margin: const EdgeInsets.symmetric(horizontal: 3),

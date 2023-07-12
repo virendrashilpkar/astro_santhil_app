@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/Models/matchlist.dart';
+import 'package:shadiapp/Models/new_matches_model.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +40,7 @@ class _ChatState extends State <Chat> {
   void initState() {
     super.initState();
     getAvailableuser();
+    match();
     Getmatch();
   }
 
@@ -62,13 +64,34 @@ class _ChatState extends State <Chat> {
       }
     }
     isLoad = false;
+    if(mounted) {
+      setState(() {});
+    }
+  }
+
+  bool listbool=false;
+  List<MatchDatum> _list = [];
+  late NewMatchesModel _newMatchesModel;
+  Future<void> match() async {
     setState(() {
+      listbool = true;
     });
+    _preferences = await SharedPreferences.getInstance();
+    _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
+    if(_newMatchesModel.status == 200){
+      for(var i = 0; i < _newMatchesModel.data!.length; i++){
+        _list = _newMatchesModel.data ?? <MatchDatum> [];
+      }
+    }
+    if(mounted) {
+      setState(() {
+        listbool = false;
+      });
+    }
   }
 
 
   void getAvailableuser() async {
-
     _preferences = await SharedPreferences.getInstance();
     user_id = "${_preferences?.getString(ShadiApp.userId).toString()}";
     await _firestore
@@ -111,7 +134,7 @@ class _ChatState extends State <Chat> {
             child: Container(
                   height: double.maxFinite,
                   child: ListView.builder(
-                      itemCount: images.length,
+                      itemCount: _list.length,
                       physics: AlwaysScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, i) {
                         return new ListTile(
@@ -127,8 +150,8 @@ class _ChatState extends State <Chat> {
                             child:
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(15.0),
-                                child: Image.network(images[i],
-                                  fit: BoxFit.fill,
+                                child: Image.network("${_list[i].image}",
+                                  fit: BoxFit.cover,
                                 )
                             ),
                           ),
@@ -190,19 +213,20 @@ class _ChatState extends State <Chat> {
                 )
               ],
             ),
-            Container(
+            if(_list.isNotEmpty) Container(
                 margin: EdgeInsets.symmetric(horizontal: 35.0),
-                child: Text("Likes you 45",
+                child: Text("Likes you ${_list.length}",
                   style: TextStyle(color: CommonColors.buttonorg),
                 ),
               ),
-            Container(
+            if(_list.isNotEmpty) Container(
               margin: EdgeInsets.only(left: 25.0, top: 10.0, right: 0.0, bottom: 10.0),
               height: 100,
               child: ListView.builder(
-                  itemCount: images.length,
+                  itemCount: _list.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
+                    MatchDatum data = _list[index];
                     return Container(
                       margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                       padding: const EdgeInsets.all(2),
@@ -224,7 +248,7 @@ class _ChatState extends State <Chat> {
                           child: Container(
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(images[index]),
+                                      image: NetworkImage("${data.image}"),
                                   fit: BoxFit.cover)
                               ),
                               child: Column(
@@ -238,15 +262,9 @@ class _ChatState extends State <Chat> {
                                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                         child: Row(
                                           children: [
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  child: Text("Ana, 24",
-                                                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
-                                                ),
-                                              ],
+                                            Expanded(
+                                              child: Text("${data.firstName}, ${data.age.toString().substring(0,2)}",
+                                                style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),maxLines: 1,),
                                             ),
                                           ],
                                         ),
@@ -260,26 +278,20 @@ class _ChatState extends State <Chat> {
                     );
                   }),
             ),
-            Expanded(
+            listbool==false ? Expanded(
               child: Container(
                 child:
                 _matchList.isEmpty ?
-                Container(
-                  height: 500,
-                  alignment: Alignment.center,
-                  child: Center(
-                      child: Stack(
-                        children: [
-                          // Image.asset("assets/iconsnew/no_data_ic.png", width: MediaQuery.of(context).size.width / 1.5, height: MediaQuery.of(context).size.height / 2,),
-                          Positioned(
-                              bottom: 100,
-                              left: 0,
-                              right: 0,
-                              child: Center(child: Text("There is no chat available", style: const TextStyle(fontSize: 16, fontFamily: 'dubai', color: Colors.black, fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
-                          ),
-                        ],
-                      )
-                  ),
+                Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/no_chat_icon.png",),
+                        SizedBox(height: 20,),
+                        Text("No Chat", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                      ],
+                    )
                 ) :
                 ListView.builder(
                     itemCount: _matchList.length,
@@ -393,7 +405,8 @@ class _ChatState extends State <Chat> {
                     }
                     ),
               ),
-            )
+            ) :
+            Expanded(child: Center(child: CircularProgressIndicator(),))
           ],
         ),
       ),

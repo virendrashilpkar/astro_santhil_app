@@ -146,7 +146,7 @@ class _MyHomePageState extends State<ChooseReg> {
     if(otpVerifyModel.status == 1){
       _preferences?.setString(ShadiApp.userId,otpVerifyModel.data?.id ?? "");
       _preferences?.setBool(ShadiApp.status, true);
-      Toaster.show(context, otpVerifyModel.massege.toString());
+      // Toaster.show(context, otpVerifyModel.massege.toString());
       Navigator.of(context).pushNamed('CountryCity');
     }else{
       Toaster.show(context, otpVerifyModel.massege.toString());

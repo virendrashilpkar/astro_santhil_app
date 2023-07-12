@@ -27,6 +27,7 @@ class _MyHomePageState extends State<Cast> {
   String gender = "";
   String country = "";
   String city = "";
+  String state = "";
   String height = "";
   String weight = "";
   String maritalStatus = "";
@@ -81,6 +82,7 @@ class _MyHomePageState extends State<Cast> {
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
       city = _userDetailModel.data![0].city.toString();
+      state = _userDetailModel.data![0].state.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
@@ -112,7 +114,7 @@ class _MyHomePageState extends State<Cast> {
 
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city, height, weight, maritalStatus, email, lookingFor, religion,
+        lastName, birthDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor, religion,
         cast, about, education, company, jobTitle);
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());

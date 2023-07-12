@@ -246,7 +246,11 @@ class _MyHomePageState extends State<PhoneLogin> {
                       child: InkWell(onTap: () {
                         if(phone.text.isEmpty){
                           Toaster.show(context, "Pelase Enter Your Phone Number");
-                        }else {
+                        }
+                        else if(phone.text.length!=10){
+                          Toaster.show(context, "Pelase Enter Valid Phone Number");
+                        }
+                        else {
                           LoginMethod();
                         }
                       },splashColor: Colors.blue.withOpacity(0.2),
