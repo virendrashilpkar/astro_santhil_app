@@ -116,11 +116,11 @@ class _MyHomePageState extends State<MyHomePage> {
                Container(
                  margin: EdgeInsets.only(top: 70.0),
                  child: CircleAvatar(
-                   radius: 50.0,
+                   radius: 70.0,
                    backgroundColor: Colors.white,
                    child: Container(
                      padding: EdgeInsets.only(top: 12.0),
-                       child: Image.asset("assets/user_ic.png")),
+                       child: Image.asset("assets/green text-01.png")),
                  ),
                ),
                Container(
@@ -174,6 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                    textAlign: TextAlign.left,
                    keyboardType: TextInputType.text,
                    decoration: InputDecoration(
+                     contentPadding: EdgeInsets.only(bottom: 5.0),
                      isDense: true,
                      hintText: 'Password',
                      hintStyle: const TextStyle(
@@ -196,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                      suffix: InkWell(
                        onTap: _togglePasswordView,
                        child: Padding(
-                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                         padding: const EdgeInsets.only(left: 8.0, top: 5.0, right: 8.0),
                          child: Icon(
                            _isHidden
                                ? Icons.visibility
@@ -236,7 +237,13 @@ class _MyHomePageState extends State<MyHomePage> {
                      backgroundColor: MaterialStateProperty.all(Color(0xff303030))
                    ),
                      onPressed: () {
-                     loginMethod();
+                     if(userName.text.isEmpty){
+                       Fluttertoast.showToast(msg: "Please Enter User Name");
+                     }else if(password.text.isEmpty){
+                       Fluttertoast.showToast(msg: "Please Enter Password");
+                     }else{
+                       loginMethod();
+                     }
                      },
                      child: Container(
                        margin: EdgeInsets.symmetric(horizontal: 20.44),

@@ -76,6 +76,9 @@ class _EditAppointmentState extends State<EditAppointment> {
   }
 
   Future<void> viewDropDown() async {
+    setState(() {
+      isLoad = true;
+    });
     _customerNameModel = await Services.nameListApi();
     if(_customerNameModel.status == true){
       for(var i=0; i < _customerNameModel.body!.length; i++){
@@ -83,6 +86,7 @@ class _EditAppointmentState extends State<EditAppointment> {
         customer_id.add(_customerNameModel.body![i].userId.toString());
       }
       print(spinnerItems);
+      appointmentDetail();
     }else{
       Fluttertoast.showToast(
           msg: "not found",
@@ -90,7 +94,7 @@ class _EditAppointmentState extends State<EditAppointment> {
           gravity: ToastGravity.SNACKBAR);
     }
     setState(() {
-
+      isLoad = false;
     });
   }
 
@@ -132,7 +136,7 @@ class _EditAppointmentState extends State<EditAppointment> {
   void initState() {
     super.initState();
     viewDropDown();
-    appointmentDetail();
+
   }
 
   @override
@@ -198,31 +202,31 @@ class _EditAppointmentState extends State<EditAppointment> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Image.asset("assets/back_arrow_ic.png",
-                                color: Colors.black,),
-                            ),
-                            Spacer(),
-                            Image.asset("assets/send_ic.png",
-                              color: Colors.black,),
-                            SizedBox(width: 10.0,),
-                            Image.asset("assets/fav_ic.png",
-                              color: Colors.black,)
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+                      //   child: Row(
+                      //     children: [
+                      //       InkWell(
+                      //         onTap: () {
+                      //           Navigator.pop(context);
+                      //         },
+                      //         child: Image.asset("assets/back_arrow_ic.png",
+                      //           color: Colors.black,),
+                      //       ),
+                      //       Spacer(),
+                      //       Image.asset("assets/send_ic.png",
+                      //         color: Colors.black,),
+                      //       SizedBox(width: 10.0,),
+                      //       Image.asset("assets/fav_ic.png",
+                      //         color: Colors.black,)
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(
-                        height: 40,
+                        height: 20,
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                        margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -272,16 +276,16 @@ class _EditAppointmentState extends State<EditAppointment> {
                                   }).toList(),
                                 )
                             ),
-                            Row(
-                              children: [
-                                Text("General Practitioner", style: TextStyle(fontSize: 16.82, color: Color(0xffB2B9C4)),),
-                                Spacer(),
-                                Container(
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Text("See All Reviews",
-                                      style: TextStyle(fontSize: 12.62, color: Color(0xffB2B9C4)),))
-                              ],
-                            )
+                            // Row(
+                            //   children: [
+                            //     Text("General Practitioner", style: TextStyle(fontSize: 16.82, color: Color(0xffB2B9C4)),),
+                            //     Spacer(),
+                            //     Container(
+                            //         margin: EdgeInsets.only(top: 10.0),
+                            //         child: Text("See All Reviews",
+                            //           style: TextStyle(fontSize: 12.62, color: Color(0xffB2B9C4)),))
+                            //   ],
+                            // )
                           ],
                         ),
                       ),
@@ -363,38 +367,40 @@ class _EditAppointmentState extends State<EditAppointment> {
                         margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
                         child: Text("Fees Type"),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(left: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Radio(
-                              activeColor: Colors.greenAccent,
-                              value: 1,
-                              groupValue: _radioSelected,
-                              onChanged: (value) {
-                                setState((){
-                                  _radioSelected = value as int;
-                                  _radioVal = 'Paid';
-                                  print(_radioVal);
-                                });
-                              },
-                            ),
-                            Text('Paid'),
-                            Radio(
-                              activeColor: Colors.greenAccent,
-                              value: 2,
-                              groupValue: _radioSelected,
-                              onChanged: (value) {
-                                setState((){
-                                  _radioSelected = value as int;
-                                  _radioVal = 'UnPaid';
-                                  print(_radioVal);
-                                });
-                              },
-                            ),
-                            Text('Un Paid'),
-                          ],
+                      InkWell(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Radio(
+                                activeColor: Colors.greenAccent,
+                                value: 2,
+                                groupValue: _radioSelected,
+                                onChanged: (value) {
+                                  setState((){
+                                    _radioSelected = value as int;
+                                    _radioVal = 'Paid';
+                                    print(_radioVal);
+                                  });
+                                },
+                              ),
+                              Text('Paid'),
+                              Radio(
+                                activeColor: Colors.greenAccent,
+                                value: 1,
+                                groupValue: _radioSelected,
+                                onChanged: (value) {
+                                  setState((){
+                                    _radioSelected = value as int;
+                                    _radioVal = 'UnPaid';
+                                    print(_radioVal);
+                                  });
+                                },
+                              ),
+                              Text('Un Paid'),
+                            ],
+                          ),
                         ),
                       ),
                       Container(

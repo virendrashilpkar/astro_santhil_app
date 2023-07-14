@@ -213,7 +213,7 @@ class _AddAppointmentState extends State<AddAppointment> {
     });
     _addCustomerModel = await Services.customerAdd(userName.text,
         selectedGender, city.text, dob.toString(), selectTimes, email.text, phoneNumber.text,
-        categoryId, subCategoryId, place.text, text.text, birthPlace.text, image!);
+        categoryId, subCategoryId, place.text, text.text, birthPlace.text, image!, horoscopeImage!);
     if(_addCustomerModel.status == true){
       Fluttertoast.showToast(msg: "${_addCustomerModel.msg}",
           toastLength: Toast.LENGTH_SHORT,

@@ -158,8 +158,10 @@ class _EditCustomerState extends State<EditCustomer> {
           titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
           content: horoscopeImage != null ?
           Image.file(horoscopeImage!):
-          Text("Upload Horoscope Image First", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,),
+              Image.network(_customerDetailModel.data![0].hImage.toString())
+          //     :
+          // Text("Upload Horoscope Image First", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          //   textAlign: TextAlign.center,),
 
         ));
   }
@@ -221,7 +223,7 @@ class _EditCustomerState extends State<EditCustomer> {
     });
     _customerDetailModel = await Services.customerDetail(widget.id);
     if(_customerDetailModel.status == true){
-      networkImage = _customerDetailModel.data![0].hImage.toString();
+      networkImage = _customerDetailModel.data![0].uImage.toString();
       userName.text = _customerDetailModel.data![0].name.toString();
       selectedGender = _customerDetailModel.data![0].gender.toString();
       place.text = _customerDetailModel.data![0].place.toString();
@@ -240,13 +242,28 @@ class _EditCustomerState extends State<EditCustomer> {
     });
   }
 
+  File? filea;
+  File? uFilea;
+
   Future<void> updateCustomer() async {
     setState(() {
       clickLoad = true;
     });
 
-    File? filea;
     if(image == null){
+      if(_customerDetailModel.data![0].uImage.toString().isEmpty){
+        Fluttertoast.showToast(msg: "Please add image");
+      }else {
+        print("bhb");
+        uFilea = await Services.urlToFile(
+            _customerDetailModel.data![0].uImage.toString());
+      }
+    }else{
+      uFilea = File(image!.path);
+      print("php");
+    }
+
+    if(horoscopeImage == null){
       if(_customerDetailModel.data![0].hImage.toString().isEmpty){
         Fluttertoast.showToast(msg: "Please add image");
       }else {
@@ -255,12 +272,15 @@ class _EditCustomerState extends State<EditCustomer> {
             _customerDetailModel.data![0].hImage.toString());
       }
     }else{
-      filea = File(image!.path);
+      filea = File(horoscopeImage!.path);
       print("php");
     }
+
+    print("uFilea $uFilea");
+    print("filea $filea");
     _updateCustomerModel = await Services.updateCustomer(widget.id, userName.text, selectedGender, city.text,
         dob.toString(), selectTimes, email.text, phoneNumber.text, categoryId, subCategoryId, place.text,
-        text.text, birthPlace.text, filea!);
+        text.text, birthPlace.text, uFilea!, filea!);
     if(_updateCustomerModel.status == true){
       Fluttertoast.showToast(msg: "${_updateCustomerModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
@@ -277,6 +297,7 @@ class _EditCustomerState extends State<EditCustomer> {
       clickLoad = false;
     });
   }
+
   @override
   void initState() {
     viewCustomer();
@@ -366,7 +387,7 @@ class _EditCustomerState extends State<EditCustomer> {
                                     child: ClipOval(
                                       child: image   != null ? Image.file(image!,
                                         height: 120,):
-                                      Image.network("${_customerDetailModel.data![0].hImage}",
+                                      Image.network("${_customerDetailModel.data![0].uImage}",
                                         fit: BoxFit.contain,),
                                     )
                                   ),

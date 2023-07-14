@@ -303,11 +303,11 @@ class _PaymentsState extends State<Payments>{
                         Expanded(
                           child: selectedFromDate.isEmpty ? Center(
                               child: Text(
-                                "Select From Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                                "Choose From Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                               )
                           ): selectedToDate.isEmpty ? Center(
                               child: Text(
-                                "Select To Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                                "Choose To Date", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                               )
                           ):isLoad ? Center(
                             child: CircularProgressIndicator(

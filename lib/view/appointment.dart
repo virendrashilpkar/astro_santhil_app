@@ -151,37 +151,27 @@ class _AppointmentState extends State<Appointment> {
                         ),),
                       ),
                       Spacer(),
-                      Row(
-                        children: [
-                          Radio(
-                              value: 1,
-                              groupValue: _radioSelected,
-                              onChanged: (value) {
-                                setState((){
-                                  _radioSelected = value as int;
-                                  _radioVal = 'Cancel';
-                                  print(_radioVal);
-                                });
-                              }
-                          ),
-                          Text("Cancel")
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                           Icon(Icons.circle_outlined),
+                            Container(
+                              margin: EdgeInsets.only(left: 10.0),
+                                child: Text("Cancel"))
+                          ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          Radio(
-                              value: 2,
-                              groupValue: _radioSelected,
-                              onChanged: (value) {
-                                setState((){
-                                  _radioSelected = value as int;
-                                  _radioVal = 'Complete';
-                                  print(_radioVal);
-                                });
-                              }
-                          ),
-                          Text("Complete")
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.circle_outlined),
+                            Container(
+                                margin: EdgeInsets.only(left: 10.0),
+                                child: Text("Complete"))
+                          ],
+                        ),
                       ),
                       Spacer(),
                       Padding(
@@ -468,6 +458,19 @@ class _AppointmentState extends State<Appointment> {
                           itemBuilder: (context, index){
                             Body _body = _list[index];
                             int randomNumber = _random.nextInt(5);
+                            final time =
+                            _body.time!.substring(0,2).contains("13") ? "01${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("14") ? "02${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("15") ? "03${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("16") ? "04${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("17") ? "05${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("18") ? "06${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("19") ? "07${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("20") ? "08${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("21") ? "09${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("22") ? "10${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("23") ? "11${_body.time!.substring(2,5)} PM":
+                            "${_body.time!.substring(0,5)} AM";
                             return Container(
                                 margin: EdgeInsets.only(bottom: 20.0),
                                 child: Card(
@@ -537,7 +540,7 @@ class _AppointmentState extends State<Appointment> {
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
                                                       Text("(${_body.date.toString().substring(0,10)})"),
-                                                      Text("(${_body.time})")
+                                                      Text("(${time})")
                                                     ],
                                                   ),
                                                 )
@@ -639,6 +642,19 @@ class _AppointmentState extends State<Appointment> {
                           itemBuilder: (context, index){
                             Body _body = _list[index];
                             int randomNumber = _random.nextInt(5);
+                            final time =
+                            _body.time!.substring(0,2).contains("13") ? "01${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("14") ? "02${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("15") ? "03${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("16") ? "04${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("17") ? "05${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("18") ? "06${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("19") ? "07${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("20") ? "08${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("21") ? "09${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("22") ? "10${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("23") ? "11${_body.time!.substring(2,5)} PM":
+                            "${_body.time!.substring(0,5)} AM";
                             return Container(
                                 margin: EdgeInsets.only(bottom: 20.0),
                                 child: Card(
@@ -707,7 +723,7 @@ class _AppointmentState extends State<Appointment> {
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
                                                       Text("(${_body.date.toString().substring(0,10)})"),
-                                                      Text("(${_body.time})")
+                                                      Text("(${time})")
                                                     ],
                                                   ),
                                                 )
@@ -808,6 +824,19 @@ class _AppointmentState extends State<Appointment> {
                           itemBuilder: (context, index){
                             Body _body = _list[index];
                             int randomNumber = _random.nextInt(5);
+                            final time =
+                            _body.time!.substring(0,2).contains("13") ? "01${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("14") ? "02${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("15") ? "03${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("16") ? "04${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("17") ? "05${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("18") ? "06${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("19") ? "07${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("20") ? "08${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("21") ? "09${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("22") ? "10${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("23") ? "11${_body.time!.substring(2,5)} PM":
+                            "${_body.time!.substring(0,5)} AM";
                             return Container(
                                 margin: EdgeInsets.only(bottom: 20.0),
                                 child: Card(
@@ -894,7 +923,7 @@ class _AppointmentState extends State<Appointment> {
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
                                                       Text("(${_body.date.toString().substring(0,10)})"),
-                                                      Text("(${_body.time})")
+                                                      Text("(${time})")
                                                     ],
                                                   ),
                                                 )
@@ -942,6 +971,19 @@ class _AppointmentState extends State<Appointment> {
                           itemBuilder: (context, index){
                             int randomNumber = _random.nextInt(5);
                             Body _body = _list[index];
+                            final time =
+                            _body.time!.substring(0,2).contains("13") ? "01${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("14") ? "02${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("15") ? "03${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("16") ? "04${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("17") ? "05${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("18") ? "06${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("19") ? "07${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("20") ? "08${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("21") ? "09${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("22") ? "10${_body.time!.substring(2,5)} PM":
+                            _body.time!.substring(0,2).contains("23") ? "11${_body.time!.substring(2,5)} PM":
+                            "${_body.time!.substring(0,5)} AM";
                             return Container(
                                 margin: EdgeInsets.only(bottom: 20.0),
                                 child: Card(
@@ -1010,7 +1052,7 @@ class _AppointmentState extends State<Appointment> {
                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
                                                       Text("(${_body.date.toString().substring(0,10)})"),
-                                                      Text("(${_body.time})")
+                                                      Text("(${time})")
                                                     ],
                                                   ),
                                                 )

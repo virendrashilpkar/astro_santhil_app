@@ -44,8 +44,11 @@ class Datum {
   String? email;
   String? phone;
   String? catId;
+  String? catName;
   String? subCatId;
+  String? subCatName;
   String? hImage;
+  String? uImage;
   String? text;
 
   Datum({
@@ -60,8 +63,11 @@ class Datum {
     this.email,
     this.phone,
     this.catId,
+    this.catName,
     this.subCatId,
+    this.subCatName,
     this.hImage,
+    this.uImage,
     this.text,
   });
 
@@ -77,8 +83,11 @@ class Datum {
     email: json["email"],
     phone: json["phone"],
     catId: json["cat_id"],
+    catName: json["cat_name"],
     subCatId: json["sub_cat_id"],
+    subCatName: json["sub_cat_name"],
     hImage: json["h_image"],
+    uImage: json["u_image"],
     text: json["text"],
   );
 
@@ -94,8 +103,11 @@ class Datum {
     "email": email,
     "phone": phone,
     "cat_id": catId,
+    "cat_name": catName,
     "sub_cat_id": subCatId,
+    "sub_cat_name": subCatName,
     "h_image": hImage,
+    "u_image": uImage,
     "text": text,
   };
 }

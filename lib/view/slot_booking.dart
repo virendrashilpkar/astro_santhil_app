@@ -1,24 +1,31 @@
-import 'dart:math';
-
+import 'package:astro_santhil_app/commonpackage/SearchChoices.dart';
 import 'package:astro_santhil_app/models/add_appointment_model.dart';
 import 'package:astro_santhil_app/models/customer_name_model.dart';
 import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
 import 'package:astro_santhil_app/view/menu.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class SlotBooking extends StatefulWidget {
+
+  String name = "";
+  SlotBooking(this.name);
   @override
   State<StatefulWidget> createState() => _SlotBookingState();
-
 }
 
 class _SlotBookingState extends State<SlotBooking> {
-
   TextEditingController fees = TextEditingController();
   TextEditingController msg = TextEditingController();
+  List<DropdownMenuItem> cutomerItems = [];
+  List<Contact> contacts = [];
+  List<Contact> foundContacts = [];
+  bool isLoading = false;
 
   late CustomerNameModel _customerNameModel;
   late AddAppointmentModel _addAppointmentModel;
@@ -29,38 +36,40 @@ class _SlotBookingState extends State<SlotBooking> {
   int _radioSelected = 0;
   String _radioVal = "";
   String feesStatus = "";
-  List<String> customer_id = ["0",];
+  List<String> customer_id = [
+    "0",
+  ];
   String selectedCustomer_id = "";
   String selectTimes = "Select Slot";
-  String dropdownValue = 'Select Customer';
+  String dropdownValue = "";
   bool clickLoad = false;
 
-  List <String> spinnerItems = [
+  List<String> spinnerItems = [
     'Select Customer',
-  ] ;
+  ];
 
   Future<Null> selectTime(BuildContext context) async {
     picked = await showTimePicker(
-      context: context,
-      initialTime: _time,
-      initialEntryMode: TimePickerEntryMode.dial,
+        context: context,
+        initialTime: _time,
+        initialEntryMode: TimePickerEntryMode.dial,
         builder: (context, Widget? child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
             child: child!,
           );
-        }
-    );
-    if(picked != null){
+        });
+    if (picked != null) {
       setState(() {
         _time = picked!;
         print(picked);
-        selectTimes = "${picked?.hour}:${picked?.minute}:${picked?.period.name.toUpperCase()}";
+        selectTimes =
+            "${picked?.hour}:${picked?.minute}:${picked?.period.name.toUpperCase()}";
       });
     }
   }
 
-  void _onDaySelected(DateTime day, DateTime focusedDay){
+  void _onDaySelected(DateTime day, DateTime focusedDay) {
     setState(() {
       today = day;
       print(today);
@@ -69,38 +78,46 @@ class _SlotBookingState extends State<SlotBooking> {
 
   Future<void> viewDropDown() async {
     _customerNameModel = await Services.nameListApi();
-    if(_customerNameModel.status == true){
-      for(var i=0; i < _customerNameModel.body!.length; i++){
+    if (_customerNameModel.status == true) {
+      for (var i = 0; i < _customerNameModel.body!.length; i++) {
         spinnerItems.add("${_customerNameModel.body![i].name}");
+        cutomerItems.add(DropdownMenuItem(
+          child: Text(_customerNameModel.body![i].name.toString()),
+          value: _customerNameModel.body![i].name.toString(),
+        ));
         customer_id.add(_customerNameModel.body![i].userId.toString());
       }
-      print(spinnerItems);
-    }else{
+    } else {
       Fluttertoast.showToast(
           msg: "not found",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Future<void> addAppointment() async {
     setState(() {
       clickLoad = true;
     });
-    _addAppointmentModel = await Services.addAppointment(selectedCustomer_id, today.toString().substring(0,10),
-        selectTimes, msg.text, fees.text, _radioSelected.toString());
+    _addAppointmentModel = await Services.addAppointment(
+        selectedCustomer_id,
+        today.toString().substring(0, 10),
+        selectTimes,
+        msg.text,
+        fees.text,
+        _radioSelected.toString());
 
-    if(_addAppointmentModel.status == true){
-      Fluttertoast.showToast(msg: "${_addAppointmentModel.msg}",
+    if (_addAppointmentModel.status == true) {
+      Fluttertoast.showToast(
+          msg: "${_addAppointmentModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => Appointment("today")));
-    }else{
-      Fluttertoast.showToast(msg: "${_addAppointmentModel.msg}",
+    } else {
+      Fluttertoast.showToast(
+          msg: "${_addAppointmentModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
@@ -109,10 +126,75 @@ class _SlotBookingState extends State<SlotBooking> {
     });
   }
 
+  void getContactPermission() async {
+
+    if(await Permission.contacts.isGranted) {
+      getContacts();
+    }else {
+      await Permission.contacts.request();
+    }
+  }
+
+  void getContacts() async {
+    setState(() {
+      isLoading = true;
+    });
+   contacts = await ContactsService.getContacts();
+   print(contacts[0].phones![0].value);
+
+   foundContacts = contacts;
+   print(foundContacts);
+   setState(() {
+     isLoading = false;
+   });
+  }
+
+
+  // void contactList(){
+  //   showBottomSheet(
+  //       context: context,
+  //       backgroundColor: Colors.white,
+  //       elevation: 10,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //       ),
+  //       builder: (context) {
+  //         return StatefulBuilder(
+  //             builder: (BuildContext context, StateSetter setState){
+  //               return ListView.builder(
+  //                 itemCount: contacts.length,
+  //                   itemBuilder: (context, index){
+  //                   return ListTile(
+  //                     leading: Text(contacts[index].displayName.toString()),
+  //                   );
+  //                   });
+  //             }
+  //         );
+  //       }
+  //   );
+  // }
+
   @override
   void initState() {
+    dropdownValue = widget.name;
+    getContactPermission();
     super.initState();
     viewDropDown();
+
+  }
+
+  void searchFilter(String enteredKeyword, StateSetter dState) {
+    List<Contact> results = [];
+    if(enteredKeyword.isEmpty){
+      results = contacts;
+    }else{
+      results = contacts
+          .where((element) =>
+          element.givenName!.toLowerCase().contains(enteredKeyword.toLowerCase())).toList();
+    }
+    dState(() {
+      foundContacts = results;
+    });
   }
 
   @override
@@ -121,13 +203,13 @@ class _SlotBookingState extends State<SlotBooking> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-                Color(0xff1BBF57),
-                Color(0xff34E389),
-              ],)
-        ),
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          colors: [
+            Color(0xff1BBF57),
+            Color(0xff34E389),
+          ],
+        )),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -140,24 +222,30 @@ class _SlotBookingState extends State<SlotBooking> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: (){
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => Menu()));
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Menu()));
                         },
                         child: Container(
-                          child: Image.asset("assets/drawer_ic.png",
+                          child: Image.asset(
+                            "assets/drawer_ic.png",
                             width: 22.51,
-                            height: 20.58,),
+                            height: 20.58,
+                          ),
                         ),
                       ),
                       Spacer(),
                       Container(
-                        child: Text("SLOT BOOKING", style: TextStyle(color: Colors.white, fontSize: 21.61),),
+                        child: Text(
+                          "SLOT BOOKING",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 21.61),
+                        ),
                       ),
                       Spacer(),
                       Container(
                         child: InkWell(
-                          onTap: (){
+                          onTap: () {
                             Navigator.pop(context);
                           },
                           child: Icon(
@@ -200,55 +288,108 @@ class _SlotBookingState extends State<SlotBooking> {
                         height: 20,
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                        margin: EdgeInsets.only(
+                            left: 20.0, right: 20.0, bottom: 10.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color(0xff6C7480)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(left: 10.0, right: 10.0),
+                                      decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Color(0xff6C7480)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10.0))),
+                                      child: SearchChoices.single(
+                                        value: dropdownValue,
+                                        items: cutomerItems,
+                                        hint: dropdownValue,
+                                        searchHint: "Select Customer",
+                                        style: TextStyle(color: Colors.black),
+                                        underline: Container(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            dropdownValue = value;
+                                            if (dropdownValue != "Select Customer") {
+                                              for (var i = 0;
+                                                  i < spinnerItems.length;
+                                                  i++) {
+                                                if (spinnerItems[i] ==
+                                                    dropdownValue) {
+                                                  selectedCustomer_id =
+                                                      customer_id[i];
+                                                }
+                                              }
+                                              print(
+                                                  "fghfdsasdfghgfdsasdfghgfdsaASDFG  " +
+                                                      selectedCustomer_id);
+                                            }
+                                          });
+                                        },
+                                        displayClearIcon: false,
+                                        isExpanded: true,
+                                      )
+                                      // DropdownButton<String>(
+                                      //         value: dropdownValue,
+                                      //         isExpanded: true,
+                                      //         icon: Icon(Icons.keyboard_arrow_down_sharp),
+                                      //         iconSize: 20,
+                                      //         elevation: 16,
+                                      //         style: const TextStyle(
+                                      //             color: Colors.black,
+                                      //             fontSize: 16,
+                                      //             fontWeight: FontWeight.w400),
+                                      //         underline: Container(
+                                      //             height: 0,
+                                      //             color: Colors.deepPurpleAccent,
+                                      //           ),
+                                      //         onChanged: (String? data) {
+                                      //           setState(() {
+                                      //             dropdownValue = data!;
+                                      //             if(dropdownValue != "Select Customer"){
+                                      //               for(var i = 0; i < spinnerItems.length; i++){
+                                      //                 if(spinnerItems[i] == dropdownValue){
+                                      //                   selectedCustomer_id = customer_id[i];
+                                      //                 }
+                                      //               }
+                                      //               print("fghfdsasdfghgfdsasdfghgfdsaASDFG  "+selectedCustomer_id);
+                                      //             }
+                                      //           });
+                                      //         },
+                                      //         items: spinnerItems
+                                      //             .map<DropdownMenuItem<String>>((String value){
+                                      //               return DropdownMenuItem(
+                                      //                 value: value,
+                                      //                   child: Text(value)
+                                      //               );
+                                      //         }).toList(),
+                                      //       )
+                                      ),
                                 ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.0)
-                                )
-                              ),
-                              child: DropdownButton<String>(
-                                value: dropdownValue,
-                                isExpanded: true,
-                                icon: Icon(Icons.keyboard_arrow_down_sharp),
-                                iconSize: 20,
-                                elevation: 16,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                                underline: Container(
-                                    height: 0,
-                                    color: Colors.deepPurpleAccent,
+                                InkWell(
+                                  onTap: (){
+                                   Navigator.pushReplacement
+                                     (context, MaterialPageRoute(builder: (context)=> MYBottomSheet()));
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                      padding: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                                      decoration: BoxDecoration(
+                                        border:
+                                        Border.all(color: Color(0xff6C7480)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                      child: Icon(
+                                          Icons.contacts
+                                      )
                                   ),
-                                onChanged: (String? data) {
-                                  setState(() {
-                                    dropdownValue = data!;
-                                    if(dropdownValue != "Select Customer"){
-                                      for(var i = 0; i < spinnerItems.length; i++){
-                                        if(spinnerItems[i] == dropdownValue){
-                                          selectedCustomer_id = customer_id[i];
-                                        }
-                                      }
-                                      print("fghfdsasdfghgfdsasdfghgfdsaASDFG  "+selectedCustomer_id);
-                                    }
-                                  });
-                                },
-                                items: spinnerItems
-                                    .map<DropdownMenuItem<String>>((String value){
-                                      return DropdownMenuItem(
-                                        value: value,
-                                          child: Text(value)
-                                      );
-                                }).toList(),
-                              )
+                                )
+                              ],
                             ),
                             // Row(
                             //   children: [
@@ -264,41 +405,49 @@ class _SlotBookingState extends State<SlotBooking> {
                         ),
                       ),
                       TableCalendar(
-                          focusedDay: today,
-                          firstDay: DateTime.utc(2010, 10, 16),
-                          lastDay: DateTime.utc(2050,10,16),
-                        onCalendarCreated: (controller) => _pageController = controller,
+                        focusedDay: today,
+                        firstDay: DateTime.utc(2010, 10, 16),
+                        lastDay: DateTime.utc(2050, 10, 16),
+                        onCalendarCreated: (controller) =>
+                            _pageController = controller,
                         onDaySelected: _onDaySelected,
-                        selectedDayPredicate: (day) =>isSameDay(day, today),
+                        selectedDayPredicate: (day) => isSameDay(day, today),
                         availableGestures: AvailableGestures.all,
                         headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                          leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white,),
-                          rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white,),
-                          titleTextStyle: TextStyle(fontSize: 25.24, color: Colors.white),
-                          decoration: BoxDecoration(
-                            image: DecorationImage(image: AssetImage("assets/calender_bg.png"))
-                          )
-                        ),
+                            formatButtonVisible: false,
+                            titleCentered: true,
+                            leftChevronIcon: Icon(
+                              Icons.chevron_left,
+                              color: Colors.white,
+                            ),
+                            rightChevronIcon: Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                            ),
+                            titleTextStyle:
+                                TextStyle(fontSize: 25.24, color: Colors.white),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image:
+                                        AssetImage("assets/calender_bg.png")))),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
+                        margin:
+                            EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
                         child: Text("SELECT TIME"),
                       ),
                       InkWell(
-                        onTap: (){
+                        onTap: () {
                           selectTime(context);
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Color(0xff6C7480)
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0))
-                          ),
+                              border: Border.all(color: Color(0xff6C7480)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
                           margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
                           child: Row(
                             children: [
                               Text(selectTimes),
@@ -309,18 +458,19 @@ class _SlotBookingState extends State<SlotBooking> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
+                        margin:
+                            EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
                         child: Text("Fees"),
                       ),
                       Container(
                         decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Color(0xff6C7480)
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0))
-                        ),
+                            border: Border.all(color: Color(0xff6C7480)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
                         margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                        padding: EdgeInsets.symmetric(horizontal: 20.0,),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                        ),
                         child: TextField(
                             controller: fees,
                             textAlignVertical: TextAlignVertical.center,
@@ -336,11 +486,11 @@ class _SlotBookingState extends State<SlotBooking> {
                                 color: Color(0xff6C7480),
                               ),
                               border: InputBorder.none,
-                            )
-                        ),
+                            )),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
+                        margin:
+                            EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
                         child: Text("Fees Type"),
                       ),
                       Container(
@@ -350,10 +500,10 @@ class _SlotBookingState extends State<SlotBooking> {
                           children: [
                             Radio(
                               activeColor: Colors.greenAccent,
-                                value: 1,
-                                groupValue: _radioSelected,
+                              value: 2,
+                              groupValue: _radioSelected,
                               onChanged: (value) {
-                                setState((){
+                                setState(() {
                                   _radioSelected = value as int;
                                   _radioVal = 'Paid';
                                   print(_radioVal);
@@ -363,10 +513,10 @@ class _SlotBookingState extends State<SlotBooking> {
                             Text('Paid'),
                             Radio(
                               activeColor: Colors.greenAccent,
-                                value: 2,
-                                groupValue: _radioSelected,
+                              value: 1,
+                              groupValue: _radioSelected,
                               onChanged: (value) {
-                                setState((){
+                                setState(() {
                                   _radioSelected = value as int;
                                   _radioVal = 'UnPaid';
                                   print(_radioVal);
@@ -378,16 +528,15 @@ class _SlotBookingState extends State<SlotBooking> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
+                        margin:
+                            EdgeInsets.only(left: 30.0, top: 20.0, bottom: 5.0),
                         child: Text("Message"),
                       ),
                       Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Color(0xff6C7480)
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0))
-                          ),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xff6C7480)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
                         margin: EdgeInsets.only(left: 20.0, right: 20.0),
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: TextField(
@@ -403,42 +552,47 @@ class _SlotBookingState extends State<SlotBooking> {
                                 color: Color(0xff6C7480),
                               ),
                               border: InputBorder.none,
-                            )
-                        ),
+                            )),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 20.0, top: 20.0, right:20.0, bottom: 20.0),
+                        margin: EdgeInsets.only(
+                            left: 20.0, top: 20.0, right: 20.0, bottom: 20.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             InkWell(
-                              onTap: (){
-                                if(dropdownValue == "Select Customer"){
-                                  Fluttertoast.showToast(msg: "Please Select Customer",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.SNACKBAR);
-                                }else if(selectTimes == "Select Slot"){
-                                  Fluttertoast.showToast(msg: "Please Select Time",
+                              onTap: () {
+                                if (dropdownValue == "Select Customer") {
+                                  Fluttertoast.showToast(
+                                      msg: "Please Select Customer",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.SNACKBAR);
-                                }else if(fees.text.isEmpty){
-                                  Fluttertoast.showToast(msg: "Please Enter Fees",
+                                } else if (selectTimes == "Select Slot") {
+                                  Fluttertoast.showToast(
+                                      msg: "Please Select Time",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.SNACKBAR);
-                                }else if(_radioSelected == 0){
-                                  Fluttertoast.showToast(msg: "Please Select Fess Type",
+                                } else if (fees.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please Enter Fees",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.SNACKBAR);
-                                }else if (msg.text.isEmpty){
-                                  Fluttertoast.showToast(msg: "Please Enter Message",
+                                } else if (_radioSelected == 0) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please Select Fess Type",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.SNACKBAR);
-                                }else {
+                                } else if (msg.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please Enter Message",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.SNACKBAR);
+                                } else {
                                   addAppointment();
                                 }
                               },
                               child: Container(
-                                width: MediaQuery.of(context).size.width/2.4,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                                 alignment: Alignment.center,
                                 height: 60,
@@ -448,11 +602,12 @@ class _SlotBookingState extends State<SlotBooking> {
                                       color: Color(0xff1BBF57).withOpacity(0.2),
                                       spreadRadius: 2,
                                       blurRadius: 10,
-                                      offset: Offset(0, 10), // changes position of shadow
+                                      offset: Offset(
+                                          0, 10), // changes position of shadow
                                     ),
                                   ],
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                      BorderRadius.all(Radius.circular(10)),
                                   gradient: LinearGradient(
                                       colors: [
                                         Color(0xff1BBF57),
@@ -463,51 +618,58 @@ class _SlotBookingState extends State<SlotBooking> {
                                       stops: [0.0, 1.0],
                                       tileMode: TileMode.clamp),
                                 ),
-                                child: clickLoad ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 3.0,
+                                child: clickLoad
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 3.0,
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Make an\nappointment'
+                                                .toUpperCase(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          ),
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ):
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Make an\nappointment'.toUpperCase(),
-                                    textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                    ),
-                                  ],
-                                ),
                               ),
                             ),
-                            SizedBox(width: 10.0,),
+                            SizedBox(
+                              width: 10.0,
+                            ),
                             InkWell(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.pop(context);
                               },
                               child: Container(
-                                width: MediaQuery.of(context).size.width/2.4,
+                                width: MediaQuery.of(context).size.width / 2.4,
                                 height: 60,
                                 alignment: Alignment.center,
                                 margin: EdgeInsets.only(left: 10.0),
                                 decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Color(0xffFF663D)
-                                  ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(5.0)
-                                  )
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                                    border:
+                                        Border.all(color: Color(0xffFF663D)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 5.0),
                                 child: Text("CANCEL"),
                               ),
                             )
@@ -522,6 +684,185 @@ class _SlotBookingState extends State<SlotBooking> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MYBottomSheet extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => _BottomSheetState();
+}
+
+class _BottomSheetState extends State<MYBottomSheet>{
+
+  List<Contact> contacts = [];
+  List<Contact> foundContacts = [];
+  bool isLoading = false;
+
+  void getContactPermission() async {
+
+    if(await Permission.contacts.isGranted) {
+      getContacts();
+    }else {
+      await Permission.contacts.request();
+    }
+  }
+
+  void getContacts() async {
+    setState(() {
+      isLoading = true;
+    });
+    contacts = await ContactsService.getContacts();
+    print(contacts[0].phones![0].value);
+
+    foundContacts = contacts;
+    print(foundContacts);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getContactPermission();
+  }
+
+  void searchFilter(String enteredKeyword, StateSetter dState) {
+    List<Contact> results = [];
+    if(enteredKeyword.isEmpty){
+      results = contacts;
+    }else{
+      results = contacts
+          .where((element) =>
+          element.givenName!.toLowerCase().contains(enteredKeyword.toLowerCase()) ||
+              element.phones![0].value!.contains(enteredKeyword)).toList();
+    }
+    dState(() {
+      foundContacts = results;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState){
+            return isLoading ? Center(
+              child: CircularProgressIndicator(),
+            ):Container(
+              height: MediaQuery.of(context).size.height,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Icon(Icons.arrow_back_rounded)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Color(0xff6C7480)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(5.0))),
+                      margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                      ),
+                      child: TextField(
+                        // controller: fees,
+                        textAlignVertical: TextAlignVertical.center,
+                        textAlign: TextAlign.left,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: 'Search Contact',
+                          prefixStyle: TextStyle(color: Colors.black),
+                          hintStyle: const TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff6C7480),
+                          ),
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (value) => searchFilter(value, setState),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: foundContacts.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index){
+                            return InkWell(
+                              onTap: (){
+                                setState((){
+                                  // dropdownValue = foundContacts[index].displayName.toString();
+                                });
+                                // cutomerItems.add(DropdownMenuItem(
+                                //   child: Text(foundContacts[index].displayName.toString()),
+                                //   value: foundContacts[index].displayName.toString(),
+                                // ));
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SlotBooking("${foundContacts[index].displayName} (${foundContacts[index].phones![0].value})")));
+                              },
+                              child: ListTile(
+                                leading: Container(
+                                  height: 30,
+                                  width: 30,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            blurRadius: 7,
+                                            color: Colors.white.withOpacity(0.1),
+                                            offset: Offset(-3, -3)
+                                        ),
+                                        BoxShadow(
+                                            blurRadius: 7,
+                                            color: Colors.black.withOpacity(0.1),
+                                            offset: Offset(3, -3)
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(6.0)
+                                      ),
+                                      color: Color(0xff262626)
+                                  ),
+                                  child: Text(
+                                    "${foundContacts[index].givenName?.substring(0,1).toUpperCase()}",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  "${foundContacts[index].displayName}",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  "${foundContacts[index].phones![0].value}",
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400
+                                  ),
+                                ),
+                                horizontalTitleGap: 12,
+                              ),
+                            );
+                          }),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:astro_santhil_app/main.dart';
 import 'package:astro_santhil_app/view/add_appointment.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
+import 'package:astro_santhil_app/view/category_managmet.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:astro_santhil_app/view/payments.dart';
 import 'package:astro_santhil_app/view/slot_booking.dart';
@@ -18,7 +19,7 @@ class _HomeState extends State<Home>{
   var image = [
     "assets/user_ic_white.png", "assets/today_ic.png", "assets/upcoming_ic.png", "assets/pending_ic.png",
     "assets/cancel_appointment_ic.png", "assets/add_appointment_ic.png", "assets/pay_repo_ic.png",
-    "assets/category_manage_ic.png", "assets/Vector (9).png"
+    "assets/category_manage_ic.png", "assets/view_customer.png"
   ];
 
   var bgImgae = [
@@ -28,8 +29,8 @@ class _HomeState extends State<Home>{
   ];
 
   var name = [
-    "Customer Managment", "Today`s Appointment", "Upcoming Appointment", "Pending Appointment", "Cancelled Appointment",
-    "Add Appointment", "Payment Reports", "Category Management", "View\nCustomer"
+    "Add\nCustomer", "Today`s Appointment", "Upcoming Appointment", "Pending Appointment", "Cancelled Appointment",
+    "Add Appointment", "Payment Reports", "Category Management", "Customer Managment"
   ];
   var navigate = [
     AddAppointment(),
@@ -37,9 +38,9 @@ class _HomeState extends State<Home>{
     Appointment("today"),
     Appointment("pending"),
     Appointment("cancel"),
-    SlotBooking(),
+    SlotBooking("Select Customer"),
     Payments(),
-    AddAppointment(),
+    CategoryManagement(),
     ViewCustomer(),
   ];
 
@@ -129,7 +130,7 @@ class _HomeState extends State<Home>{
                           backgroundColor: Colors.white,
                           child: Container(
                               padding: EdgeInsets.only(top: 12.0),
-                              child: Image.asset("assets/user_ic.png")),
+                              child: Image.asset("assets/green text-01.png")),
                         ),
                       ),
                       Container(

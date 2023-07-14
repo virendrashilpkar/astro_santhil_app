@@ -11,6 +11,7 @@ import 'package:astro_santhil_app/models/category_model.dart';
 import 'package:astro_santhil_app/models/complete_appointment_model.dart';
 import 'package:astro_santhil_app/models/customer_detail_model.dart';
 import 'package:astro_santhil_app/models/customer_name_model.dart';
+import 'package:astro_santhil_app/models/delete_customer_model.dart';
 import 'package:astro_santhil_app/models/login_model.dart';
 import 'package:astro_santhil_app/models/payment_view_model.dart';
 import 'package:astro_santhil_app/models/sub_category_model.dart';
@@ -135,9 +136,10 @@ class Services {
 
   static Future<AddCustomerModel> customerAdd(String name, String gender, String city, String dob, String birt_time,
       String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
-      File image) async {
+      File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
-    var fImage = await http.MultipartFile.fromPath("h_image", image.path);
+    var fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
+    var Image = await http.MultipartFile.fromPath("u_image", image.path);
 
     request.fields["name"] = name;
     request.fields["gender"] = gender;
@@ -151,6 +153,7 @@ class Services {
     request.fields["place"] = place;
     request.fields["text"] = text;
     request.fields["birth_place"] = birthPlace;
+    request.files.add(Image);
     request.files.add(fImage);
 
 
@@ -280,9 +283,13 @@ class Services {
     }
   }
 
-  static Future<ViewCustomerModel> veiwCustomer() async {
+  static Future<ViewCustomerModel> veiwCustomer(String name, String phone, String catId, String subCatId) async {
     final params = {
       "flag": "customer_list",
+      "name": name,
+      "phone": phone,
+      "cat_id": catId,
+      "sub_cat_id": subCatId,
     };
 
     http.Response response = await http.post(Uri.parse(nameList), body: params);
@@ -370,9 +377,10 @@ class Services {
 
   static Future<UpdateCustomerModel> updateCustomer(String cId, String name, String gender, String city, String dob, String birt_time,
       String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
-      File image) async {
+      File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(nameList));
-    var fImage = await http.MultipartFile.fromPath("h_image", image.path);
+    var fImage = await http.MultipartFile.fromPath("u_image", image.path);
+    var hImage = await http.MultipartFile.fromPath("h_image", image.path);
 
     request.fields["flag"] = "edit_customer";
     request.fields["customer_id"] = cId;
@@ -389,6 +397,7 @@ class Services {
     request.fields["text"] = text;
     request.fields["birth_place"] = birthPlace;
     request.files.add(fImage);
+    request.files.add(hImage);
 
 
 
@@ -407,4 +416,26 @@ class Services {
       return user;
     }
   }
+
+  static Future<DeleteCustomerModel> customerDelete(String id) async {
+    final params = {
+      "flag": "delete_user",
+      "user_id": id
+    };
+
+    http.Response response = await http.post(Uri.parse(nameList), body: params);
+    print("customerDelete ${params}");
+    print("customerDelete ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      DeleteCustomerModel user = DeleteCustomerModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      DeleteCustomerModel user = DeleteCustomerModel.fromJson(data);
+      return user;
+    }
+  }
+
 }
