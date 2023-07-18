@@ -2,9 +2,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/view/subscription/custom/Customcheck.dart';
 
 class VIPSub extends StatefulWidget {
+  String name = "";
+  int price = 0;
+  List<Feauture> list = [];
+  VIPSub(this.name, this.price, this.list);
   @override
   State<VIPSub> createState() => _MyHomePageState();
 }
@@ -93,7 +98,7 @@ class _MyHomePageState extends State<VIPSub> {
                   children: [
                     new SizedBox(height: 20,),
                     new Container(
-                      child: Text("VIP",style: new TextStyle(color: CommonColors.black,fontSize: 20,fontWeight: FontWeight.w600),),
+                      child: Text(widget.name,style: new TextStyle(color: CommonColors.black,fontSize: 20,fontWeight: FontWeight.w600),),
                     ),
                     new SizedBox(height: 5,),
                     new Container(
@@ -119,7 +124,7 @@ class _MyHomePageState extends State<VIPSub> {
                         child: Column(
                           children: [
                             new Container(
-                              child: Text("Upgrade form \$19.27",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                              child: Text("Upgrade form \$${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
                             ),
                           ],
                         ),
@@ -147,27 +152,11 @@ class _MyHomePageState extends State<VIPSub> {
                   ]
               ),
 
-              new Expanded(
-                  child:
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        new Customcheck(tittle: "Unlimited likes",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Record a voice message on profile",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Search Worldwide",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Unlimited Super likes daily",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Control what you want to show",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Only profiles you like can see you",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Select a username",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Upload videos",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "GoLive, videoconference with members",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Top Matches selected daily",color: CommonColors.white,textcolor: CommonColors.black,),
-                        new Customcheck(tittle: "Message while liking",color: CommonColors.white,textcolor: CommonColors.black,),
-
-                      ],
-                    ),
-                  )
-              )
+              Expanded(child: ListView.builder(
+                  itemCount: widget.list.length,
+                  itemBuilder: (context, index){
+                    return Customcheck(tittle: widget.list[index].feature.toString(), color: CommonColors.black.withOpacity(0.2), textcolor: CommonColors.white);
+                  }))
 
 
             ],

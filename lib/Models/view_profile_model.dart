@@ -38,6 +38,8 @@ class Datum {
   String? lastName;
   String? city;
   String? country;
+  String? state;
+  bool? isVerified;
   String? image;
 
   Datum({
@@ -46,6 +48,8 @@ class Datum {
     this.lastName,
     this.city,
     this.country,
+    this.state,
+    this.isVerified,
     this.image,
   });
 
@@ -55,6 +59,8 @@ class Datum {
     lastName: json["last_name"],
     city: json["city"],
     country: json["country"],
+    state: json["state"],
+    isVerified: json["is_verified"],
     image: json["image"],
   );
 
@@ -64,6 +70,8 @@ class Datum {
     "last_name": lastName,
     "city": city,
     "country": country,
+    "state": state,
+    "is_verified": isVerified,
     "image": image,
   };
 }

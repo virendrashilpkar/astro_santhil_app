@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
@@ -9,6 +10,9 @@ import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/view_profile_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/subscription/GoldSub.dart';
+import 'package:shadiapp/view/subscription/PremiumSub.dart';
+import 'package:shadiapp/view/subscription/VIPSub.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -29,6 +33,7 @@ class _MyHomePageState extends State<Profile> {
   List<planDatum> _list = [];
   bool clickLoad = false;
   bool isLoad = false;
+  File? image;
 
   Future CheckUserConnection() async {
     try {
@@ -122,6 +127,58 @@ class _MyHomePageState extends State<Profile> {
   }
 
 
+  void _pickedImage() {
+    showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+          content: Text("Choose image source"),
+          actions: [
+            TextButton(
+                child: Text("Camera"),
+                onPressed: () {
+                  _getFromCamera();
+                  Navigator.pop(context);
+                }
+            ),
+            TextButton(
+                child: Text("Gallery"),
+                onPressed: () {
+                  _getFromGallery();
+                  Navigator.pop(context);
+                }
+            ),
+          ]
+      ),
+    );
+  }
+
+  _getFromGallery() async {
+    PickedFile? pickedFile = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      setState((){
+        image = File(pickedFile.path);
+      });
+    }
+  }
+  _getFromCamera() async {
+    PickedFile? pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      setState((){
+        image = File(pickedFile.path);
+      });
+
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,150 +245,151 @@ class _MyHomePageState extends State<Profile> {
                           right: 15,
                           child: InkWell(
                             onTap: (){
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      insetPadding: const EdgeInsets.all(20),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(10.0)), //this right here
-                                      child: Container(
-                                        height: 320,
-                                        width: double.infinity,
-
-                                        // margin: const EdgeInsets.symmetric(horizontal: 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            new Expanded(child: Container(
-                                              height:double.infinity,
-                                                decoration: BoxDecoration(
-                                                    color:Color(0xffCBF1FA),
-                                                    borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))
-                                                ),
-                                              width: MediaQuery.of(context).size.width,
-                                              child: Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  new Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Container(
-                                                          height:132,
-                                                          width:132,
-                                                          child: Stack(
-                                                            children: [
-                                                              Container(
-                                                                alignment: Alignment.center,
-                                                                height:120,
-                                                                width:120,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.all(Radius.circular(66)),
-                                                                    border: Border.all(width: 5,color: CommonColors.upgradeblue)
-                                                                ),
-                                                                child: ClipRRect(
-                                                                  borderRadius: BorderRadius.circular(66.0),
-                                                                  child: Image.network(_viewProfileModel.data![0].image.toString(),
-                                                                    fit: BoxFit.cover,height: 180,width: 180,),
-                                                                ),
-                                                              ),
-                                                              new Positioned(
-                                                                  bottom: 10,
-                                                                  right: 10,
-                                                                  child: InkWell(
-                                                                    onTap: (){
-                                                                    },
-                                                                    child: ClipRRect(
-                                                                        borderRadius: BorderRadius.circular(20),
-                                                                        child: Container(
-                                                                          height: 33,
-                                                                          width: 33,
-                                                                          padding: const EdgeInsets.all(5),
-                                                                          color: CommonColors.upgradeblue,
-                                                                          child: Image.asset("assets/chat_upgrade.png")
-                                                                        )
-                                                                    ),
-                                                                  )
-                                                              )
-                                                            ],
-                                                          )
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  new Positioned(
-                                                    right:0,
-                                                      top: 0,
-                                                      child: Container(
-                                                        height: 55,
-                                                        width: 56,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0xffA9EDF8),
-                                                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(28),topRight:Radius.circular(10) )
-                                                        ),
-                                                      )
-                                                  ),
-                                                  new Positioned(
-                                                      left:0,
-                                                      bottom: 0,
-                                                      child: Container(
-                                                        height: 55,
-                                                        width: 56,
-                                                        decoration: BoxDecoration(
-                                                            color: Color(0xffA9EDF8),
-                                                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),topRight: Radius.circular(28))
-                                                        ),
-                                                      )
-                                                  ),
-                                                  new Positioned(
-                                                    top: 10,
-                                                      left:10,
-                                                      child: Container(
-                                                        height: 38,
-                                                        width: 38,
-                                                        decoration: BoxDecoration(
-                                                            color: Color(0xffFB3357),
-                                                            borderRadius: BorderRadius.all(Radius.circular(19))
-                                                        ),
-                                                        padding: const EdgeInsets.all(8),
-                                                        child:
-                                                        new RotationTransition(
-                                                          turns: new AlwaysStoppedAnimation(-30 / 360),
-                                                          child: Image.asset("assets/bell_icon.png",color: Colors.white,),
-                                                        )
-
-
-                                                      )
-                                                  ),
-                                                ],
-                                              )
-                                            )),
-                                            new Expanded(child: Container(
-                                              height:double.infinity,
-                                                width: double.infinity,
-                                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    new Container(
-                                                      child: Text("Upgrade your like!",style: new TextStyle(fontSize: 15,fontWeight: FontWeight.w600,color: Colors.black),),
-                                                    ),
-                                                    new SizedBox(height: 13,),
-                                                    new Container(
-                                                      child: Text("Push notifications make sure you never\nmiss new comments. Turn on in settings.",style: new TextStyle(fontSize: 13,fontWeight: FontWeight.w400,color: Color(0xff656565)),textAlign: TextAlign.center,),
-                                                    ),
-                                                    new SizedBox(height: 20,),
-                                                  ],
-                                                )
-                                            )),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  });
+                              _pickedImage();
+                              // showDialog(
+                              //     context: context,
+                              //     builder: (BuildContext context) {
+                              //       return Dialog(
+                              //         insetPadding: const EdgeInsets.all(20),
+                              //         shape: RoundedRectangleBorder(
+                              //             borderRadius:
+                              //             BorderRadius.circular(10.0)), //this right here
+                              //         child: Container(
+                              //           height: 320,
+                              //           width: double.infinity,
+                              //
+                              //           // margin: const EdgeInsets.symmetric(horizontal: 10),
+                              //           child: Column(
+                              //             mainAxisAlignment: MainAxisAlignment.center,
+                              //             crossAxisAlignment: CrossAxisAlignment.start,
+                              //             children: [
+                              //               new Expanded(child: Container(
+                              //                 height:double.infinity,
+                              //                   decoration: BoxDecoration(
+                              //                       color:Color(0xffCBF1FA),
+                              //                       borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))
+                              //                   ),
+                              //                 width: MediaQuery.of(context).size.width,
+                              //                 child: Stack(
+                              //                   alignment: Alignment.center,
+                              //                   children: [
+                              //                     new Row(
+                              //                       mainAxisAlignment: MainAxisAlignment.center,
+                              //                       crossAxisAlignment: CrossAxisAlignment.center,
+                              //                       children: [
+                              //                         Container(
+                              //                             height:132,
+                              //                             width:132,
+                              //                             child: Stack(
+                              //                               children: [
+                              //                                 Container(
+                              //                                   alignment: Alignment.center,
+                              //                                   height:120,
+                              //                                   width:120,
+                              //                                   decoration: BoxDecoration(
+                              //                                       borderRadius: BorderRadius.all(Radius.circular(66)),
+                              //                                       border: Border.all(width: 5,color: CommonColors.upgradeblue)
+                              //                                   ),
+                              //                                   child: ClipRRect(
+                              //                                     borderRadius: BorderRadius.circular(66.0),
+                              //                                     child: Image.network(_viewProfileModel.data![0].image.toString(),
+                              //                                       fit: BoxFit.cover,height: 180,width: 180,),
+                              //                                   ),
+                              //                                 ),
+                              //                                 new Positioned(
+                              //                                     bottom: 10,
+                              //                                     right: 10,
+                              //                                     child: InkWell(
+                              //                                       onTap: (){
+                              //                                       },
+                              //                                       child: ClipRRect(
+                              //                                           borderRadius: BorderRadius.circular(20),
+                              //                                           child: Container(
+                              //                                             height: 33,
+                              //                                             width: 33,
+                              //                                             padding: const EdgeInsets.all(5),
+                              //                                             color: CommonColors.upgradeblue,
+                              //                                             child: Image.asset("assets/chat_upgrade.png")
+                              //                                           )
+                              //                                       ),
+                              //                                     )
+                              //                                 )
+                              //                               ],
+                              //                             )
+                              //                         ),
+                              //                       ],
+                              //                     ),
+                              //                     new Positioned(
+                              //                       right:0,
+                              //                         top: 0,
+                              //                         child: Container(
+                              //                           height: 55,
+                              //                           width: 56,
+                              //                           decoration: BoxDecoration(
+                              //                             color: Color(0xffA9EDF8),
+                              //                             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(28),topRight:Radius.circular(10) )
+                              //                           ),
+                              //                         )
+                              //                     ),
+                              //                     new Positioned(
+                              //                         left:0,
+                              //                         bottom: 0,
+                              //                         child: Container(
+                              //                           height: 55,
+                              //                           width: 56,
+                              //                           decoration: BoxDecoration(
+                              //                               color: Color(0xffA9EDF8),
+                              //                               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),topRight: Radius.circular(28))
+                              //                           ),
+                              //                         )
+                              //                     ),
+                              //                     new Positioned(
+                              //                       top: 10,
+                              //                         left:10,
+                              //                         child: Container(
+                              //                           height: 38,
+                              //                           width: 38,
+                              //                           decoration: BoxDecoration(
+                              //                               color: Color(0xffFB3357),
+                              //                               borderRadius: BorderRadius.all(Radius.circular(19))
+                              //                           ),
+                              //                           padding: const EdgeInsets.all(8),
+                              //                           child:
+                              //                           new RotationTransition(
+                              //                             turns: new AlwaysStoppedAnimation(-30 / 360),
+                              //                             child: Image.asset("assets/bell_icon.png",color: Colors.white,),
+                              //                           )
+                              //
+                              //
+                              //                         )
+                              //                     ),
+                              //                   ],
+                              //                 )
+                              //               )),
+                              //               new Expanded(child: Container(
+                              //                 height:double.infinity,
+                              //                   width: double.infinity,
+                              //                   padding: const EdgeInsets.symmetric(horizontal: 20),
+                              //                   child: Column(
+                              //                     mainAxisAlignment: MainAxisAlignment.center,
+                              //                     crossAxisAlignment: CrossAxisAlignment.center,
+                              //                     children: [
+                              //                       new Container(
+                              //                         child: Text("Upgrade your like!",style: new TextStyle(fontSize: 15,fontWeight: FontWeight.w600,color: Colors.black),),
+                              //                       ),
+                              //                       new SizedBox(height: 13,),
+                              //                       new Container(
+                              //                         child: Text("Push notifications make sure you never\nmiss new comments. Turn on in settings.",style: new TextStyle(fontSize: 13,fontWeight: FontWeight.w400,color: Color(0xff656565)),textAlign: TextAlign.center,),
+                              //                       ),
+                              //                       new SizedBox(height: 20,),
+                              //                     ],
+                              //                   )
+                              //               )),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //       );
+                              //     });
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
@@ -574,13 +632,14 @@ class _MyHomePageState extends State<Profile> {
                     SizedBox(
                       height: 15,
                       width: 15,
-                      child: Center(child: Image.asset("assets/blue_tick.png",height: 15,width: 15)),
+                      child: _viewProfileModel.data![0].isVerified == true ? Center(
+                          child: Image.asset("assets/blue_tick.png",height: 15,width: 15)):Container(),
                     )
                   ],
                 ),
                 new SizedBox(height: 5,),
                 new Container(
-                  child: Text("${_viewProfileModel.data![0].city}, ${_viewProfileModel.data![0].country}",
+                  child: Text("${_viewProfileModel.data![0].city}, ${_viewProfileModel.data![0].state}, ${_viewProfileModel.data![0].country}",
                     style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
                 ),
                 new SizedBox(height: 15,),
@@ -725,11 +784,17 @@ class _MyHomePageState extends State<Profile> {
                                   if(_list[index].name=="BASIC"){
                                     Navigator.of(context).pushNamed("FreeSub");
                                   }else if(_list[index].name=="Premium"){
-                                    Navigator.of(context).pushNamed("PremiumSub");
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => PremiumSub(_list[index].name.toString(),
+                                        _list[index].price!.toInt(), _list[index].feauture!.toList())));
                                   }else if(_list[index].name=="Gold"){
-                                    Navigator.of(context).pushNamed("GoldSub");
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => GoldSub(_list[index].name.toString(),
+                                            _list[index].price!.toInt(), _list[index].feauture!.toList())));
                                   }else if(_list[index].name=="Vip"){
-                                    Navigator.of(context).pushNamed("VIPSub");
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => VIPSub(_list[index].name.toString(),
+                                            _list[index].price!.toInt(), _list[index].feauture!.toList())));
                                   }
                                 });
                               },
@@ -779,7 +844,7 @@ class _MyHomePageState extends State<Profile> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text("Save ${10}%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                                              Text("Save ${_list[index].discountePercent}%",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
                                             ],
                                           )
                                       ),
