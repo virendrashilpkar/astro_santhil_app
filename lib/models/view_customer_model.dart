@@ -22,13 +22,13 @@ class ViewCustomerModel {
   factory ViewCustomerModel.fromJson(Map<String, dynamic> json) => ViewCustomerModel(
     status: json["status"],
     msg: json["msg"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "msg": msg,
-    "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 
@@ -46,6 +46,7 @@ class Datum {
   String? catId;
   String? subCatId;
   String? hImage;
+  String? uImage;
   String? text;
 
   Datum({
@@ -62,6 +63,7 @@ class Datum {
     this.catId,
     this.subCatId,
     this.hImage,
+    this.uImage,
     this.text,
   });
 
@@ -71,7 +73,7 @@ class Datum {
     gender: json["gender"],
     place: json["place"],
     city: json["city"],
-    dob: DateTime.parse(json["dob"]),
+    dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
     birthTime: json["birth_time"],
     birthPlace: json["birth_place"],
     email: json["email"],
@@ -79,6 +81,7 @@ class Datum {
     catId: json["cat_id"],
     subCatId: json["sub_cat_id"],
     hImage: json["h_image"],
+    uImage: json["u_image"],
     text: json["text"],
   );
 
@@ -88,7 +91,7 @@ class Datum {
     "gender": gender,
     "place": place,
     "city": city,
-    "dob": "${dob?.year.toString().padLeft(4, '0')}-${dob?.month.toString().padLeft(2, '0')}-${dob?.day.toString().padLeft(2, '0')}",
+    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
     "birth_time": birthTime,
     "birth_place": birthPlace,
     "email": email,
@@ -96,6 +99,7 @@ class Datum {
     "cat_id": catId,
     "sub_cat_id": subCatId,
     "h_image": hImage,
+    "u_image": uImage,
     "text": text,
   };
 }

@@ -340,7 +340,7 @@ class _ViewCustomerState extends State<ViewCustomer> {
                           textAlign: TextAlign.left,
                           decoration: InputDecoration(
                             isDense: true,
-                            hintText: 'Search contacts... ',
+                            hintText: 'Search Customers',
                             prefixIcon: Icon(
                                 Icons.search
                             ),
@@ -360,6 +360,12 @@ class _ViewCustomerState extends State<ViewCustomer> {
                         height: MediaQuery.of(context).size.height,
                         child: _pageLoading? Center(
                           child: CircularProgressIndicator(),
+                        ): _customerModel.msg == "No Data Found!.." ? Center(
+                          child: Text("${_customerModel.msg}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20
+                            ),),
                         ):ListView.builder(
                             itemCount: filtterList.length,
                             shrinkWrap: true,
@@ -443,7 +449,7 @@ class _ViewCustomerState extends State<ViewCustomer> {
                                                                   padding: const EdgeInsets.all(0),
                                                                   child: FadeInImage.assetNetwork(
                                                                     placeholder: "assets/user_ic_white.png",
-                                                                    image: "${_body.hImage}",
+                                                                    image: "${_body.uImage}",
                                                                     fit: BoxFit.cover,
                                                                   )
 

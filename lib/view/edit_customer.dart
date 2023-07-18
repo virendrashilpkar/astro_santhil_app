@@ -51,7 +51,7 @@ class _EditCustomerState extends State<EditCustomer> {
   TimeOfDay? picked;
   String selectTimes = "Select Slot";
   bool clickLoad = false;
-  bool isLoad = false;
+  bool isLoad = true;
 
   Future<Null> selectTime(BuildContext context) async {
     picked = await showTimePicker(
@@ -194,10 +194,18 @@ class _EditCustomerState extends State<EditCustomer> {
   }
 
   Future<void> categoryMethod() async {
+    setState(() {
+      isLoad = true;
+    });
     _categoryModel = await Services.categoryList();
     if(_categoryModel.status == true){
       for(var i=0; i < _categoryModel.body!.length; i++){
         categoryList.add(_categoryModel.body![i].catName.toString());
+        if(selectedCategory == _categoryModel.body![i].catName){
+          categoryId = _categoryModel.body![i].catId.toString();
+          subCategoryMethod();
+        }
+        selectedSubCategory = _customerDetailModel.data![0].subCatName.toString();
       }
     }
     setState(() {
@@ -206,14 +214,20 @@ class _EditCustomerState extends State<EditCustomer> {
   }
 
   Future<void> subCategoryMethod() async {
+    setState(() {
+      isLoad = true;
+    });
     _subCategoryModel = await Services.subCategoryList(categoryId);
     if(_subCategoryModel.status == true){
       for(var i=0; i < _subCategoryModel.body!.length; i++){
+        if(selectedSubCategory == _subCategoryModel.body![i].subCatName){
+          subCategoryId = _subCategoryModel.body![i].subCatId.toString();
+        }
         subCategoryList.add(_subCategoryModel.body![i].subCatName.toString());
       }
     }
     setState(() {
-
+      isLoad = false;
     });
   }
 
@@ -234,6 +248,7 @@ class _EditCustomerState extends State<EditCustomer> {
       phoneNumber.text = _customerDetailModel.data![0].phone.toString();
       birthPlace.text = _customerDetailModel.data![0].birthPlace.toString();
       text.text = _customerDetailModel.data![0].text.toString();
+      selectedCategory = _customerDetailModel.data![0].catName.toString();
       categoryId = _customerDetailModel.data![0].catId.toString();
       subCategoryId = _customerDetailModel.data![0].subCatId.toString();
     }
@@ -381,15 +396,28 @@ class _EditCustomerState extends State<EditCustomer> {
                                   onTap: (){
                                     _pickedImage();
                                   },
-                                  child: CircleAvatar(
-                                    radius: 45.0,
-                                    backgroundColor: Colors.black,
-                                    child: ClipOval(
-                                      child: image   != null ? Image.file(image!,
-                                        height: 120,):
-                                      Image.network("${_customerDetailModel.data![0].uImage}",
-                                        fit: BoxFit.contain,),
-                                    )
+                                  child: image != null ?
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: Container(
+                                        height: 100,
+                                        width: 100,
+                                        child:  Image.file(File(image!.path),
+                                          height: 100.0,
+                                          width: 100.0,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                  ):ClipRRect(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    child: Container(
+                                      height: 100,
+                                      width: 100,
+                                      child: Image.network("${_customerDetailModel.data![0].uImage}",
+                                        height: 100.0,
+                                        width: 100.0,
+                                        fit: BoxFit.cover,),
+                                    ),
                                   ),
                                 )
                             ),

@@ -138,8 +138,8 @@ class Services {
       String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
       File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
-    var fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
     var Image = await http.MultipartFile.fromPath("u_image", image.path);
+    var fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
 
     request.fields["name"] = name;
     request.fields["gender"] = gender;

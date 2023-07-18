@@ -91,14 +91,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-     resizeToAvoidBottomInset: false,
-     body: Container(
-       decoration: BoxDecoration(
-         image: DecorationImage(
-             image: AssetImage("assets/background.png"),
-         fit: BoxFit.fitWidth)
-       ),
-       child: SingleChildScrollView(
+     // resizeToAvoidBottomInset: false,
+     body: SingleChildScrollView(
+       child: Container(
+         decoration: BoxDecoration(
+           image: DecorationImage(
+               image: AssetImage("assets/background.png"),
+           fit: BoxFit.fitWidth)
+         ),
          child: Container(
            height: MediaQuery.of(context).size.height,
            child: Column(
@@ -120,7 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
                    backgroundColor: Colors.white,
                    child: Container(
                      padding: EdgeInsets.only(top: 12.0),
-                       child: Image.asset("assets/green text-01.png")),
+                       child: Image.asset("assets/green text-01.png",
+                       width: 120,)),
                  ),
                ),
                Container(
@@ -167,25 +168,13 @@ class _MyHomePageState extends State<MyHomePage> {
                      Radius.circular(10.0)
                    )
                  ),
-                 child: TextField(
-                   controller: password,
-                   obscureText: _isHidden,
-                   textAlignVertical: TextAlignVertical.center,
-                   textAlign: TextAlign.left,
-                   keyboardType: TextInputType.text,
-                   decoration: InputDecoration(
-                     contentPadding: EdgeInsets.only(bottom: 5.0),
-                     isDense: true,
-                     hintText: 'Password',
-                     hintStyle: const TextStyle(
-                       fontSize: 14.0,
-                       color: Colors.black26,
-                     ),
-                     border: InputBorder.none,
-                     prefixIcon: Container(
+                 child: Row(
+                   crossAxisAlignment: CrossAxisAlignment.center,
+                   children: [
+                     Container(
                        margin: EdgeInsets.only(right: 16.0),
                        decoration: BoxDecoration(
-                         color: Colors.black,
+                           color: Colors.black,
                            borderRadius: BorderRadius.all(
                                Radius.circular(5.0)
                            )
@@ -194,10 +183,29 @@ class _MyHomePageState extends State<MyHomePage> {
                          icon: Image.asset("assets/pass_ic.png", width: 20, height: 20,), onPressed: () { },
                        ),
                      ),
-                     suffix: InkWell(
+                     Expanded(
+                       child: TextField(
+                         controller: password,
+                         obscureText: _isHidden,
+                         textAlignVertical: TextAlignVertical.center,
+                         textAlign: TextAlign.left,
+                         keyboardType: TextInputType.text,
+                         decoration: InputDecoration(
+                           contentPadding: EdgeInsets.only(bottom: 0.0),
+                           isDense: true,
+                           hintText: 'Password',
+                           hintStyle: const TextStyle(
+                             fontSize: 14.0,
+                             color: Colors.black26,
+                           ),
+                           border: InputBorder.none,
+                         ),
+                       ),
+                     ),
+                     InkWell(
                        onTap: _togglePasswordView,
-                       child: Padding(
-                         padding: const EdgeInsets.only(left: 8.0, top: 5.0, right: 8.0),
+                       child: Container(
+                         margin: EdgeInsets.only(right: 8.0),
                          child: Icon(
                            _isHidden
                                ? Icons.visibility
@@ -205,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                          ),
                        ),
                      ),
-                   ),
+                   ],
                  ),
                ),
                Container(

@@ -33,12 +33,12 @@ class _HomeState extends State<Home>{
     "Add Appointment", "Payment Reports", "Category Management", "Customer Managment"
   ];
   var navigate = [
-    AddAppointment(),
+    AddAppointment("", ""),
     Appointment("today"),
     Appointment("today"),
     Appointment("pending"),
     Appointment("cancel"),
-    SlotBooking("Select Customer"),
+    SlotBooking(),
     Payments(),
     CategoryManagement(),
     ViewCustomer(),
@@ -126,11 +126,11 @@ class _HomeState extends State<Home>{
                     children: [
                       Container(
                         child: CircleAvatar(
-                          radius: 45.0,
+                          radius: 50.0,
                           backgroundColor: Colors.white,
                           child: Container(
-                              padding: EdgeInsets.only(top: 12.0),
-                              child: Image.asset("assets/green text-01.png")),
+                              child: Image.asset("assets/green text-01.png",
+                              width: 90,)),
                         ),
                       ),
                       Container(

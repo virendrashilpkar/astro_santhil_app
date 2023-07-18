@@ -7,11 +7,17 @@ import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/home.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:astro_santhil_app/view/slot_booking.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddAppointment extends StatefulWidget {
+
+  String name = "";
+  String number = "";
+  AddAppointment(this.name, this.number);
   @override
   State<StatefulWidget> createState() => _AddAppointmentState();
 }
@@ -42,8 +48,11 @@ class _AddAppointmentState extends State<AddAppointment> {
   String dob = "(DD/MM/YYYY)";
   TimeOfDay _time = TimeOfDay.now();
   TimeOfDay? picked;
-  String selectTimes = "Select Slot";
+  String selectTimes = "Select Time";
   bool clickLoad = false;
+  List<Contact> contacts = [];
+  List<Contact> foundContacts = [];
+  bool isLoading = false;
 
   Future<Null> selectTime(BuildContext context) async {
     picked = await showTimePicker(
@@ -231,8 +240,33 @@ class _AddAppointmentState extends State<AddAppointment> {
     });
   }
 
+  void getContactPermission() async {
+
+    if(await Permission.contacts.isGranted) {
+      getContacts();
+    }else {
+      await Permission.contacts.request();
+    }
+  }
+
+  void getContacts() async {
+    setState(() {
+      isLoading = true;
+    });
+    contacts = await ContactsService.getContacts();
+    print(contacts[0].phones![0].value);
+
+    foundContacts = contacts;
+    print(foundContacts);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
+    userName.text = widget.name;
+    phoneNumber.text = widget.number;
     categoryMethod();
     super.initState();
   }
@@ -311,18 +345,30 @@ class _AddAppointmentState extends State<AddAppointment> {
                                    onTap: (){
                                      _pickedImage();
                                    },
-                                   child: CircleAvatar(
-                                    radius: 45.0,
-                                    backgroundColor: Colors.black,
-                                    child: ClipOval(
-                                      child: image   != null ? Image.file(image!,
-                                      height: 120,):
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 13.0),
-                                        child: Image.asset("assets/user_ic.png",
-                                        color: Colors.white,),
-                                      ),
-                                    ),
+                                   child: image == null ? ClipRRect(
+                                     borderRadius: BorderRadius.circular(50.0),
+                                     child: Container(
+                                       height: 100,
+                                       width: 100,
+                                       color: Colors.black,
+                                       child: Image.asset("assets/user_ic.png",
+                                         color: Colors.white,
+                                         height: 100.0,
+                                         width: 100.0,
+                                         fit: BoxFit.cover,),
+                                     ),
+                                   ):
+                                   ClipRRect(
+                                       borderRadius: BorderRadius.circular(50.0),
+                                       child: Container(
+                                         height: 100,
+                                         width: 100,
+                                         child:  Image.file(File(image!.path),
+                                           height: 100.0,
+                                           width: 100.0,
+                                           fit: BoxFit.cover,
+                                         ),
+                                       )
                                    ),
                                  )
                                ),
@@ -356,6 +402,25 @@ class _AddAppointmentState extends State<AddAppointment> {
                                         color: Color(0xff6C7480),
                                       ),
                                       border: InputBorder.none,
+                                      suffixIcon: InkWell(
+                                        onTap: (){
+                                          Navigator.pushReplacement
+                                            (context, MaterialPageRoute(builder: (context)=> MYBottomSheet()));
+                                        },
+                                        child: Container(
+                                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                            padding: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                                            decoration: BoxDecoration(
+                                                border:
+                                                Border.all(color: Color(0xff6C7480)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10.0))),
+                                            child: Icon(
+                                                Icons.contacts
+                                            )
+                                        ),
+                                      )
+
                                     )
                                 ),
                               ),
@@ -846,7 +911,7 @@ class _AddAppointmentState extends State<AddAppointment> {
                                     Fluttertoast.showToast(msg: "Enter city");
                                   }else if(dob == "(DD/MM/YYYY)"){
                                     Fluttertoast.showToast(msg: "Enter Date of bith");
-                                  }else if(selectTimes == "Select Slot"){
+                                  }else if(selectTimes == "Select Time"){
                                     Fluttertoast.showToast(msg: "Enter time");
                                   }else if(email.text.isEmpty){
                                     Fluttertoast.showToast(msg: "Enter email");

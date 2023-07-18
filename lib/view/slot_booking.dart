@@ -2,6 +2,7 @@ import 'package:astro_santhil_app/commonpackage/SearchChoices.dart';
 import 'package:astro_santhil_app/models/add_appointment_model.dart';
 import 'package:astro_santhil_app/models/customer_name_model.dart';
 import 'package:astro_santhil_app/networking/services.dart';
+import 'package:astro_santhil_app/view/add_appointment.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -13,8 +14,6 @@ import 'package:table_calendar/table_calendar.dart';
 
 class SlotBooking extends StatefulWidget {
 
-  String name = "";
-  SlotBooking(this.name);
   @override
   State<StatefulWidget> createState() => _SlotBookingState();
 }
@@ -40,7 +39,7 @@ class _SlotBookingState extends State<SlotBooking> {
     "0",
   ];
   String selectedCustomer_id = "";
-  String selectTimes = "Select Slot";
+  String selectTimes = "Select Time";
   String dropdownValue = "";
   bool clickLoad = false;
 
@@ -176,8 +175,6 @@ class _SlotBookingState extends State<SlotBooking> {
 
   @override
   void initState() {
-    dropdownValue = widget.name;
-    getContactPermission();
     super.initState();
     viewDropDown();
 
@@ -308,7 +305,7 @@ class _SlotBookingState extends State<SlotBooking> {
                                       child: SearchChoices.single(
                                         value: dropdownValue,
                                         items: cutomerItems,
-                                        hint: dropdownValue,
+                                        hint: "Select Customer",
                                         searchHint: "Select Customer",
                                         style: TextStyle(color: Colors.black),
                                         underline: Container(),
@@ -371,24 +368,6 @@ class _SlotBookingState extends State<SlotBooking> {
                                       //       )
                                       ),
                                 ),
-                                InkWell(
-                                  onTap: (){
-                                   Navigator.pushReplacement
-                                     (context, MaterialPageRoute(builder: (context)=> MYBottomSheet()));
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                      padding: EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
-                                      decoration: BoxDecoration(
-                                        border:
-                                        Border.all(color: Color(0xff6C7480)),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0))),
-                                      child: Icon(
-                                          Icons.contacts
-                                      )
-                                  ),
-                                )
                               ],
                             ),
                             // Row(
@@ -567,7 +546,7 @@ class _SlotBookingState extends State<SlotBooking> {
                                       msg: "Please Select Customer",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.SNACKBAR);
-                                } else if (selectTimes == "Select Slot") {
+                                } else if (selectTimes == "Select Time") {
                                   Fluttertoast.showToast(
                                       msg: "Please Select Time",
                                       toastLength: Toast.LENGTH_SHORT,
@@ -806,7 +785,8 @@ class _BottomSheetState extends State<MYBottomSheet>{
                                 //   child: Text(foundContacts[index].displayName.toString()),
                                 //   value: foundContacts[index].displayName.toString(),
                                 // ));
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SlotBooking("${foundContacts[index].displayName} (${foundContacts[index].phones![0].value})")));
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
+                                    AddAppointment(foundContacts[index].displayName.toString(), foundContacts[index].phones![0].value.toString())));
                               },
                               child: ListTile(
                                 leading: Container(

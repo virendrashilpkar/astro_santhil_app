@@ -50,6 +50,7 @@ class _AppointmentState extends State<Appointment> {
   String tab = "";
   int _radioSelected = 0;
   String _radioVal = "";
+  bool? statusValue;
 
   Future<void> viewAppointment(String type) async {
     _pageLoading = true;
@@ -102,6 +103,12 @@ class _AppointmentState extends State<Appointment> {
     });
   }
 
+  void onClick2(bool istrue){
+    setState(() {
+      statusValue = istrue;
+    });
+  }
+
   void deleteDailog(String id) {
     showDialog(
       barrierDismissible: false,
@@ -151,27 +158,37 @@ class _AppointmentState extends State<Appointment> {
                         ),),
                       ),
                       Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                           Icon(Icons.circle_outlined),
-                            Container(
-                              margin: EdgeInsets.only(left: 10.0),
-                                child: Text("Cancel"))
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Radio(
+                              value: 1,
+                              groupValue: _radioSelected,
+                              onChanged: (value) {
+                                setState((){
+                                  _radioSelected = value as int;
+                                  _radioVal = 'Cancel';
+                                  print(_radioVal);
+                                });
+                              }
+                          ),
+                          Text("Cancel")
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.circle_outlined),
-                            Container(
-                                margin: EdgeInsets.only(left: 10.0),
-                                child: Text("Complete"))
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Radio(
+                              value: 2,
+                              groupValue: _radioSelected,
+                              onChanged: (value) {
+                                setState((){
+                                  _radioSelected = value as int;
+                                  _radioVal = 'Complete';
+                                  print(_radioVal);
+                                });
+                              }
+                          ),
+                          Text("Complete")
+                        ],
                       ),
                       Spacer(),
                       Padding(
