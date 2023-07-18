@@ -56,6 +56,10 @@ class _LikesState extends State<Likes> {
     viewLike();
     super.initState();
   }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -72,7 +76,7 @@ class _LikesState extends State<Likes> {
       ),
     ):Container(
       margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-      child: GridView.builder(
+      child: _list.isNotEmpty ? GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 15.0,
@@ -82,6 +86,7 @@ class _LikesState extends State<Likes> {
           itemCount: _list.length,
           itemBuilder: (context, index){
             Datum data = _list[index];
+            // print(data.type);
             return InkWell(
               onTap: (){
               },
@@ -131,17 +136,17 @@ class _LikesState extends State<Likes> {
                                                 fontSize: 14),),
                                         ),
                                         Container(
-                                          child: Text("20h left",
+                                          child: Text("${DateTime.now().difference(data.createdAt ??  DateTime.now()).inHours} H",
                                               style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w400,)),
                                         )
                                       ],
                                     ),
                                     Spacer(),
-                                    Container(
+                                     Container(
                                       height: 28,
                                       margin: const EdgeInsets.symmetric(vertical: 6),
                                       width: 28,
-                                      child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
+                                      child: data.type=="superLike" ? Image.asset("assets/white_bg_star.png",height: 28,width: 28):Container(),
                                     )
                                   ],
                                 ),
@@ -154,7 +159,17 @@ class _LikesState extends State<Likes> {
               ),
             );
           }
-          ),
+          ):Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset("assets/no_likes_icon.png",),
+              SizedBox(height: 20,),
+              Text("No Likes", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+            ],
+          )
+      ),
     ),
   );
   }

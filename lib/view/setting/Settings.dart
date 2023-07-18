@@ -208,7 +208,7 @@ class _MyHomePageState extends State<Settings> {
             mainAxisAlignment: MainAxisAlignment.start,
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              new SizedBox(height: MediaQuery.of(context).padding.top+20,),
+              new SizedBox(height: MediaQuery.of(context).padding.top+10,),
               Row(
                 children: [
                   Container(

@@ -38,6 +38,7 @@ class Datum {
   int? age;
   String? image;
   String? name;
+  String? type;
 
   Datum({
     this.id,
@@ -45,6 +46,7 @@ class Datum {
     this.age,
     this.image,
     this.name,
+    this.type,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -53,6 +55,7 @@ class Datum {
     age: json["age"],
     image: json["image"],
     name: json["name"],
+    type: json["type"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +64,6 @@ class Datum {
     "age": age,
     "image": image,
     "name": name,
+    "type": type,
   };
 }

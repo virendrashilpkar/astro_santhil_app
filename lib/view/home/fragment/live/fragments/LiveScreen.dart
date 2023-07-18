@@ -57,7 +57,7 @@ class _LiveScreenState extends State<LiveScreen> {
            Expanded(
              child: Container(
                margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-               child: GridView.builder(
+               child: images.isNotEmpty ? GridView.builder(
                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                        crossAxisCount: 2,
                        crossAxisSpacing: 2.0,
@@ -110,6 +110,16 @@ class _LiveScreenState extends State<LiveScreen> {
                        ),
                      );
                    }
+               ):Center(
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     children: [
+                       Image.asset("assets/no_live_icon.png",),
+                       SizedBox(height: 20,),
+                       Text("No Live", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                     ],
+                   )
                ),
              ),
            ),

@@ -38,6 +38,7 @@ class Datum {
   int? age;
   String? image;
   String? name;
+  String? type;
   String? userId;
 
   Datum({
@@ -46,6 +47,7 @@ class Datum {
     this.age,
     this.image,
     this.name,
+    this.type,
     this.userId,
   });
 
@@ -55,6 +57,7 @@ class Datum {
     age: json["age"],
     image: json["image"],
     name: json["name"],
+    type: json["type"],
     userId: json["userId"],
   );
 
@@ -64,6 +67,7 @@ class Datum {
     "age": age,
     "image": image,
     "name": name,
+    "type": type,
     "userId": userId,
   };
 }

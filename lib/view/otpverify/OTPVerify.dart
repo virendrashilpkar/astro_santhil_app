@@ -68,7 +68,12 @@ class _MyHomePageState extends State<OTPVerify> {
       otpVerifyModel = await Services.Otp(
           _preferences!.getString(ShadiApp.userId).toString(), otp.toString());
       if (otpVerifyModel.status == 1) {
-        Navigator.of(context).pushNamed('CountryCity');
+        if(otpVerifyModel.data?.firstName!="" || otpVerifyModel.data?.lastName!="" || otpVerifyModel.data?.birthDate!=""){
+          Navigator.of(context).pushNamed('Home');
+        }else{
+          Navigator.of(context).pushNamed('CountryCity');
+        }
+
         Toaster.show(context, otpVerifyModel.massege.toString());
         _preferences?.setBool(ShadiApp.status, true);
       } else {

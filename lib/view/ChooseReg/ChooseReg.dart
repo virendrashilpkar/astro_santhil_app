@@ -147,7 +147,11 @@ class _MyHomePageState extends State<ChooseReg> {
       _preferences?.setString(ShadiApp.userId,otpVerifyModel.data?.id ?? "");
       _preferences?.setBool(ShadiApp.status, true);
       // Toaster.show(context, otpVerifyModel.massege.toString());
-      Navigator.of(context).pushNamed('CountryCity');
+      if(otpVerifyModel.data?.firstName!="" || otpVerifyModel.data?.lastName!="" || otpVerifyModel.data?.birthDate!=""){
+        Navigator.of(context).pushNamed('Home');
+      }else{
+        Navigator.of(context).pushNamed('CountryCity');
+      }
     }else{
       Toaster.show(context, otpVerifyModel.massege.toString());
     }

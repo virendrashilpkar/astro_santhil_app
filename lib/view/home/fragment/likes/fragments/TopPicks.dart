@@ -73,7 +73,7 @@ class _TopPicks extends State<TopPicks> {
         ),
       ):Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-        child: GridView.builder(
+        child:_list.isNotEmpty ? GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 15.0,
@@ -127,11 +127,11 @@ class _TopPicks extends State<TopPicks> {
                                               fontSize: 14),),
                                       ),
                                       Spacer(),
-                                      Container(
+                                       Container(
                                         height: 28,
                                         margin: const EdgeInsets.symmetric(vertical: 6),
                                         width: 28,
-                                        child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
+                                        // child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
                                       )
                                     ],
                                   ),
@@ -143,7 +143,17 @@ class _TopPicks extends State<TopPicks> {
                   ),
                 ),
               );
-            }),
+            }):Center(
+      child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset("assets/no_picks_icon.png",),
+          SizedBox(height: 20,),
+          Text("No Picks", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+        ],
+      )
+    ),
       ),
     );
   }

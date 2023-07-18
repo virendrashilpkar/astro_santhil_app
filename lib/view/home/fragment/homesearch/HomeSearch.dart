@@ -357,7 +357,7 @@ class _MyHomePageState extends State<HomeSearch> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: CommonColors.white,
+      backgroundColor: CommonColors.themeblack,
       body: Container(
           child: isLoad ? Center(
             child: CircularProgressIndicator(
@@ -367,9 +367,16 @@ class _MyHomePageState extends State<HomeSearch> {
           ):Stack(
               alignment: Alignment.bottomCenter,
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: Text("Match not found",style: TextStyle(fontSize: 30,color: Colors.black,fontWeight: FontWeight.bold),),
+                Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/no_match_icon.png",),
+                        SizedBox(height: 20,),
+                        Text("Match not found", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                      ],
+                    )
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height - 60,
@@ -1219,12 +1226,12 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                         //     ],
                         //   ),
                         // ),
-                        new SizedBox(height: 40,),
-                        Container(
+                        if(intrest.isNotEmpty)  new SizedBox(height: 40,),
+                        if(intrest.isNotEmpty)  Container(
                           alignment: Alignment.centerLeft,
                           child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
-                        new SizedBox(height: 20,),
+                        if(intrest.isNotEmpty) SizedBox(height: 20,),
                         Container(
                           alignment: Alignment.centerLeft,
                           child: Wrap(

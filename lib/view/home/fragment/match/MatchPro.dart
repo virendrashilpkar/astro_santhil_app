@@ -123,10 +123,11 @@ class _MyHomePageState extends State<MatchPro> {
                     color: Colors.white,
                     strokeWidth: 3.0,
                   ),
-                ):Row(
+                ):
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ListView.builder(
+                    _list.isNotEmpty ? ListView.builder(
                       shrinkWrap: true,
                       itemCount: _list.length,
                       scrollDirection: Axis.horizontal,
@@ -216,6 +217,9 @@ class _MyHomePageState extends State<MatchPro> {
                         );
                       },
                     )
+                        : Container(
+                      child: Text("No Match Found",style: TextStyle(color: Colors.white),),
+                    )
                   ],
                 ),
               ),
@@ -252,7 +256,7 @@ class _MyHomePageState extends State<MatchPro> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed("EnableLocation");
+                          Navigator.of(context).pushNamed("Home");
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

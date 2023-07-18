@@ -27,6 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
 
+
 class EditProfile extends StatefulWidget {
   @override
   State<EditProfile> createState() => _MyHomePageState();
@@ -625,9 +626,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     tagsearch.text="";
     ischeck2 = false;
     viewPrefs();
-    if (_addPreferenceModel.status == 1) {
+    if(_addPreferenceModel.status == 1){
       Toaster.show(context, _addPreferenceModel.message.toString());
-    } else {
+    }else{
       Toaster.show(context, _addPreferenceModel.message.toString());
     }
     setState(() {

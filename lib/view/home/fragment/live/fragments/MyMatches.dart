@@ -68,7 +68,15 @@ class _MyMatchesState extends State<MyMatches> {
           strokeWidth: 3.0,
         ),
       ):_matchesModel.data!.isEmpty  ? Center(
-        child: Text("No Matches there", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset("assets/no_live_icon.png",),
+              SizedBox(height: 20,),
+              Text("No Live", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+            ],
+          )
       ):Container(
         child: Column(
           children: [

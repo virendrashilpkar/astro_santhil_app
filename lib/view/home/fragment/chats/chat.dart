@@ -171,11 +171,11 @@ class _ChatState extends State <Chat> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            new SizedBox(height: MediaQuery.of(context).padding.top+20,),
+            new SizedBox(height: MediaQuery.of(context).padding.top+10,),
             new Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 35.5,vertical: 0),
+                  margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                   alignment: Alignment.centerLeft,
                   child: InkWell(
                     onTap: (){
@@ -190,27 +190,32 @@ class _ChatState extends State <Chat> {
                   ),
                 ),
                 Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    child: Image.asset(
-                      'assets/shield_pro.png',
-                      width: 20,
-                      height: 24,
-                    ),
+                InkWell(
+                  onTap:(){
+                    Navigator.of(context).pushNamed('MatchPro');
+                  },
+                  child: new SizedBox(
+                    width: 20,
+                    height: 24,
+                    child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    margin: EdgeInsets.only(right: 35),
-                    child: Image.asset(
-                      'assets/settings.png',
-                      width: 20,
-                      height: 20,
-                    ),
+                new SizedBox(
+                  width: 15,
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pushNamed("Settings");
+                  },
+                  child: new SizedBox(
+                    width: 22,
+                    height: 24,
+                    child: Image.asset("assets/setting_pro.png",height:24,width: 22,color: Colors.white,),
                   ),
-                )
+                ),
+                new SizedBox(
+                  width: 24,
+                ),
               ],
             ),
             if(_list.isNotEmpty) Container(
