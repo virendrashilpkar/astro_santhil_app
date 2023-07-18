@@ -96,13 +96,13 @@ class CustomRoute {
           return FreeSub();
         case "PremiumSub":
         // ignore: prefer_const_constructors
-          return PremiumSub();
+          return PremiumSub("", 0, []);
         case "GoldSub":
         // ignore: prefer_const_constructors
-          return GoldSub();
+          return GoldSub("", 0, []);
         case "VIPSub":
         // ignore: prefer_const_constructors
-          return VIPSub();
+          return VIPSub("", 0, []);
 
       }
       // ignore: prefer_const_constructors

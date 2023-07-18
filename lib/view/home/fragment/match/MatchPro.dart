@@ -252,7 +252,7 @@ class _MyHomePageState extends State<MatchPro> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed("EnableLocation");
+                          Navigator.of(context).pushNamed("Home");
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

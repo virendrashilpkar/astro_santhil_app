@@ -24,7 +24,7 @@ class _MyMatchesState extends State<MyMatches> {
     });
     _preferences = await SharedPreferences.getInstance();
     _matchesModel = await Services.MyMatchesList(_preferences.getString(ShadiApp.userId).toString());
-    if(_matchesModel.status == 200){
+    if(_matchesModel.status == 1){
       for(var i = 0; i < _matchesModel.data!.length; i++){
         _list = _matchesModel.data ?? <Datum> [];
       }
@@ -67,8 +67,6 @@ class _MyMatchesState extends State<MyMatches> {
           color: Colors.white,
           strokeWidth: 3.0,
         ),
-      ):_matchesModel.data!.isEmpty  ? Center(
-        child: Text("No Matches there", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
       ):Container(
         child: Column(
           children: [
