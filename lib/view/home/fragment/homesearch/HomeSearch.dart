@@ -12,6 +12,7 @@ import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
+import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayoutview.dart';
 import 'package:shadiapp/view/home/fragment/match/Match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
@@ -578,7 +579,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         child: Text(
                                                           "${_userList[index].height?.replaceAll(".", "`") } | "
                                                               "${_userList[index].weight}kg | "
-                                                              "hindu |"
+                                                              "${_userList[index].religion} |"
                                                               "${_userList[index].maritalStatus}",
                                                           style: TextStyle(
                                                             color: CommonColors.white,
@@ -935,7 +936,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
   SharedPreferences? _preferences;
   late UserViewPreferenceModel _viewPreferenceModel;
   late UserDetailModel _userDetailModel = UserDetailModel();
-  List<PrefsDatum> intrest = [];
+  List<String> intrest = [];
   bool clickLoad = false;
   bool isLoad = false;
 
@@ -948,13 +949,31 @@ class _BottomSheetState extends State<ShowBottomSheet> {
   String height = "";
   String weight = "";
   String religion = "";
+  String marriagePlan = "";
+  String plan_user = "";
+  String aboutme = "";
   String maratialStatus = "";
+
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String petss = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workouts = "";
+  String smokings = "";
+  String healths = "";
+  String drinkings = "";
+
+  String personality_type = "";
 
   Future<void> userDetail() async {
     setState(() {
       clickLoad = true;
     });
     _preferences = await SharedPreferences.getInstance();
+    // _userDetailModel = await Services.UserDetailMethod("641997803e3c4036ee2e1f78");
     _userDetailModel = await Services.UserDetailMethod(widget.id);
     if(_userDetailModel.status == 1){
       name = _userDetailModel.data![0].firstName.toString();
@@ -967,6 +986,22 @@ class _BottomSheetState extends State<ShowBottomSheet> {
       height = _userDetailModel.data![0].height.toString();
       weight = _userDetailModel.data![0].weight.toString();
       maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
+      aboutme = _userDetailModel.data![0].about.toString();
+      marriagePlan = _userDetailModel.data![0].marriagePlan.toString();
+      zodiac_sign = _userDetailModel.data![0].zodiacSign.toString();
+      covid_vaccine = _userDetailModel.data![0].covidVaccine.toString();
+      petss = _userDetailModel.data![0].pets.toString();
+      dietary_preference = _userDetailModel.data![0].dietaryPreference.toString();
+      education_level = _userDetailModel.data![0].educationLevel.toString();
+      sleeping_habits = _userDetailModel.data![0].sleepingHabits.toString();
+      social_media = _userDetailModel.data![0].socialMedia.toString();
+      workouts = _userDetailModel.data![0].workout.toString();
+      healths = _userDetailModel.data![0].health.toString();
+      smokings = _userDetailModel.data![0].smoking.toString();
+      drinkings = _userDetailModel.data![0].drinking.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
+      plan_user = _userDetailModel.data![0].plan.toString();
+      intrest = _userDetailModel.data![0].preference ?? [];
     }
 
     setState(() {
@@ -974,22 +1009,22 @@ class _BottomSheetState extends State<ShowBottomSheet> {
     });
   }
 
-  Future<void> userViewPreference() async {
-    _viewPreferenceModel = await Services.ViewUserPreference(widget.id);
-    if(_viewPreferenceModel.status == 1){
-      for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
-        intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
-      }
-    }
-    setState(() {
-
-    });
-  }
+  // Future<void> userViewPreference() async {
+  //   _viewPreferenceModel = await Services.ViewUserPreference(widget.id);
+  //   if(_viewPreferenceModel.status == 1){
+  //     for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
+  //       intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
+  //     }
+  //   }
+  //   setState(() {
+  //
+  //   });
+  // }
 
   @override
   void initState() {
     userDetail();
-    userViewPreference();
+    // userViewPreference();
     super.initState();
   }
 
@@ -1110,7 +1145,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                               alignment: Alignment.center,
-                              child: Text("GOLD",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                              child: Text("$plan_user",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                             ),
                             Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
@@ -1141,49 +1176,49 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
                               alignment: Alignment.centerLeft,
-                              child: Text("Within 3 months",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                              child: Text("$marriagePlan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                             ),
                           ],
                         ),
                         new SizedBox(height: 40,),
                         new Container(height: 1,width: double.infinity,color: Colors.white,),
-                        new SizedBox(height: 40,),
-                        Container(
+                        if(aboutme!="null") new SizedBox(height: 40,),
+                       if(aboutme!="null") Container(
                           alignment: Alignment.centerLeft,
                           child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
-                        new SizedBox(height: 10,),
-                        Container(
+                        if(aboutme!="null") new SizedBox(height: 10,),
+                        if(aboutme!="null") Container(
                           alignment: Alignment.centerLeft,
-                          child: Text("I am a gentle lady who loves to have fun, i sleep early and loves to sing before i sleep which is quite unormal tough. I have a farm somewhere",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                          child: Text("$aboutme",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
                         ),
-                        new SizedBox(height: 10,),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Wrap(
-                            children: [
-                              ...List.generate(
-                                about.length,
-                                    (index) => GestureDetector(
-                                  child: Container(
-                                      margin: const EdgeInsets.only(right: 5,top:5),
-                                      decoration: BoxDecoration(
-                                        color: CommonColors.buttonorg,
-                                        borderRadius: BorderRadius.circular(65),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
-                                        ],
-                                      )
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        // new SizedBox(height: 10,),
+                        // Container(
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Wrap(
+                        //     children: [
+                        //       ...List.generate(
+                        //         about.length,
+                        //             (index) => GestureDetector(
+                        //           child: Container(
+                        //               margin: const EdgeInsets.only(right: 5,top:5),
+                        //               decoration: BoxDecoration(
+                        //                 color: CommonColors.buttonorg,
+                        //                 borderRadius: BorderRadius.circular(65),
+                        //               ),
+                        //               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                        //               child: Row(
+                        //                 mainAxisSize: MainAxisSize.min,
+                        //                 children: [
+                        //                   Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
+                        //                 ],
+                        //               )
+                        //           ),
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                         new SizedBox(height: 40,),
                         Container(
                           alignment: Alignment.centerLeft,
@@ -1208,7 +1243,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("${intrest[index].preference}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                                          Text("${intrest[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
                                         ],
                                       )
                                   ),
@@ -1227,11 +1262,11 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                     ),
                   ),
 
-                  Customlayout(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: 'Libra',),
-                  Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: 'Master degree',),
-                  Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: 'Not added',),
-                  Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: 'Not added',),
-                  Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: 'Add',),
+                  CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
+                  CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
+                  CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
+                  CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
+                  CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
 
                   new SizedBox(height: 40,),
                   Container(
@@ -1240,13 +1275,13 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                     child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                   ),
                   new SizedBox(height: 20,),
-                  Customlayout(icon: 'assets/pet_icon.png',tittle: 'Pets',status: 'Dog',),
-                  Customlayout(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: 'On special occasions',),
-                  Customlayout(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: 'Non-smoker',),
-                  Customlayout(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: 'Often',),
-                  Customlayout(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: 'Not added',),
-                  Customlayout(icon: 'assets/social_bottom.png',tittle: 'Social media',status: 'Socially active',),
-                  Customlayout(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: 'Early bird',),
+                  CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
+                  CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
+                  CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
+                  CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
+                  CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
+                  CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
+                  CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
                   new SizedBox(height: 40,),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 30),

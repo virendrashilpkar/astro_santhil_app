@@ -5,6 +5,7 @@ import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/age_height_range_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
@@ -54,6 +55,12 @@ class _MyHomePageState extends State<Settings> {
 
   List<File?> imagelist = List.filled(6, null);
 
+  bool GoGlobal = false;
+  bool inrange = false;
+  bool showme = false;
+  bool dontshowme = false;
+  bool incognito = false;
+  bool isonline = false;
   Future<void> userDetail() async {
     isLoad = true;
     _preferences = await SharedPreferences.getInstance();
@@ -65,6 +72,12 @@ class _MyHomePageState extends State<Settings> {
       maxAge = _userDetailModel.data![0].maxAge;
       minHeight = _userDetailModel.data![0].minHeight;
       maxHeight = _userDetailModel.data![0].maxHeight;
+      GoGlobal = _userDetailModel.data![0].goGlobel ?? false;
+      inrange = _userDetailModel.data![0].showPeopleInRange ?? false;
+      showme = _userDetailModel.data![0].isShowOnCard ?? false;
+      incognito = _userDetailModel.data![0].goIncognito ?? false;
+      isonline = _userDetailModel.data![0].isOnline ?? false;
+      _controllerusername.text = _userDetailModel.data![0].username ?? "";
       _currentRangeValues =  RangeValues(minAge?.toDouble() ?? 18, maxAge?.toDouble() ?? 30);
       _currentheightValues =  RangeValues(minHeight?.toDouble() ??0, maxHeight?.toDouble() ??10);
     }
@@ -127,10 +140,11 @@ class _MyHomePageState extends State<Settings> {
   ];
 
   List<int> selectedIndex = [];
-  bool GoGlobal = false;
+
+
   bool ischeck = false;
   // double value1 = minAge as double;
-  TextEditingController tagsearch = TextEditingController();
+  TextEditingController _controllerusername = TextEditingController();
   late RangeValues _currentRangeValues;
   late RangeValues _currentheightValues;
 
@@ -142,6 +156,40 @@ class _MyHomePageState extends State<Settings> {
         MaterialPageRoute(builder: (context) => ChooseReg()),
             (route) => false);
 
+  }
+
+
+  late UpdateUserModel _updateUserModel;
+  void Updateuser()async{
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.CheckUpdateUser2(
+      {
+        "userId": "${_preferences?.getString(ShadiApp.userId)}",
+        "is_online": isonline.toString(),
+        "goGlidobel": GoGlobal.toString(),
+        "go_incognito": incognito.toString(),
+        "show_people_in_range": inrange.toString(),
+        "is_showOnCard": showme.toString(),
+      }
+    );
+    if(_updateUserModel.status==1){
+      userDetail();
+    }
+  }
+  void Checkuser(String username)async{
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.CheckUpdateUser2(
+      {
+        "id": "${_preferences?.getString(ShadiApp.userId)}",
+        "username": username,
+      }
+    );
+    if(_updateUserModel.status==1){
+      userDetail();
+      Toaster.show(context, _updateUserModel.message.toString());
+    }else{
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
   }
 
   @override
@@ -534,6 +582,7 @@ class _MyHomePageState extends State<Settings> {
                             GoGlobal = value;
                             setState(() {
                             });
+                            Updateuser();
                           },
                           thumbColor: CupertinoColors.black,
                           activeColor: CupertinoColors.white,
@@ -621,11 +670,12 @@ class _MyHomePageState extends State<Settings> {
                    Transform.scale(
                      scale:0.8,
                       child: CupertinoSwitch(
-                        value:GoGlobal,
+                        value:inrange,
                         onChanged: (value){
-                          GoGlobal = value;
+                          inrange = value;
                           setState(() {
                           });
+                          Updateuser();
                         },
                         thumbColor: CupertinoColors.black,
                         activeColor: CupertinoColors.white,
@@ -711,11 +761,13 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("Show me on Shadi-App",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    ischeck ? InkWell(
+                    showme ? InkWell(
                       onTap: (){
+
                         setState(() {
-                          ischeck=false;
+                          showme=false;
                         });
+                        Updateuser();
                       },
                       child: new Container(
                         height: 20,
@@ -729,9 +781,11 @@ class _MyHomePageState extends State<Settings> {
                     ):
                     InkWell(
                       onTap: (){
+
                         setState(() {
-                          ischeck=true;
+                          showme=true;
                         });
+                        Updateuser();
                       },
                     child: new Container(
                       height: 20,
@@ -773,10 +827,12 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("Go Incognito",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    ischeck ? InkWell(
+                    incognito ? InkWell(
                       onTap: (){
+
+                        Updateuser();
                         setState(() {
-                          ischeck=false;
+                          incognito=false;
                         });
                       },
                       child: new Container(
@@ -791,8 +847,10 @@ class _MyHomePageState extends State<Settings> {
                     ):
                     InkWell(
                       onTap: (){
+
+                        Updateuser();
                         setState(() {
-                          ischeck=true;
+                          incognito=true;
                         });
                       },
                       child: new Container(
@@ -839,11 +897,13 @@ class _MyHomePageState extends State<Settings> {
                       child: new Text("Don’t show me on Shadi-App",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.edittextblack),),
                     ),
                     Spacer(),
-                    ischeck ? InkWell(
+                    showme==false ? InkWell(
                       onTap: (){
+
                         setState(() {
-                          ischeck=false;
+                          showme=true;
                         });
+                        Updateuser();
                       },
                       child: new Container(
                         height: 20,
@@ -858,8 +918,9 @@ class _MyHomePageState extends State<Settings> {
                     InkWell(
                       onTap: (){
                         setState(() {
-                          ischeck=true;
+                          showme=false;
                         });
+                        Updateuser();
                       },
                       child: new Container(
                         height: 20,
@@ -900,9 +961,11 @@ class _MyHomePageState extends State<Settings> {
                    Transform.scale(
                      scale:0.8,
                       child: CupertinoSwitch(
-                        value:GoGlobal,
+                        value:isonline,
                         onChanged: (value){
-                          GoGlobal = value;
+                          isonline = value;
+
+                          Updateuser();
                           setState(() {
                           });
                         },
@@ -952,7 +1015,7 @@ class _MyHomePageState extends State<Settings> {
                 child: TextFormField(
                   keyboardType: TextInputType.name,
                   textInputAction: TextInputAction.done,
-                  controller: tagsearch,
+                  controller: _controllerusername,
                   decoration: InputDecoration(
                       hintText: '',
                       border: InputBorder.none,
@@ -992,7 +1055,7 @@ class _MyHomePageState extends State<Settings> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed("EnableLocation");
+                          Checkuser(_controllerusername.text);
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

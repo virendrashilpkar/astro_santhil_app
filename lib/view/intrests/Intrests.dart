@@ -49,10 +49,11 @@ class _MyHomePageState extends State<Intrests> {
   List<File?> imagelist = List.filled(6, null);
   // List<File?> imagelist=[null,null,null,null,null,null];
   List<prefsDatum> prefList = [];
-  List<PrefsDatum> intrest = [];
+  // List<PrefsDatum> intrest = [];
 
   Future<void> viewPrefs() async {
     isLoad = true;
+    prefList.clear();
     _preferences = await SharedPreferences.getInstance();
     _preferenceListModel = await Services.PrefView(
         "${_preferences?.getString(ShadiApp.userId).toString()}");
@@ -72,6 +73,7 @@ class _MyHomePageState extends State<Intrests> {
     _preferences = await SharedPreferences.getInstance();
     _addPreferenceModel = await Services.AddPrefsMethod(
         "${_preferences?.getString(ShadiApp.userId)}", preferenceId);
+    // viewPrefs();
     if (_addPreferenceModel.status == 1) {
       Toaster.show(context, _addPreferenceModel.message.toString());
     } else {
@@ -81,59 +83,51 @@ class _MyHomePageState extends State<Intrests> {
       clickLoad = false;
     });
   }
-
-  Future<void> userViewPreference() async {
+  Future<void> addCustomPrefs(String title) async {
+    setState(() {
+      clickLoad = true;
+    });
     _preferences = await SharedPreferences.getInstance();
-    _viewPreferenceModel = await Services.ViewUserPreference(
-        _preferences.getString(ShadiApp.userId).toString());
-    if (_viewPreferenceModel.status == 1) {
-      for (int i = 0; i < _viewPreferenceModel.data!.length; i++) {
-        intrest = _viewPreferenceModel.data ?? <PrefsDatum>[];
-      }
-      intrest.forEach((element) {
-        if (prefList.contains(element)) {
-          print("ahsdjfsdhfjshfs ${element.preference}");
-        }
-      });
+    _addPreferenceModel = await Services.AddCustomPrefsMethod(
+        "${_preferences?.getString(ShadiApp.userId)}", title);
+    tagsearch.text="";
+    ischeck = false;
+    viewPrefs();
+    if (_addPreferenceModel.status == 1) {
+
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    } else {
+      Toaster.show(context, _addPreferenceModel.message.toString());
     }
-    setState(() {});
+    setState(() {
+      clickLoad = false;
+    });
   }
+
+  // Future<void> userViewPreference() async {
+  //   _preferences = await SharedPreferences.getInstance();
+  //   _viewPreferenceModel = await Services.ViewUserPreference(
+  //       _preferences.getString(ShadiApp.userId).toString());
+  //   if (_viewPreferenceModel.status == 1) {
+  //     for (int i = 0; i < _viewPreferenceModel.data!.length; i++) {
+  //       intrest = _viewPreferenceModel.data ?? <PrefsDatum>[];
+  //     }
+  //     intrest.forEach((element) {
+  //       if (prefList.contains(element)) {
+  //         print("ahsdjfsdhfjshfs ${element.preference}");
+  //       }
+  //     });
+  //   }
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
     CheckUserConnection();
     viewPrefs();
-    userViewPreference();
+    // userViewPreference();
     super.initState();
   }
-
-  List<String> tags = [
-    'travel',
-    'foodie',
-    'fitness',
-    'photography',
-    'nature',
-    'fashion',
-    'beauty',
-    'health',
-    'motivation',
-    'entrepreneur',
-    'pets',
-    'music',
-    'art',
-    'books',
-    'technology',
-    'education',
-    'cooking',
-    'gaming',
-    'humor',
-    'sports',
-    'finance',
-    'selfcare',
-    'parenting',
-    'politics',
-    'spirituality'
-  ];
 
   List<int> selectedIndex = [];
 
@@ -270,14 +264,15 @@ class _MyHomePageState extends State<Intrests> {
                     ischeck
                         ? new InkWell(
                             onTap: () {
-                              if (selectedIndex.length != 4) {
-                                setState(() {
-                                  tags.add(tagsearch.text!);
-                                  selectedIndex.add(tags.length - 1);
-                                });
-                              } else {
-                                Toaster.show(context, "You can select only 4");
-                              }
+                              // if (selectedIndex.length != 4) {
+                                // setState(() {
+                                  addCustomPrefs(tagsearch.text!);
+                                  // tags.add(tagsearch.text!);
+                                  // selectedIndex.add(tags.length - 1);
+                                // });
+                              // } else {
+                              //   Toaster.show(context, "You can select only 4");
+                              // }
                             },
                             child: SizedBox(
                               child: Icon(
@@ -306,20 +301,15 @@ class _MyHomePageState extends State<Intrests> {
                     : Wrap(
                         children: [
                           ...List.generate(prefList.length, (index) {
-                              if (prefList[index].isActive ?? false) {
-                                selectedIndex.add(index);
-                              } else {
-                                // Toaster.show(context, "You can select only 4");
-                              }
+
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  if (selectedIndex.length != 4) {
-                                    selectedIndex.add(index);
-                                    addPrefs(prefList![index].id.toString());
-                                  } else {
-                                    Toaster.show(
-                                        context, "You can select only 4");
+                                  addPrefs(prefList![index].id.toString());
+                                  if (prefList[index].is_select==true) {
+                                    prefList[index].is_select=false;
+                                  }else{
+                                    prefList[index].is_select=true;
                                   }
                                 });
                               },
@@ -327,7 +317,7 @@ class _MyHomePageState extends State<Intrests> {
                                   margin: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.white),
-                                    color: selectedIndex.contains(index)
+                                    color: prefList[index].is_select ?? false
                                         ? CommonColors.buttonorg
                                         : null,
                                     borderRadius: BorderRadius.circular(65),
@@ -347,13 +337,12 @@ class _MyHomePageState extends State<Intrests> {
                                       new SizedBox(
                                         width: 5,
                                       ),
-                                      selectedIndex.contains(index)
+                                      prefList[index].is_select ?? false
                                           ? new SizedBox(
                                               child: InkWell(
                                                   onTap: () {
                                                     setState(() {
-                                                      selectedIndex
-                                                          .remove(index);
+                                                      addPrefs(prefList![index].id.toString());
                                                     });
                                                   },
                                                   child: Padding(

@@ -43,6 +43,20 @@ class _MyHomePageState extends State<CountryCity> {
   String education = "";
   String company = "";
   String jobTitle = "";
+
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String pets = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workout = "";
+  String smoking = "";
+  String health = "";
+  String drinking = "";
+  String personality_type = "";
+
   bool clickLoad = false;
   bool isLoad = false;
 
@@ -97,6 +111,11 @@ class _MyHomePageState extends State<CountryCity> {
       //   country = "Select country";
       // }else {
         country = _userDetailModel.data![0].country.toString();
+
+        if(country!=""){
+          Liststate(country);
+        }
+
       // }
       // print(">>>>>>>>>>${_userDetailModel.data![0].country}");
       // if(_userDetailModel.data![0].city == ""){
@@ -115,6 +134,19 @@ class _MyHomePageState extends State<CountryCity> {
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
+
+      zodiac_sign = _userDetailModel.data![0].zodiacSign.toString();
+      covid_vaccine = _userDetailModel.data![0].covidVaccine.toString();
+      pets = _userDetailModel.data![0].pets.toString();
+      dietary_preference = _userDetailModel.data![0].dietaryPreference.toString();
+      education_level = _userDetailModel.data![0].educationLevel.toString();
+      sleeping_habits = _userDetailModel.data![0].sleepingHabits.toString();
+      social_media = _userDetailModel.data![0].socialMedia.toString();
+      workout = _userDetailModel.data![0].workout.toString();
+      health = _userDetailModel.data![0].health.toString();
+      smoking = _userDetailModel.data![0].smoking.toString();
+      drinking = _userDetailModel.data![0].drinking.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
       setState(() {
       });
     }
@@ -199,9 +231,14 @@ class _MyHomePageState extends State<CountryCity> {
     });
 
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor,
-        religion, caste, about, education, company, jobTitle);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "country": country,
+          "city": city,
+          "state": state,
+        }
+    );
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).push(MaterialPageRoute(
@@ -242,7 +279,7 @@ class _MyHomePageState extends State<CountryCity> {
           color: Colors.white,
           strokeWidth: 3.0,
         ),
-      ): Center(
+      ): SingleChildScrollView(
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,57 +465,7 @@ class _MyHomePageState extends State<CountryCity> {
                 displayClearIcon: false,
                 isExpanded: true,
               ),
-              // DropdownButton<String>(
-              //   value: city,
-              //   underline: Container(
-              //     // height: 1,
-              //     // margin:const EdgeInsets.only(top: 20),
-              //     // color: Colors.white,
-              //   ),
-              //   isExpanded: true,
-              //   style: TextStyle(color: Colors.white,fontSize: 16),
-              //   onChanged: (newValue) {
-              //     setState(() {
-              //       city = newValue!;
-              //     });
-              //   },
-              //   selectedItemBuilder: (BuildContext context) {
-              //     return cityList.map((String value) {
-              //       return DropdownMenuItem<String>(
-              //         value: value,
-              //         child: Text(value,style: TextStyle(color:city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
-              //       );
-              //     }).toList();
-              //   },
-              //   iconSize: 24,
-              //   icon: Icon(Icons.arrow_forward_ios),
-              //   iconDisabledColor: Colors.white,
-              //   items: cityList // add your own dial codes
-              //       .map<DropdownMenuItem<String>>((String value) {
-              //     return DropdownMenuItem<String>(
-              //       value: value,
-              //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-              //     );
-              //   }).toList(),
-              // ),
             ),
-            // Container(
-            //   height: 50,
-            //   margin: const EdgeInsets.symmetric(horizontal: 20),
-            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-            //   decoration: BoxDecoration(
-            //     // color: Colors.white,
-            //     border: Border.all(color: Colors.white),
-            //     borderRadius: const BorderRadius.all(Radius.circular(25)),
-            //   ),
-            //   child: InkWell(
-            //     onTap: (){
-            //
-            //     },
-            //     child: Text("select city"),
-            //   )
-            // ),
-
             Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
@@ -525,13 +512,13 @@ class _MyHomePageState extends State<CountryCity> {
                       child: InkWell(onTap: () {
                         if (country == "Select country"){
                           Toaster.show(context, "Pelase select country");
-
-                        }else{
-                          if(city == "Select city"){
-                            Toaster.show(context, "Pelase select city");
-                          }else {
-                            updateUser();
-                          }
+                        }else if(state == "Select state"){
+                          Toaster.show(context, "Pelase select state");
+                        }else if(city == "Select city"){
+                          Toaster.show(context, "Pelase select city");
+                        }
+                        else{
+                          updateUser();
                         }
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(

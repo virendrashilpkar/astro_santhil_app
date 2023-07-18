@@ -40,6 +40,7 @@ class prefsDatum {
   int? v;
   String? icon;
   bool? isActive;
+  bool? is_select;
 
   prefsDatum({
     this.id,
@@ -49,6 +50,7 @@ class prefsDatum {
     this.v,
     this.icon,
     this.isActive,
+    this.is_select,
   });
 
   factory prefsDatum.fromJson(Map<String, dynamic> json) => prefsDatum(
@@ -59,6 +61,7 @@ class prefsDatum {
     v: json["__v"],
     icon: json["icon"],
     isActive: json["is_active"],
+    is_select: json["is_select"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +72,6 @@ class prefsDatum {
     "__v": v,
     "icon": icon,
     "is_active": isActive,
+    "is_select": is_select,
   };
 }

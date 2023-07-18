@@ -107,21 +107,37 @@ class _MyHomePageState extends State<LookingFor> {
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
       setState(() {
 
       });
     }
   }
-
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String pets = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workout = "";
+  String smoking = "";
+  String health = "";
+  String drinking = "";
+  String personality_type = "";
   Future<void> updateUser() async {
     setState(() {
       clickLoad = true;
     });
     print("sdfhghdsfhgdf ${lookingFor}");
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city,state, height, weight, Maritalstatus, email, lookingFor,
-        religion, caste, about, education, company, jobTitle);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "gender": gender,
+          "marital_status": Maritalstatus,
+          "looking_for": lookingFor,
+        });
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('AddPhotos');
@@ -349,7 +365,7 @@ class _MyHomePageState extends State<LookingFor> {
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
                 ),
                 child: DropdownButton<String>(
-                  value: Maritalstatus,
+                  value: Maritalstatus=="null" ? "Marital status":Maritalstatus,
                   underline: Container(
                     // height: 1,
                     // margin:const EdgeInsets.only(top: 20),

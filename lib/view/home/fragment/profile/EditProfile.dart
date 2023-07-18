@@ -4,17 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/CasteModel.dart';
+import 'package:shadiapp/Models/ReligionModel.dart';
 import 'package:shadiapp/Models/city_list_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/delete_image_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
+import 'package:shadiapp/Models/statelistmodel.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
+import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Models/user_view_preference_model.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/commonpackage/SearchChoices.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,6 +128,34 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     });
   }
 
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String petss = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workouts = "";
+  String smokings = "";
+  String healths = "";
+  String personality_type = "";
+  String managedBy = "";
+  String marriage_plan = "Within";
+  String drinkings = "";
+  String zodiac_signd = "";
+  String education_leveld = "";
+  String covid_vaccined = "";
+  String petssd = "";
+  String dietary_preferenced = "";
+  String sleeping_habitsd = "";
+  String social_mediad = "";
+  String workoutsd = "";
+  String smokingsd = "";
+  String healthsd = "";
+  String personaltyped = "";
+  String drinkingsd = "";
+  String personality_typed = "";
+
   Future<void> userDetail() async {
     _preferences = await SharedPreferences.getInstance();
     _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
@@ -132,22 +165,45 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       dateOfBirth = _userDetailModel.data![0].birthDate.toString();
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
+      state = _userDetailModel.data![0].state.toString();
       if(country!=""){
-        ListCountry();
+        Liststate(country,state);
       }
       city = _userDetailModel.data![0].city.toString();
-      state = _userDetailModel.data![0].state.toString();
       weight = _userDetailModel.data![0].weight.toString();
       height = _userDetailModel.data![0].height.toString();
       maritalStatus = _userDetailModel.data![0].maritalStatus.toString();
       email = _userDetailModel.data![0].email.toString();
       religion = _userDetailModel.data![0].religion.toString();
       caste = _userDetailModel.data![0].caste.toString();
+      if(religion!=""/* || caste!="Select Caste"*/){
+        Castemethod(religion);
+      }
       about.text = _userDetailModel.data![0].about.toString();
       education.text = _userDetailModel.data![0].education.toString();
       company.text = _userDetailModel.data![0].company.toString();
       jobTitle.text = _userDetailModel.data![0].jobTitle.toString();
-
+      zodiac_sign = _userDetailModel.data![0].zodiacSign.toString();
+      covid_vaccine = _userDetailModel.data![0].covidVaccine.toString();
+      petss = _userDetailModel.data![0].pets.toString();
+      dietary_preference = _userDetailModel.data![0].dietaryPreference.toString();
+      education_level = _userDetailModel.data![0].educationLevel.toString();
+      sleeping_habits = _userDetailModel.data![0].sleepingHabits.toString();
+      social_media = _userDetailModel.data![0].socialMedia.toString();
+      workouts = _userDetailModel.data![0].workout.toString();
+      healths = _userDetailModel.data![0].health.toString();
+      smokings = _userDetailModel.data![0].smoking.toString();
+      drinkings = _userDetailModel.data![0].drinking.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
+      marriage_plan = _userDetailModel.data![0].marriagePlan.toString();
+      mother_tongue = _userDetailModel.data![0].motherTongue.toString();
+      managedBy = _userDetailModel.data![0].managedBy.toString();
+      is_age = _userDetailModel.data![0].isAge ?? false;
+      is_height = _userDetailModel.data![0].isHeight ?? false;
+      is_weight = _userDetailModel.data![0].isWeight ?? false;
+      is_smoke = _userDetailModel.data![0].isSmoke ?? false;
+      is_drink = _userDetailModel.data![0].isDrink ?? false;
+      is_diet = _userDetailModel.data![0].isDiet ?? false;
       setState(() {
 
       });
@@ -159,11 +215,61 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       clickLoad = true;
     });
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, dateOfBirth, gender, country, city,state ,height, weight, maritalStatus, email, lookingFor,
-        religion, caste, about.text, education.text, company.text, jobTitle.text);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          if(firstName!="null") "first_name": firstName,
+          if(lastName!="null")  "last_name": lastName,
+          if(dateOfBirth!="null")  "birth_date": dateOfBirth,
+          if(gender!="null")  "gender": gender,
+          if(country!="null")  "country": country,
+          if(city!="null")  "city": city,
+          if(state!="null")  "state": state,
+          if(height!="null")  "height": height,
+          if(weight!="null")  "weight": weight,
+          if(maritalStatus!="null")  "marital_status": maritalStatus,
+          if(email!="null")  "email": email,
+          if(lookingFor!="null")  "looking_for": lookingFor,
+          if(religion!="null")  "religion": religion,
+          if(caste!="null")  "caste": caste,
+          if(about.text!="null")  "about": about.text,
+          if(education.text!="null")  "education": education.text,
+          if(jobTitle.text!="null")  "job_title": jobTitle.text,
+          if(company.text!="null")  "company": company.text,
+          if(zodiac_signd!="null")  "zodiac_sign":zodiac_signd,
+          if(education_leveld!="null")  "education_level":education_leveld,
+          if(covid_vaccined!="null")  "covid_vaccine":covid_vaccined,
+          if(petssd!="null")  "pets":petssd,
+          if(dietary_preferenced!="null")  "dietary_preference":dietary_preferenced,
+          if(sleeping_habitsd!="null")  "sleeping_habits":sleeping_habitsd,
+          if(social_mediad!="null")  "social_media":social_mediad,
+          if(workoutsd!="null")  "workout":workoutsd,
+          if(smokingsd!="null")  "smoking":smokingsd,
+          if(healthsd!="null")  "health":healthsd,
+          if(drinkingsd!="null")  "drinking":drinkingsd,
+          if(personality_typed!="null")  "personality_type":personality_typed,
+          if(marriage_plan!="null")  "marriage_plan":marriage_plan,
+          if(mother_tongue!="null")  "mother_tongue":mother_tongue,
+          if(managedBy!="null")  "managedBy":managedBy,
+          "is_age":is_age.toString(),
+          "is_height":is_height.toString(),
+          "is_weight":is_weight.toString(),
+          "is_smoke":is_smoke.toString(),
+          "is_drink":is_drink.toString(),
+          "is_diet":is_diet.toString(),
+        }
+
+        // "${_preferences?.getString(ShadiApp.userId)}",
+        // firstName, lastName, dateOfBirth, gender, country, city,state ,height, weight,
+        // maritalStatus, email, lookingFor, religion, caste, about.text, education.text,
+        // company.text, jobTitle.text, zodiac_signd, education_leveld, covid_vaccined,
+        // petssd, dietary_preferenced, sleeping_habitsd, social_mediad, workoutsd,
+        // smokingsd, healthsd, drinkingsd, personality_typed, marriage_plan, mother_tongue, managedBy
+    );
     if(_updateUserModel.status == 1){
-      Toaster.show(context, _updateUserModel.message.toString());
+      if(mounted) {
+        Toaster.show(context, _updateUserModel.message.toString());
+      }
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => Profile()));
     }else{
@@ -191,28 +297,154 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     });
   }
 
-  Future<void> userViewPreference() async {
-    _preferences = await SharedPreferences.getInstance();
-    _viewPreferenceModel = await Services.ViewUserPreference(_preferences.getString(ShadiApp.userId).toString());
-    if(_viewPreferenceModel.status == 1){
-      for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
-        intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
-      }
-      intrest.forEach((element) {
-        if (prefList.contains(element)){
-          print("ahsdjfsdhfjshfs ${element.preference}");
-        }
-      });
-    }
-    setState(() {
-
-    });
-  }
+  // Future<void> userViewPreference() async {
+  //   _preferences = await SharedPreferences.getInstance();
+  //   _viewPreferenceModel = await Services.ViewUserPreference(_preferences.getString(ShadiApp.userId).toString());
+  //   if(_viewPreferenceModel.status == 1){
+  //     for (int i = 0; i < _viewPreferenceModel.data!.length; i++){
+  //       intrest = _viewPreferenceModel.data ?? <PrefsDatum> [];
+  //     }
+  //     intrest.forEach((element) {
+  //       if (prefList.contains(element)){
+  //         print("ahsdjfsdhfjshfs ${element.preference}");
+  //       }
+  //     });
+  //   }
+  //   setState(() {
+  //
+  //   });
+  // }
 
   List<File?> imagelist = List.filled(6, null);
   // List<File?> imagelist=[null,null,null,null,null,null];
  late TabController _tabController;
 
+  List<DropdownMenuItem> countryitems = [];
+  List<DropdownMenuItem> stateitems = [];
+  List<DropdownMenuItem> cityitems = [];
+
+  String country = 'Select country';
+  String state = 'Select state';
+  String city = 'Select city';
+
+  late CountryListModel _countryListModel;
+  late StateListModel _stateListModel;
+  late CItyListModel _cItyListModel;
+  Future<void> ListCountry() async {
+    isLoad = true;
+
+    _countryListModel = await Services.CountryList();
+    if (_countryListModel.status == true){
+
+      for(var i = 0; i < _countryListModel.data!.length; i++){
+        countryList.add(_countryListModel.data![i].name.toString());
+        countryitems.add(DropdownMenuItem(
+          value: _countryListModel.data![i].name.toString(),
+          child: Text(_countryListModel.data![i].name.toString()),
+        ));
+      }
+      // if(country!=""){
+      //   ListCity(country);
+      // }
+      // country = _userDetailModel.data?[0].country ?? "Select country";
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
+  Future<void> Liststate(name,state) async {
+    isLoad = true;
+    stateitems.clear();
+    stateList.clear();
+    _stateListModel = await Services.StateList(name,"");
+    if (_stateListModel.status == true){
+      for(var i = 0; i < _stateListModel.data!.length; i++){
+        stateList.add(_stateListModel.data![i].name.toString());
+        stateitems.add(DropdownMenuItem(
+          value: _stateListModel.data![i].name.toString(),
+          child: Text(_stateListModel.data![i].name.toString()),
+        ));
+      }
+    }
+    if(state!=""){
+      city = _userDetailModel.data![0].city.toString();
+      ListCity(state,city);
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
+
+  Future<void> ListCity(String name,cityname) async {
+    print("LISTCITY>>>>$name");
+    setState(() {
+      isLoad = true;
+    });
+    cityList.clear();
+    cityitems.clear();
+    List<Statedata> stateDataList=[];
+    List<CountryData> countryDataList=[];
+    // try{
+
+       stateDataList = _stateListModel.data!.where((user) {
+        return user.name == state;
+      }).toList();
+    countryDataList = _countryListModel.data!.where((user) {
+      return user.name == country;
+    }).toList();
+    // }catch(error){
+    // }
+
+    _cItyListModel = await Services.CityList("",stateDataList.isNotEmpty ? "${stateDataList[0]?.isoCode}":"",countryDataList.isNotEmpty ? "${countryDataList[0]?.countryCode}":"");
+    if(_cItyListModel.status == true){
+      cityList.add("Select city");
+      for(var i = 0; i < _cItyListModel.data!.length; i++){
+        cityList.add(_cItyListModel.data![i].name.toString());
+        cityitems.add(DropdownMenuItem(
+          value: _cItyListModel.data![i].name.toString(),
+          child: Text(_cItyListModel.data![i].name.toString()),
+        ));
+      }
+    }
+    print(">>>$cityname");
+    setState(() {
+      if(cityname!="") {
+        city = cityname;
+      }
+      isLoad = false;
+    });
+
+  }
+
+
+
+  String religions = 'Select religion';
+  // String cast = 'Select cast';
+  List<String> religionList=[];
+  List<String> castList=[];
+  void Religionmethod() async{
+    ReligionModel religionModel = await Services.ReligionMethod();
+    if(religionModel.data?.isNotEmpty ?? false){
+      // religionList.add("Select religion");
+      for(ReligionDatum item in religionModel.data ?? []){
+        religionList.add(item.name ?? "");
+      }
+    }
+    setState(() {
+    });
+  }
+  void Castemethod(String name) async{
+    castList.clear();
+    CasteModel casteModel = await Services.CasteMethod(name);
+    if(casteModel.data?.isNotEmpty ?? false){
+      castList.add("Select Caste");
+      for(CasteDatum item in casteModel.data ?? []){
+        castList.add(item.caste ?? "");
+      }
+    }
+    setState(() {
+    });
+  }
 
 
   List<String> tags = [
@@ -265,8 +497,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     ListCountry();
     viewImage();
     userDetail();
+    Religionmethod();
     viewPrefs();
-    userViewPreference();
+    // userViewPreference();
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
@@ -331,60 +564,84 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   }
 
   bool PhotoOptions=false;
+  bool Interests=true;
+  bool managedby=true;
+  bool Lifestyle=true;
+  bool Living=true;
+  bool diet=true;
+  bool drink=true;
+  bool smoke=true;
+  bool weightb=true;
+  bool heightb=true;
+  bool age=true;
+  bool mothertongue=true;
+  bool casteb=true;
+  bool Religion=true;
   int ischeck=100;
   int ischeckregion=100;
   bool ischeck2 =false;
+  bool is_age =false;
+  bool is_height =false;
+  bool is_weight =false;
+  bool is_smoke =false;
+  bool is_drink =false;
+  bool is_diet =false;
 
-  String country = 'Select country';
-  String city = 'Select city';
-  String state = 'Select state';
   List<String> cityList = [
     "Select city"
   ];
   List<String> countryList = [
     "Select country"
   ];
-  late CountryListModel _countryListModel;
-  late CItyListModel _cItyListModel;
-  Future<void> ListCity(String name) async {
+  List<String> stateList = [
+    "Select state"
+  ];
+
+
+  late AddPreferenceModel _addPreferenceModel;
+  Future<void> addPrefs(String preferenceId) async {
     setState(() {
-      isLoad = true;
+      clickLoad = true;
     });
-    cityList.clear();
-    _cItyListModel = await Services.CityList(name,"","");
-    if(_cItyListModel.status == true){
-      cityList.add("Select city");
-      for(var i = 0; i < _cItyListModel.data!.length; i++){
-        cityList.add(_cItyListModel.data![i].name.toString());
-      }
+    _preferences = await SharedPreferences.getInstance();
+    _addPreferenceModel = await Services.AddPrefsMethod(
+        "${_preferences?.getString(ShadiApp.userId)}", preferenceId);
+    if (_addPreferenceModel.status == 1) {
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    } else {
+      Toaster.show(context, _addPreferenceModel.message.toString());
     }
     setState(() {
-      isLoad = false;
+      clickLoad = false;
     });
   }
-
-  Future<void> ListCountry() async {
-    isLoad = true;
-
-    _countryListModel = await Services.CountryList();
-    if (_countryListModel.status == true){
-
-      for(var i = 0; i < _countryListModel.data!.length; i++){
-        countryList.add(_countryListModel.data![i].name.toString());
-      }
-      if(country!=""){
-        ListCity(country);
-      }
-      // country = _userDetailModel.data?[0].country ?? "Select country";
-    }
-    isLoad = false;
+  Future<void> addCustomPrefs(String title) async {
     setState(() {
+      clickLoad = true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    _addPreferenceModel = await Services.AddCustomPrefsMethod(
+        "${_preferences?.getString(ShadiApp.userId)}", title);
+    tagsearch.text="";
+    ischeck2 = false;
+    viewPrefs();
+    if (_addPreferenceModel.status == 1) {
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    } else {
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
     });
   }
-
 
   String caste = 'Select Caste';
-  String tongue = 'Select your mother tongue';
+  String mother_tongue = 'Select your mother tongue';
+
+
+  // String zodiac="Add",eduction="Add",covid="Add",health="Add",personaltype="Add";
+  // String pets="Add",drinking="Add",smoking="Add",working="Add",workout="Add",dietary="Add",socialmedia="Add",sleeping="Add";
+
   @override
   Widget build(BuildContext context) {
 
@@ -814,6 +1071,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                           child: TextFormField(
                             controller: about,
+                            maxLines: 11,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
@@ -848,9 +1106,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:Interests,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    Interests = value;
                                     setState(() {
                                     });
                                   },
@@ -865,208 +1123,225 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-
-                        new SizedBox(height: 10,),
-                        // Container(
-                        //   height: 50,
-                        //   margin: const EdgeInsets.symmetric(horizontal: 30),
-                        //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                        //   // decoration: BoxDecoration(
-                        //   //   // color: Colors.white,
-                        //   //   border: Border.all(color: Colors.white),
-                        //   //   borderRadius: const BorderRadius.all(Radius.circular(25)),
-                        //   // ),
-                        //   child: TextFormField(
-                        //     keyboardType: TextInputType.name,
-                        //     textInputAction: TextInputAction.done,
-                        //     controller: tagsearch,
-                        //     decoration: InputDecoration(
-                        //         hintText: 'Add New Tag...',
-                        //         border: InputBorder.none,
-                        //         hintStyle: new TextStyle(color: Colors.white.withOpacity(0.8),fontSize: 14,fontWeight: FontWeight.w400),
-                        //         prefixIcon: SizedBox(child: Image.asset("assets/tag_interest.png",color: Colors.white,),),
-                        //         suffixIcon: ischeck2 ? new InkWell(
-                        //           onTap: (){
-                        //             if(selectedIndex.length!=4){
-                        //               setState((){
-                        //                 tags.add(tagsearch.text!);
-                        //                 selectedIndex.add(tags.length-1);
-                        //               });
-                        //             }else{
-                        //               Toaster.show(context, "You can select only 4");
-                        //             }
-                        //           },
-                        //           child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                        //         ):null
-                        //     ),
-                        //     onChanged: (value){
-                        //       if(value.isNotEmpty){
-                        //         setState(() {
-                        //           ischeck2 = true;
-                        //         });
-                        //       }else{
-                        //         setState(() {
-                        //           ischeck2 = false;
-                        //         });
-                        //       }
-                        //     },
-                        //     style: new TextStyle(color: Colors.white,fontSize: 14),
-                        //     validator: (value) {
-                        //       if (value!.isEmpty) {
-                        //         return 'Please enter your Tag';
-                        //       }
-                        //       return null;
-                        //     },
-                        //   ),
-                        // ),
-
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          // decoration: BoxDecoration(
-                          //   // color: Colors.white,
-                          //   border: Border.all(color: Colors.white),
-                          //   borderRadius: const BorderRadius.all(Radius.circular(25)),
-                          // ),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height:20,width:20,
-                                child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:20,width:20,),),
-                              SizedBox(
-                                width: 5,),
-                              Expanded(
-                                child: TextFormField(
-                                  keyboardType: TextInputType.name,
-                                  textInputAction: TextInputAction.done,
-                                  controller: tagsearch,
-                                  decoration: InputDecoration(
-                                    hintText: 'Add New Tag...',
-                                    border: InputBorder.none,
-                                    hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
-                                    // prefixIcon: SizedBox(
-                                    //   height:5,width:5,
-                                    //   child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:5,width:5,),),
-                                    // suffixIcon: ischeck ? new InkWell(
-                                    //   onTap: (){
-                                    //       if(selectedIndex.length!=4){
-                                    //         setState((){
-                                    //         tags.add(tagsearch.text!);
-                                    //         selectedIndex.add(tags.length-1);
-                                    //         });
-                                    //       }else{
-                                    //         Toaster.show(context, "You can select only 4");
-                                    //       }
-                                    //   },
-                                    //   child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                                    // ):null
-                                  ),
-                                  onChanged: (value){
-                                    if(value.isNotEmpty){
-                                      setState(() {
-                                        ischeck2 = true;
-                                      });
-                                    }else{
-                                      setState(() {
-                                        ischeck2 = false;
-                                      });
-                                    }
-                                  },
-                                  style: new TextStyle(color: Colors.white,fontSize: 14),
-                                  textAlign: TextAlign.left,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter your Tag';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,),
-                              ischeck2 ? new InkWell(
-                                onTap: (){
-                                  if(selectedIndex.length!=4){
-                                    setState((){
-                                      tags.add(tagsearch.text!);
-                                      selectedIndex.add(tags.length-1);
-                                    });
-                                  }else{
-                                    Toaster.show(context, "You can select only 4");
-                                  }
-                                },
-                                child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
-                              ):Container()
-                            ],
-                          ),
-                        ),
-
-                        new SizedBox(height: 10,),
-                        isLoad ? Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 3.0,
-                          ),
-                        ):Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 27),
-                          alignment: Alignment.centerLeft,
-                          child: Wrap(
-                            children: [
-                              ...List.generate(
-                                prefList.length,
-                                    (index){
-                                  if(prefList[index] != intrest){
-                                    if(selectedIndex.length!=4){
-                                      selectedIndex.add(index);
-                                    }
-                                  }
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if(selectedIndex.length!=4){
-                                          selectedIndex.add(index);
+                        // intrests
+                        if(Interests) new Column(
+                          children: [
+                            new SizedBox(height: 10,),
+                            // Container(
+                            //   height: 50,
+                            //   margin: const EdgeInsets.symmetric(horizontal: 30),
+                            //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                            //   // decoration: BoxDecoration(
+                            //   //   // color: Colors.white,
+                            //   //   border: Border.all(color: Colors.white),
+                            //   //   borderRadius: const BorderRadius.all(Radius.circular(25)),
+                            //   // ),
+                            //   child: TextFormField(
+                            //     keyboardType: TextInputType.name,
+                            //     textInputAction: TextInputAction.done,
+                            //     controller: tagsearch,
+                            //     decoration: InputDecoration(
+                            //         hintText: 'Add New Tag...',
+                            //         border: InputBorder.none,
+                            //         hintStyle: new TextStyle(color: Colors.white.withOpacity(0.8),fontSize: 14,fontWeight: FontWeight.w400),
+                            //         prefixIcon: SizedBox(child: Image.asset("assets/tag_interest.png",color: Colors.white,),),
+                            //         suffixIcon: ischeck2 ? new InkWell(
+                            //           onTap: (){
+                            //             if(selectedIndex.length!=4){
+                            //               setState((){
+                            //                 tags.add(tagsearch.text!);
+                            //                 selectedIndex.add(tags.length-1);
+                            //               });
+                            //             }else{
+                            //               Toaster.show(context, "You can select only 4");
+                            //             }
+                            //           },
+                            //           child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                            //         ):null
+                            //     ),
+                            //     onChanged: (value){
+                            //       if(value.isNotEmpty){
+                            //         setState(() {
+                            //           ischeck2 = true;
+                            //         });
+                            //       }else{
+                            //         setState(() {
+                            //           ischeck2 = false;
+                            //         });
+                            //       }
+                            //     },
+                            //     style: new TextStyle(color: Colors.white,fontSize: 14),
+                            //     validator: (value) {
+                            //       if (value!.isEmpty) {
+                            //         return 'Please enter your Tag';
+                            //       }
+                            //       return null;
+                            //     },
+                            //   ),
+                            // ),
+                            Container(
+                              height: 50,
+                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              // decoration: BoxDecoration(
+                              //   // color: Colors.white,
+                              //   border: Border.all(color: Colors.white),
+                              //   borderRadius: const BorderRadius.all(Radius.circular(25)),
+                              // ),
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height:20,width:20,
+                                    child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:20,width:20,),),
+                                  SizedBox(
+                                    width: 5,),
+                                  Expanded(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.name,
+                                      textInputAction: TextInputAction.done,
+                                      controller: tagsearch,
+                                      decoration: InputDecoration(
+                                        hintText: 'Add New Tag...',
+                                        border: InputBorder.none,
+                                        hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                        // prefixIcon: SizedBox(
+                                        //   height:5,width:5,
+                                        //   child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:5,width:5,),),
+                                        // suffixIcon: ischeck ? new InkWell(
+                                        //   onTap: (){
+                                        //       if(selectedIndex.length!=4){
+                                        //         setState((){
+                                        //         tags.add(tagsearch.text!);
+                                        //         selectedIndex.add(tags.length-1);
+                                        //         });
+                                        //       }else{
+                                        //         Toaster.show(context, "You can select only 4");
+                                        //       }
+                                        //   },
+                                        //   child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                                        // ):null
+                                      ),
+                                      onChanged: (value){
+                                        if(value.isNotEmpty){
+                                          setState(() {
+                                            ischeck2 = true;
+                                          });
+                                        }else{
+                                          setState(() {
+                                            ischeck2 = false;
+                                          });
                                         }
-                                      });
-                                    },
-                                    child: Container(
-                                        margin: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.white),
-                                          color: selectedIndex.contains(index) ? CommonColors.buttonorg : null,
-                                          borderRadius: BorderRadius.circular(65),
-                                        ),
-                                        padding: EdgeInsets.all(8),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            new SizedBox(width: 5,),
-                                            Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
-                                            new SizedBox(width: 5,),
-                                           selectedIndex.contains(index) ? new SizedBox(
-                                              child: InkWell(onTap: (){
-                                                setState(() {
-                                                  selectedIndex.remove(index);
-                                                });
-                                              },child: Padding(
-                                                padding: const EdgeInsets.all(0.0),
-                                                child: Icon(Icons.close,color: Colors.white,),
-                                              )),
-                                            ): Container()
-                                          ],
-                                        )
+                                      },
+                                      style: new TextStyle(color: Colors.white,fontSize: 14),
+                                      textAlign: TextAlign.left,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter your Tag';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                  );
+                                  ),
+                                  SizedBox(
+                                    width: 5,),
+                                  ischeck2 ? new InkWell(
+                                    onTap: (){
+                                      addCustomPrefs(tagsearch.text!);
+                                      // if(selectedIndex.length!=4){
+                                      //   setState((){
+                                      //     tags.add(tagsearch.text!);
+                                      //     selectedIndex.add(tags.length-1);
+                                      //   });
+                                      // }else{
+                                      //   Toaster.show(context, "You can select only 4");
+                                      // }
                                     },
-                              )
-                            ],
-                          ),
+                                    child: SizedBox(child: Icon(Icons.done,color: Colors.cyan,),),
+                                  ):Container()
+                                ],
+                              ),
+                            ),
+                            new SizedBox(height: 10,),
+                            isLoad ? Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3.0,
+                              ),
+                            ):Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 27),
+                              alignment: Alignment.centerLeft,
+                              child: Wrap(
+                                children: [
+                                  ...List.generate(
+                                    prefList.length, (index){
+                                    // if(prefList[index].isActive ?? false){
+                                    //   if(selectedIndex.length!=3){
+                                    //     selectedIndex.add(index);
+                                    //   }
+                                    // }
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          addPrefs(prefList![index].id.toString());
+                                          if (prefList[index].is_select==true) {
+                                            prefList[index].is_select=false;
+                                          }else{
+                                            prefList[index].is_select=true;
+                                          }
+                                        });
+                                        // setState(() {
+                                        //   if (selectedIndex.length != 4) {
+                                        //     selectedIndex.add(index);
+                                        //     addPrefs(prefList![index].id.toString());
+                                        //   }else{
+                                        //     Toaster.show(
+                                        //         context, "You can select only 4");
+                                        //   }
+                                        // });
+                                      },
+                                      child: Container(
+                                          margin: const EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.white),
+                                            color: prefList[index].is_select ?? false ? CommonColors.buttonorg : null,
+                                            borderRadius: BorderRadius.circular(65),
+                                          ),
+                                          padding: EdgeInsets.all(8),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              new SizedBox(width: 5,),
+                                              Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
+                                              new SizedBox(width: 5,),
+                                              prefList[index].is_select ?? false ? new SizedBox(
+                                                child: InkWell(onTap: (){
+                                                  setState(() {
+                                                    selectedIndex.remove(index);
+                                                  });
+                                                },child: Padding(
+                                                  padding: const EdgeInsets.all(0.0),
+                                                  child: Icon(Icons.close,color: Colors.white,),
+                                                )),
+                                              ): Container()
+                                            ],
+                                          )
+                                      ),
+                                    );
+                                  },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new SizedBox(height: 20,),
+                          ],
                         ),
 
-                        new SizedBox(height: 20,),
+
+
+
                         Container(
                           margin: const EdgeInsets.only(left: 20,right: 20),
                           // decoration: BoxDecoration(
@@ -1084,9 +1359,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:managedby,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    managedby = value;
                                     setState(() {
                                     });
                                   },
@@ -1100,173 +1375,262 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        Container(
-                          height:50,
-                          margin: const EdgeInsets.only(left: 30,right: 30),
-                          decoration: BoxDecoration(
-                              color: CommonColors.editblack,
-                              borderRadius: BorderRadius.circular(37)
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                          child: Row(
-                            children: [
-                               Row(
-                                  children: [
-                                    // new SizedBox(width: 20,),
-                                    ischeck==1 ? InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=100;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: CommonColors.blueloc,
-                                            borderRadius: BorderRadius.circular(3)
+                       if(managedby) Column(
+                         children: [
+                           Container(
+                              height:50,
+                              margin: const EdgeInsets.only(left: 30,right: 30),
+                              decoration: BoxDecoration(
+                                  color: CommonColors.editblack,
+                                  borderRadius: BorderRadius.circular(37)
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                              child: Row(
+                                children: [
+                                   Row(
+                                      children: [
+                                        // new SizedBox(width: 20,),
+
+                                        managedBy=="Self" ? InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=100;
+
+                                              managedBy="";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: CommonColors.blueloc,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                            child: Icon(Icons.check,size: 20,color: Colors.white,),
+                                          ),
+                                        ):
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=1;
+                                              managedBy="Self";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                          ),),
+                                        new SizedBox(width: 5,),
+                                        new Container(
+                                          child: new Text("Self",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
-                                        child: Icon(Icons.check,size: 20,color: Colors.white,),
-                                      ),
-                                    ):
-                                    InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=1;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(3)
+                                      ],
+                                   ),
+                                  // new SizedBox(width: 20,),
+                                  Spacer(),
+                                   Row(
+                                      children: [
+                                        // new SizedBox(width: 20,),
+
+                                        managedBy=="Sibling" ? InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=100;
+                                              managedBy="";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: CommonColors.blueloc,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                            child: Icon(Icons.check,size: 20,color: Colors.white,),
+                                          ),
+                                        ):
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=2;
+                                              managedBy="Sibling";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                          ),),
+                                        new SizedBox(width: 5,),
+                                        new Container(
+                                          child: new Text("Sibling",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
-                                      ),),
-                                    new SizedBox(width: 5,),
-                                    new Container(
-                                      child: new Text("Self",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                      ],
                                     ),
-                                  ],
-                               ),
-                              // new SizedBox(width: 20,),
-                              Spacer(),
-                               Row(
-                                  children: [
-                                    // new SizedBox(width: 20,),
-                                    ischeck==2 ? InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=100;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: CommonColors.blueloc,
-                                            borderRadius: BorderRadius.circular(3)
+                                  Spacer(),
+                                  // new SizedBox(width: 20,),
+                                   Row(
+                                      children: [
+                                        // new SizedBox(width: 20,),
+                                        managedBy=="Parents"? InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=100;
+                                              managedBy="";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: CommonColors.blueloc,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                            child: Icon(Icons.check,size: 20,color: Colors.white,),
+                                          ),
+                                        ):
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              ischeck=3;
+                                              managedBy="Parents";
+                                            });
+                                          },
+                                          child: new Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(3)
+                                            ),
+                                          ),),
+                                        new SizedBox(width: 5,),
+                                        new Container(
+                                          child: new Text("Parents",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
-                                        child: Icon(Icons.check,size: 20,color: Colors.white,),
-                                      ),
-                                    ):
-                                    InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=2;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(3)
-                                        ),
-                                      ),),
-                                    new SizedBox(width: 5,),
-                                    new Container(
-                                      child: new Text("Sibling",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              Spacer(),
-                              // new SizedBox(width: 20,),
-                               Row(
-                                  children: [
-                                    // new SizedBox(width: 20,),
-                                    ischeck==3 ? InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=100;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: CommonColors.blueloc,
-                                            borderRadius: BorderRadius.circular(3)
-                                        ),
-                                        child: Icon(Icons.check,size: 20,color: Colors.white,),
-                                      ),
-                                    ):
-                                    InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          ischeck=3;
-                                        });
-                                      },
-                                      child: new Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(3)
-                                        ),
-                                      ),),
-                                    new SizedBox(width: 5,),
-                                    new Container(
-                                      child: new Text("Parents",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ),
-                        new SizedBox(height: 15,),
+                                ],
+                              ),
+                            ),
+                           new SizedBox(height: 15,)
+                         ],
+                       ),
                         new Container(
                           margin: const EdgeInsets.only(left: 37,right: 37),
                           alignment: Alignment.centerLeft,
                           child: new Text("Marriage plan",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
                         new SizedBox(height: 15,),
+
                         Container(
-                          height:50,
-                          margin: const EdgeInsets.only(left: 30,right: 30),
+                          height: 50,
+                          margin: const EdgeInsets.symmetric(horizontal: 30),
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
                           decoration: BoxDecoration(
-                              color: CommonColors.editblack,
-                              borderRadius: BorderRadius.circular(37)
+                            color: CommonColors.editblack,
+                            // border: Border.all(color: Colors.white),
+                            borderRadius: const BorderRadius.all(Radius.circular(25)),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                          child: Row(
-                            children: [
-                              // new SizedBox(width: 20,),
-                              new Container(
-                                  child: Image.asset("assets/within.png")
-                              ),
-                              new SizedBox(width: 5,),
-                              new Container(
-                                child: new Text("Within",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
-                              ),
-                              new Spacer(),
-                              new Container(
-                                  child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
-                              ),
-                              // new SizedBox(width: 20,),
-                            ],
+                          child: DropdownButton<String>(
+                            value: marriage_plan=="null" || marriage_plan==""?"Within":marriage_plan,
+                            underline: Container(
+                              // height: 1,
+                              // margin:const EdgeInsets.only(top: 20),
+                              // color: Colors.white,
+                            ),
+                            isExpanded: true,
+                            style: TextStyle(color: Colors.white,fontSize: 16),
+                            onChanged: (newValue) {
+                              setState(() {
+                                marriage_plan = newValue!;
+                              });
+                            },
+                            selectedItemBuilder: (BuildContext context) {
+                              return ["Within","Six Months","One Year"].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value,style: TextStyle(color: marriage_plan== "Within" ?CommonColors.edittextblack : Colors.white,fontSize: 16),),
+                                );
+                              }).toList();
+                            },
+                            iconSize: 20,
+                            icon: Icon(Icons.arrow_forward_ios,color: marriage_plan=="Within"? CommonColors.edittextblack : Colors.white,size: 20,),
+                            iconDisabledColor: Colors.white,
+                            items: ["Within","Six Months","One Year"] // add your own dial codes
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+                              );
+                            }).toList(),
                           ),
                         ),
+                        // Container(
+                        //   height:50,
+                        //   margin: const EdgeInsets.only(left: 30,right: 30),
+                        //   decoration: BoxDecoration(
+                        //       color: CommonColors.editblack,
+                        //       borderRadius: BorderRadius.circular(37)
+                        //   ),
+                        //   padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                        //   child: Row(
+                        //     children: [
+                        //       // new SizedBox(width: 20,),
+                        //       new Container(
+                        //           child: Image.asset("assets/within.png")
+                        //       ),
+                        //       new SizedBox(width: 5,),
+                        //       new Container(
+                        //         height: 30,
+                        //         child: DropdownButton<String>(
+                        //           value: marriage_plan,
+                        //           underline: Container(
+                        //             // height: 1,
+                        //             // margin:const EdgeInsets.only(top: 20),
+                        //             // color: Colors.white,
+                        //           ),
+                        //           isExpanded: true,
+                        //           style: TextStyle(color: Colors.white,fontSize: 16),
+                        //           onChanged: (newValue) {
+                        //             setState(() {
+                        //               marriage_plan = newValue!;
+                        //             });
+                        //           },
+                        //           selectedItemBuilder: (BuildContext context) {
+                        //             return ["Within","Six Months","One Year"].map((String value) {
+                        //               return DropdownMenuItem<String>(
+                        //                 value: value,
+                        //                 child: Text(value,style: TextStyle(color: marriage_plan== "Within" ?CommonColors.edittextblack : Colors.white,fontSize: 16),),
+                        //               );
+                        //             }).toList();
+                        //           },
+                        //           iconSize: 20,
+                        //           icon: Icon(Icons.arrow_forward_ios,color: marriage_plan=="Within"? CommonColors.edittextblack : Colors.white,size: 20,),
+                        //           iconDisabledColor: Colors.white,
+                        //           items: <String>["Within","Six Months","One Year"] // add your own dial codes
+                        //               .map<DropdownMenuItem<String>>((String value) {
+                        //             return DropdownMenuItem<String>(
+                        //               value: value,
+                        //               child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+                        //             );
+                        //           }).toList(),
+                        //         ),
+                        //       ),
+                        //       // new Container(
+                        //       //     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                        //       // ),
+                        //       // new SizedBox(width: 20,),
+                        //     ],
+                        //   ),
+                        // ),
                         new SizedBox(height: 50,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -1274,11 +1638,72 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Text("Basic info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
                         new SizedBox(height: 20,),
-                        Customlayout(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: 'Libra',),
-                        Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: 'Master degree',),
-                        Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: 'Not added',),
-                        Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: 'Not added',),
-                        Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: 'Add',),
+                        // InkWell(onTap:(){openDialog(context,"eduction");},child:Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$eduction',),),
+                        // InkWell(onTap:(){openDialog(context,"covid");},child:Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid',),),
+                        // InkWell(onTap:(){openDialog(context,"health");},child:Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$health',),),
+                        // InkWell(onTap:(){openDialog(context,"personaltype");},child:Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: '$personaltype',),),
+
+                        Customlayout(icon: 'assets/zodiac_icon.png',title: 'Zodiac',selectedItem:"$zodiac_sign",dropdownItems: "645a24f6c46146c70ceef85e",
+                          onDropdownChanged: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              zodiac_sign=selectedItem;
+                            });
+                          },onDropdownChanged2: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              zodiac_signd=selectedItem;
+                            });
+                          },),
+                        Customlayout(icon: 'assets/education_bottom.png',title: 'Education',selectedItem:"$education_level",dropdownItems: "644f86833153f40588bbd101",
+                          onDropdownChanged: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              education_level=selectedItem;
+                            });
+                          },onDropdownChanged2: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              education_leveld=selectedItem;
+                            });
+                          },),
+                        Customlayout(icon: 'assets/covid_bottom.png',title: 'COVID vaccine',selectedItem:"$covid_vaccine",dropdownItems: "644fa1dbbf73df1a4d885a56",
+                          onDropdownChanged: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              covid_vaccine=selectedItem;
+                            });
+                          },onDropdownChanged2: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              covid_vaccined=selectedItem;
+                            });
+                          },),
+                        Customlayout(icon: 'assets/health_bottom.png',title: 'Health',selectedItem:"$healths",dropdownItems: "64afe579de520a14346455bc",
+                          onDropdownChanged: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              healths=selectedItem;
+                            });
+                          }, onDropdownChanged2: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              healthsd=selectedItem;
+                            });
+                          },),
+                        Customlayout(icon: 'assets/persional_bottom.png',title: 'Personality type',selectedItem:"$personality_type",dropdownItems: "64affcb625a4f99a26baf001",
+                          onDropdownChanged: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              personality_type=selectedItem;
+                            });
+                          },onDropdownChanged2: (selectedItem) {
+                            // Handle the selected item
+                            setState(() {
+                              personality_typed=selectedItem;
+                            });
+                          },),
+
 
                         new SizedBox(height: 40,),
                         Container(
@@ -1293,9 +1718,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:Lifestyle,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    Lifestyle = value;
                                     setState(() {
                                     });
                                   },
@@ -1309,13 +1734,90 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
                         new SizedBox(height: 20,),
-                        Customlayout(icon: 'assets/pet_icon.png',tittle: 'Pets',status: 'Dog',),
-                        Customlayout(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: 'On special occasions',),
-                        Customlayout(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: 'Non-smoker',),
-                        Customlayout(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: 'Often',),
-                        Customlayout(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: 'Not added',),
-                        Customlayout(icon: 'assets/social_bottom.png',tittle: 'Social media',status: 'Socially active',),
-                        Customlayout(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: 'Early bird',),
+                        Customlayout(icon: 'assets/pet_icon.png',title: 'Pets',selectedItem:"$petss",dropdownItems: "644f87093153f40588bbd111",
+                          onDropdownChanged: (selectedItem) {
+                            setState(() {
+                              petss=selectedItem;
+                            });
+                              // Handle the selected item
+                            },onDropdownChanged2: (selectedItem) {
+                            setState(() {
+                              petssd=selectedItem;
+                            });
+                              // Handle the selected item
+                            },),
+                        Customlayout(icon: 'assets/drink_bottom.png',title: 'Drinking',selectedItem:"$drinkings",dropdownItems: "644f9c91bf73df1a4d885a20",
+                          onDropdownChanged: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              drinkings=selectedItem;
+                            });
+                            },onDropdownChanged2: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              drinkingsd=selectedItem;
+                            });
+                            },),
+                        Customlayout(icon: 'assets/smoke_bottom.png',title: 'Smoking',selectedItem:"$smokings",dropdownItems: "644f9d6cbf73df1a4d885a2e",
+                          onDropdownChanged: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              smokings=selectedItem;
+                            });
+                            },onDropdownChanged2: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              smokingsd=selectedItem;
+                            });
+                            },),
+                        Customlayout(icon: 'assets/workout_bottom.png',title: 'Workout',selectedItem:"$workouts",dropdownItems: "644fa0bebf73df1a4d885a3a",
+                          onDropdownChanged: (selectedItem) {
+                            setState(() {
+                              workouts=selectedItem;
+                            });
+                            },onDropdownChanged2: (selectedItem) {
+                            setState(() {
+                              workoutsd=selectedItem;
+                            });
+                            },),
+                        Customlayout(icon: 'assets/dientary_bottom.png',title: 'Dietary preference',selectedItem:"$dietary_preference",dropdownItems: "644fa116bf73df1a4d885a44",
+                          onDropdownChanged: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              dietary_preference=selectedItem;
+                            });
+                            },onDropdownChanged2: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              dietary_preferenced=selectedItem;
+                            });
+                            },),
+                        Customlayout(icon: 'assets/social_bottom.png',title: 'Social media',selectedItem:"$social_media",dropdownItems: "64affcd725a4f99a26baf005",
+                          onDropdownChanged: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              social_media=selectedItem;
+                            });
+                            },onDropdownChanged2: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              social_mediad=selectedItem;
+                            });
+                            },),
+                        Customlayout(icon: 'assets/sleep_bottom.png',title: 'Sleeping habits',selectedItem:"$sleeping_habits",dropdownItems: "6452a9626abdec919eed862c",
+                          onDropdownChanged: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              sleeping_habits=selectedItem;
+                            });
+                            }, onDropdownChanged2: (selectedItem) {
+                              // Handle the selected item
+                            setState(() {
+                              sleeping_habitsd=selectedItem;
+                            });
+                            },),
+
+
 
                         new SizedBox(height: 20,),
                         new Container(
@@ -1430,9 +1932,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:Living,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    Living = value;
                                     setState(() {
                                     });
                                   },
@@ -1456,38 +1958,90 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             // border: Border.all(color: Colors.white),
                             borderRadius: const BorderRadius.all(Radius.circular(25)),
                           ),
-                          child: DropdownButton<String>(
+                          child:
+                          SearchChoices.single(
+                            items: countryitems,
                             value: country,
-                            underline: Container(
-                              // height: 1,
-                              // margin:const EdgeInsets.only(top: 20),
-                              // color: Colors.white,
-                            ),
-                            isExpanded: true,
-                            style: TextStyle(color: Colors.white,fontSize: 16),
-                            onChanged: (newValue) {
+                            hint: "Select country",
+                            disabledHint: "Disabled",
+                            searchHint: "Select country",
+                            style: TextStyle(color: Colors.white),
+                            underline: Container(),
+                            onChanged: (value) {
                               setState(() {
-                                country = newValue!;
+                                country = value;
+                                city = "Select city";
+                                cityList.clear();
+                                cityList.add("Select city");
+                                state = 'Select state';
+                                city = 'Select city';
+                                Liststate(country,"");
                               });
                             },
-                            selectedItemBuilder: (BuildContext context) {
-                              return ['Select country', 'India', 'pakistan', 'china'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
-                                );
-                              }).toList();
+                            displayClearIcon: false,
+                            isExpanded: true,
+                          ),
+                          // DropdownButton<String>(
+                          //   value: country,
+                          //   underline: Container(
+                          //     // height: 1,
+                          //     // margin:const EdgeInsets.only(top: 20),
+                          //     // color: Colors.white,
+                          //   ),
+                          //   isExpanded: true,
+                          //   style: TextStyle(color: Colors.white,fontSize: 16),
+                          //   onChanged: (newValue) {
+                          //     setState(() {
+                          //       country = newValue!;
+                          //     });
+                          //   },
+                          //   selectedItemBuilder: (BuildContext context) {
+                          //     return ['Select country', 'India', 'pakistan', 'china'].map((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //         value: value,
+                          //         child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                          //       );
+                          //     }).toList();
+                          //   },
+                          //   iconSize: 24,
+                          //   icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
+                          //   iconDisabledColor: Colors.white,
+                          //   items: <String>['Select country', 'India', 'pakistan', 'china'] // add your own dial codes
+                          //       .map<DropdownMenuItem<String>>((String value) {
+                          //     return DropdownMenuItem<String>(
+                          //       value: value,
+                          //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+                          //     );
+                          //   }).toList(),
+                          // ),
+                        ),
+                        new SizedBox(height: 15,),
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.symmetric(horizontal: 30),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: CommonColors.editblack,
+                            // border: Border.all(color: Colors.white),
+                            borderRadius: const BorderRadius.all(Radius.circular(25)),
+                          ),
+                          child:
+                          SearchChoices.single(
+                            items: stateitems,
+                            value: state,
+                            hint: "Select State",
+                            searchHint: "Select State",
+                            style: TextStyle(color: Colors.white),
+                            underline: Container(),
+                            onChanged: (value) {
+                              setState(() {
+                                state = value;
+                                city="Select city";
+                                ListCity(state,"");
+                              });
                             },
-                            iconSize: 24,
-                            icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
-                            iconDisabledColor: Colors.white,
-                            items: <String>['Select country', 'India', 'pakistan', 'china'] // add your own dial codes
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-                              );
-                            }).toList(),
+                            displayClearIcon: false,
+                            isExpanded: true,
                           ),
                         ),
 
@@ -1501,38 +2055,20 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             // border: Border.all(color: Colors.white),
                             borderRadius: const BorderRadius.all(Radius.circular(25)),
                           ),
-                          child: DropdownButton<String>(
+                          child: SearchChoices.single(
+                            items: cityitems,
                             value: city,
-                            underline: Container(
-                              // height: 1,
-                              // margin:const EdgeInsets.only(top: 20),
-                              // color: Colors.white,
-                            ),
-                            isExpanded: true,
-                            style: TextStyle(color: Colors.white,fontSize: 16),
-                            onChanged: (newValue) {
+                            hint: "Select city",
+                            searchHint: "Select city",
+                            style: TextStyle(color: Colors.white),
+                            underline: Container(),
+                            onChanged: (value) {
                               setState(() {
-                                city = newValue!;
+                                city = value;
                               });
                             },
-                            selectedItemBuilder: (BuildContext context) {
-                              return ['Select city', 'Indore', 'bhopal', 'guna'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,style: TextStyle(color: city == 'Select city' ? Colors.grey : Colors.white,fontSize: 16),),
-                                );
-                              }).toList();
-                            },
-                            iconSize: 24,
-                            icon: Icon(Icons.arrow_forward_ios,color: city == 'Select city' ? CommonColors.edittextblack : Colors.white,size: 20,),
-                            iconDisabledColor: Colors.white,
-                            items: <String>['Select city', 'Indore', 'bhopal', 'guna'] // add your own dial codes
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-                              );
-                            }).toList(),
+                            displayClearIcon: false,
+                            isExpanded: true,
                           ),
                         ),
                         new SizedBox(height: 25,),
@@ -1548,9 +2084,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:Religion,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    Religion = value;
                                     setState(() {
                                     });
                                   },
@@ -1571,21 +2107,24 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Wrap(
                             children: [
                               ...List.generate(
-                                regions.length,
+                                religionList.length,
                                     (index){
-                                      if(regions[index]!="$religion"){
+                                      if(religionList[index]!="$religion"){
                                         ischeckregion=100;
                                       }else{
                                         ischeckregion=index;
                                       }
 
-                                  return GestureDetector(
+                                  return InkWell(
                                     onTap: () {
                                       setState(() {
                                         if(ischeckregion==index){
                                           ischeckregion=100;
                                         }else{
                                           ischeckregion=index;
+                                          religion=religionList[index];
+                                          caste="Select Caste";
+                                          Castemethod(religion);
                                         }
                                         // if(selectedIndexregion.length!=4){
                                         //   selectedIndexregion.add(index);
@@ -1624,7 +2163,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                             ),
                                             new SizedBox(width: 5,),
                                             new Container(
-                                              child: new Text("${regions[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                              child: new Text("${religionList[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                             ),
                                           ],
                                         )
@@ -1649,9 +2188,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:casteb,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    casteb = value;
                                     setState(() {
                                     });
                                   },
@@ -1690,7 +2229,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               });
                             },
                             selectedItemBuilder: (BuildContext context) {
-                              return ['Select Caste', 'punjabi', 'gujrati', 'bangali','Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
+                              return castList.map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value,style: TextStyle(color: caste== "Select Caste" ?CommonColors.edittextblack : Colors.white,fontSize: 16),),
@@ -1700,7 +2239,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             iconSize: 20,
                             icon: Icon(Icons.arrow_forward_ios,color: caste=="Select Caste"? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
-                            items: <String>['Select Caste', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
+                            items: castList // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -1728,9 +2267,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:mothertongue,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    mothertongue = value;
                                     setState(() {
                                     });
                                   },
@@ -1755,7 +2294,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           //   borderRadius: const BorderRadius.all(Radius.circular(25)),
                           // ),
                           child: DropdownButton<String>(
-                            value: tongue,
+                            value: mother_tongue=="null" ? "Select your mother tongue":mother_tongue,
                             underline: Container(
                               // height: 1,
                               // margin:const EdgeInsets.only(top: 20),
@@ -1765,19 +2304,19 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             style: TextStyle(color: Colors.white,fontSize: 16),
                             onChanged: (newValue) {
                               setState(() {
-                                tongue = newValue!;
+                                mother_tongue = newValue!;
                               });
                             },
                             selectedItemBuilder: (BuildContext context) {
                               return ['Select your mother tongue', 'Hindi', 'English'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value,style: TextStyle(color: tongue== "Select your mother tongue" ?CommonColors.edittextblack: Colors.white,fontSize: 16),),
+                                  child: Text(value,style: TextStyle(color: mother_tongue== "Select your mother tongue" ?CommonColors.edittextblack: Colors.white,fontSize: 16),),
                                 );
                               }).toList();
                             },
                             iconSize: 20,
-                            icon: Icon(Icons.arrow_forward_ios,color:tongue== "Select your mother tongue" ? CommonColors.edittextblack : Colors.white,size: 20,),
+                            icon: Icon(Icons.arrow_forward_ios,color:mother_tongue== "Select your mother tongue" ? CommonColors.edittextblack : Colors.white,size: 20,),
                             iconDisabledColor: Colors.white,
                             items: <String>['Select your mother tongue', 'Hindi', 'English'] // add your own dial codes
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -1813,9 +2352,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_age,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_age = value;
                                     setState(() {
                                     });
                                   },
@@ -1849,9 +2388,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_height,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_height = value;
                                     setState(() {
                                     });
                                   },
@@ -1885,9 +2424,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_weight,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_weight = value;
                                     setState(() {
                                     });
                                   },
@@ -1921,9 +2460,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_smoke,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_smoke = value;
                                     setState(() {
                                     });
                                   },
@@ -1958,9 +2497,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_drink,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_drink = value;
                                     setState(() {
                                     });
                                   },
@@ -1994,9 +2533,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:is_diet,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    is_diet = value;
                                     setState(() {
                                     });
                                   },
@@ -2205,3 +2744,23 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   }
 }
 
+class EditText extends StatelessWidget {
+  final String labelText;
+  final TextEditingController controller;
+
+  const EditText({
+    Key? key,
+    required this.labelText,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+      ),
+    );
+  }
+}

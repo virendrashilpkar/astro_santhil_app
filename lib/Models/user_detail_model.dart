@@ -11,7 +11,7 @@ String userDetailModelToJson(UserDetailModel data) => json.encode(data.toJson())
 class UserDetailModel {
   int? status;
   String? meesage;
-  List<detailDatum>? data;
+  List<Datum>? data;
 
   UserDetailModel({
     this.status,
@@ -22,7 +22,7 @@ class UserDetailModel {
   factory UserDetailModel.fromJson(Map<String, dynamic> json) => UserDetailModel(
     status: json["status"],
     meesage: json["meesage"],
-    data: json["data"] == null ? [] : List<detailDatum>.from(json["data"]!.map((x) => detailDatum.fromJson(x))),
+    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,123 +32,239 @@ class UserDetailModel {
   };
 }
 
-class detailDatum {
+class Datum {
   String? id;
   String? firstName;
   String? lastName;
-  String? email;
   DateTime? birthDate;
-  int? age;
   String? phone;
-  String? plan;
-  String? city;
-  String? state;
-  String? country;
   String? gender;
+  String? city;
   String? height;
-  String? maritalStatus;
   String? weight;
-  Location? location;
-  String? lookingFor;
-  String? religion;
-  String? caste;
+  String? email;
   String? about;
+  String? maritalStatus;
+  String? country;
+  Location? location;
+  String? plan;
+  String? caste;
+  String? managedBy;
+  String? religion;
+  String? lookingFor;
+  int? minAge;
+  int? maxAge;
+  int? minHeight;
+  int? maxHeight;
+  bool? isOnline;
+  bool? isShowOnCard;
+  bool? goGlobel;
   String? company;
   String? education;
   String? jobTitle;
-  int? maxAge;
-  int? maxHeight;
-  int? minAge;
-  int? minHeight;
+  String? state;
+  String? marriagePlan;
+  String? motherTongue;
+  bool? goIncognito;
+  bool? showPeopleInRange;
+  String? username;
+  bool? isAge;
+  bool? isDiet;
+  bool? isDrink;
+  bool? isHeight;
+  bool? isSmoke;
+  bool? isWeight;
+  String? image;
+  int? age;
+  String? zodiacSign;
+  String? covidVaccine;
+  String? pets;
+  String? dietaryPreference;
+  String? educationLevel;
+  String? sleepingHabits;
+  String? socialMedia;
+  String? workout;
+  String? personalityType;
+  String? health;
+  String? smoking;
+  String? drinking;
+  List<String>? preference;
 
-  detailDatum({
+  Datum({
     this.id,
     this.firstName,
     this.lastName,
-    this.email,
     this.birthDate,
-    this.age,
     this.phone,
-    this.plan,
-    this.city,
-    this.state,
-    this.country,
     this.gender,
+    this.city,
     this.height,
-    this.maritalStatus,
     this.weight,
-    this.location,
-    this.lookingFor,
-    this.religion,
-    this.caste,
+    this.email,
     this.about,
+    this.maritalStatus,
+    this.country,
+    this.location,
+    this.plan,
+    this.caste,
+    this.managedBy,
+    this.religion,
+    this.lookingFor,
+    this.isOnline,
+    this.isShowOnCard,
+    this.minAge,
+    this.maxAge,
+    this.minHeight,
+    this.maxHeight,
+    this.goGlobel,
     this.company,
     this.education,
     this.jobTitle,
-    this.maxHeight,
-    this.maxAge,
-    this.minHeight,
-    this.minAge
+    this.state,
+    this.marriagePlan,
+    this.motherTongue,
+    this.goIncognito,
+    this.showPeopleInRange,
+    this.username,
+    this.isAge,
+    this.isDiet,
+    this.isDrink,
+    this.isHeight,
+    this.isSmoke,
+    this.isWeight,
+    this.image,
+    this.age,
+    this.zodiacSign,
+    this.covidVaccine,
+    this.pets,
+    this.dietaryPreference,
+    this.educationLevel,
+    this.sleepingHabits,
+    this.socialMedia,
+    this.workout,
+    this.personalityType,
+    this.health,
+    this.smoking,
+    this.drinking,
+    this.preference,
   });
 
-  factory detailDatum.fromJson(Map<String, dynamic> json) => detailDatum(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["_id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    email: json["email"],
-    birthDate: json["birth_date"] == "" ? null : DateTime.parse(json["birth_date"]),
-    age: json["age"],
+    birthDate: json["birth_date"] == null ? null : DateTime.parse(json["birth_date"]),
     phone: json["phone"],
-    plan: json["plan"],
-    city: json["city"],
-    state: json["state"],
-    country: json["country"],
     gender: json["gender"],
+    city: json["city"],
     height: json["height"],
-    maritalStatus: json["marital_status"],
     weight: json["weight"],
-    location: json["location"] == null ? null : Location.fromJson(json["location"]),
-    lookingFor: json["looking_for"],
-    religion: json["religion"],
-    caste: json["caste"],
+    email: json["email"],
     about: json["about"],
+    maritalStatus: json["marital_status"],
+    country: json["country"],
+    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    plan: json["plan"],
+    caste: json["caste"],
+    managedBy: json["managedBy"],
+    religion: json["religion"],
+    lookingFor: json["looking_for"],
+    isOnline: json["is_online"],
+    isShowOnCard: json["is_showOnCard"],
+    goGlobel: json["goGlobel"],
+    minAge: json["minAge"],
+    maxAge: json["maxAge"],
+    minHeight: json["minHeight"],
+    maxHeight: json["maxHeight"],
     company: json["company"],
     education: json["education"],
     jobTitle: json["job_title"],
-    maxAge: json["maxAge"],
-    maxHeight: json["maxHeight"],
-    minAge: json["minAge"],
-    minHeight: json["minHeight"],
+    state: json["state"],
+    marriagePlan: json["marriage_plan"],
+    motherTongue: json["mother_tongue"],
+    goIncognito: json["go_incognito"],
+    showPeopleInRange: json["show_people_in_range"],
+    username: json["username"],
+    isAge: json["is_age"],
+    isDiet: json["is_diet"],
+    isDrink: json["is_drink"],
+    isHeight: json["is_height"],
+    isSmoke: json["is_smoke"],
+    isWeight: json["is_weight"],
+    image: json["image"],
+    age: json["age"],
+    zodiacSign: json["zodiac_sign"],
+    covidVaccine: json["covid_vaccine"],
+    pets: json["pets"],
+    dietaryPreference: json["dietary_preference"],
+    educationLevel: json["education_level"],
+    sleepingHabits: json["sleeping_habits"],
+    socialMedia: json["social_media"],
+    workout: json["workout"],
+    personalityType: json["personality_type"],
+    health: json["health"],
+    smoking: json["smoking"],
+    drinking: json["drinking"],
+    preference: json["preference"] == null ? [] : List<String>.from(json["preference"]!.map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
     "_id": id,
     "first_name": firstName,
     "last_name": lastName,
-    "email": email,
     "birth_date": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
-    "age":age,
     "phone": phone,
-    "plan": plan,
-    "city": city,
-    "state": state,
-    "country": country,
     "gender": gender,
+    "city": city,
     "height": height,
-    "marital_status": maritalStatus,
     "weight": weight,
-    "location": location?.toJson(),
-    "looking_for": lookingFor,
-    "religion": religion,
-    "caste": caste,
+    "email": email,
     "about": about,
+    "marital_status": maritalStatus,
+    "country": country,
+    "location": location?.toJson(),
+    "plan": plan,
+    "caste": caste,
+    "managedBy": managedBy,
+    "religion": religion,
+    "looking_for": lookingFor,
+    "is_online": isOnline,
+    "is_showOnCard": isShowOnCard,
+    "goGlobel": goGlobel,
+    "minAge": minAge,
+    "maxAge": maxAge,
+    "minHeight": minHeight,
+    "maxHeight": maxHeight,
     "company": company,
     "education": education,
     "job_title": jobTitle,
-    "maxAge": maxAge,
-    "maxHeight": maxHeight,
-    "minAge": minAge,
-    "minHeight": minHeight,
+    "state": state,
+    "marriage_plan": marriagePlan,
+    "mother_tongue": motherTongue,
+    "go_incognito": goIncognito,
+    "show_people_in_range": showPeopleInRange,
+    "username": username,
+    "is_age": isAge,
+    "is_diet": isDiet,
+    "is_drink": isDrink,
+    "is_height": isHeight,
+    "is_smoke": isSmoke,
+    "is_weight": isWeight,
+    "image": image,
+    "age": age,
+    "zodiac_sign": zodiacSign,
+    "covid_vaccine": covidVaccine,
+    "pets": pets,
+    "dietary_preference": dietaryPreference,
+    "education_level": educationLevel,
+    "sleeping_habits": sleepingHabits,
+    "social_media": socialMedia,
+    "workout": workout,
+    "personality_type": personalityType,
+    "health": health,
+    "smoking": smoking,
+    "drinking": drinking,
+    "preference": preference == null ? [] : List<dynamic>.from(preference!.map((x) => x)),
   };
 }
 

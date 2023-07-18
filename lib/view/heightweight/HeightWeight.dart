@@ -40,6 +40,7 @@ class _MyHomePageState extends State<HeightWeight> {
   String education = "";
   String company = "";
   String jobTitle = "";
+  String personality_type = "";
 
   bool clickLoad = false;
 
@@ -60,6 +61,17 @@ class _MyHomePageState extends State<HeightWeight> {
     }
   }
 
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String pets = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workout = "";
+  String smoking = "";
+  String health = "";
+  String drinking = "";
   Future<void> userDetail() async {
     _preferences = await SharedPreferences.getInstance();
     _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
@@ -80,6 +92,18 @@ class _MyHomePageState extends State<HeightWeight> {
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
+      zodiac_sign = _userDetailModel.data![0].zodiacSign.toString();
+      covid_vaccine = _userDetailModel.data![0].covidVaccine.toString();
+      pets = _userDetailModel.data![0].pets.toString();
+      dietary_preference = _userDetailModel.data![0].dietaryPreference.toString();
+      education_level = _userDetailModel.data![0].educationLevel.toString();
+      sleeping_habits = _userDetailModel.data![0].sleepingHabits.toString();
+      social_media = _userDetailModel.data![0].socialMedia.toString();
+      workout = _userDetailModel.data![0].workout.toString();
+      health = _userDetailModel.data![0].health.toString();
+      smoking = _userDetailModel.data![0].smoking.toString();
+      drinking = _userDetailModel.data![0].drinking.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
       setState(() {
 
       });
@@ -92,9 +116,13 @@ class _MyHomePageState extends State<HeightWeight> {
     });
 
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city,state, height.text, weight.text, maritalStatus, email,
-        lookingFor, religion, caste, about, education, company, jobTitle);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "height": height.text,
+          "weight": weight.text,
+        }
+    );
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('LookingFor');
@@ -161,7 +189,7 @@ class _MyHomePageState extends State<HeightWeight> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'My height is',
+                  'My height is (in cm)',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -187,14 +215,14 @@ class _MyHomePageState extends State<HeightWeight> {
                         controller: height,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                          hintText: 'Height',
+                          hintText: 'Height in cm',
                           border: InputBorder.none,
                           hintStyle: new TextStyle(color: Colors.grey,fontSize: 16),
                         ),
                         style: new TextStyle(color: Colors.white,fontSize: 16),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Please enter your phone number';
+                            return 'Please enter your Height';
                           }
                           return null;
                         },

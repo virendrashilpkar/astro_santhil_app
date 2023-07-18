@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/CasteModel.dart';
+import 'package:shadiapp/Models/ReligionModel.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
@@ -37,6 +39,20 @@ class _MyHomePageState extends State<Cast> {
   String education = "";
   String company = "";
   String jobTitle = "";
+
+
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String pets = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workout = "";
+  String smoking = "";
+  String health = "";
+  String drinking = "";
+  String personality_type = "";
 
   bool clickLoad = false;
 
@@ -91,9 +107,10 @@ class _MyHomePageState extends State<Cast> {
         religion = "Select religion";
       }else {
         religion = _userDetailModel.data![0].religion.toString();
+        Castemethod(religion);
       }
       if (_userDetailModel.data![0].caste == ""){
-        cast = "Select cast";
+        cast = "Select caste";
       }else {
         cast = _userDetailModel.data![0].caste.toString();
       }
@@ -101,6 +118,20 @@ class _MyHomePageState extends State<Cast> {
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
+
+
+      zodiac_sign = _userDetailModel.data![0].zodiacSign.toString();
+      covid_vaccine = _userDetailModel.data![0].covidVaccine.toString();
+      pets = _userDetailModel.data![0].pets.toString();
+      dietary_preference = _userDetailModel.data![0].dietaryPreference.toString();
+      education_level = _userDetailModel.data![0].educationLevel.toString();
+      sleeping_habits = _userDetailModel.data![0].sleepingHabits.toString();
+      social_media = _userDetailModel.data![0].socialMedia.toString();
+      workout = _userDetailModel.data![0].workout.toString();
+      health = _userDetailModel.data![0].health.toString();
+      smoking = _userDetailModel.data![0].smoking.toString();
+      drinking = _userDetailModel.data![0].drinking.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
       setState(() {
 
       });
@@ -113,9 +144,13 @@ class _MyHomePageState extends State<Cast> {
     });
 
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName,
-        lastName, birthDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor, religion,
-        cast, about, education, company, jobTitle);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "religion": religion,
+          "caste": cast,
+        }
+    );
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('NameDOB');
@@ -130,18 +165,50 @@ class _MyHomePageState extends State<Cast> {
   @override
   void initState() {
     userDetail();
+    Religionmethod();
     CheckUserConnection();
     super.initState();
   }
 
   String religion = 'Select religion';
-  String cast = 'Select cast';
+  String cast = 'Select caste';
+  List<String> religionList=['Select religion'];
+  List<String> castList=["Select caste"];
+  void Religionmethod() async{
+    religionList.clear();
+    ReligionModel religionModel = await Services.ReligionMethod();
+    if(religionModel.data?.isNotEmpty ?? false){
+      religionList.add("Select religion");
+      for(ReligionDatum item in religionModel.data ?? []){
+        religionList.add(item.name ?? "");
+      }
+    }
+    setState(() {
+    });
+  }
+  bool isloadcaste=false;
+  void Castemethod(String name) async{
+    setState(() {
+      isloadcaste=true;
+    });
+    castList.clear();
+    CasteModel casteModel = await Services.CasteMethod(name);
+    if(casteModel.data?.isNotEmpty ?? false){
+      castList.add("Select caste");
+      for(CasteDatum item in casteModel.data ?? []){
+        castList.add(item.caste ?? "");
+      }
+    }
+    setState(() {
+      isloadcaste=true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: Center(
+      body: SingleChildScrollView(
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,10 +265,12 @@ class _MyHomePageState extends State<Cast> {
                 onChanged: (newValue) {
                   setState(() {
                     religion = newValue!;
+                    cast = "Select caste";
+                    Castemethod(religion);
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select religion', 'Hindu', 'Muslim', 'Sikh'].map((String value) {
+                  return religionList.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value,style: TextStyle(color:religion == 'Select religion' ? Colors.grey:  Colors.white,fontSize: 16),),
@@ -211,7 +280,7 @@ class _MyHomePageState extends State<Cast> {
                 iconSize: 24,
                 icon: Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select religion', 'Hindu', 'Muslim', 'Sikh'] // add your own dial codes
+                items: religionList // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -225,7 +294,7 @@ class _MyHomePageState extends State<Cast> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Cast',
+                'Caste',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -245,7 +314,7 @@ class _MyHomePageState extends State<Cast> {
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
               child: DropdownButton<String>(
-                value: cast,
+                value: castList.isEmpty ? "":cast,
                 underline: Container(
                   // height: 1,
                   // margin:const EdgeInsets.only(top: 20),
@@ -259,17 +328,17 @@ class _MyHomePageState extends State<Cast> {
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return ['Select cast', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'].map((String value) {
+                  return castList.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: TextStyle(color:cast == 'Select cast' ? Colors.grey : Colors.white,fontSize: 16),),
+                      child: Text(value,style: TextStyle(color:cast == 'Select caste' ? Colors.grey : Colors.white,fontSize: 16),),
                     );
                   }).toList();
                 },
                 iconSize: 24,
-                icon: Icon(Icons.arrow_forward_ios),
+                icon:  Icon(Icons.arrow_forward_ios),
                 iconDisabledColor: Colors.white,
-                items: <String>['Select cast', 'punjabi', 'gujrati', 'bangali', 'Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'] // add your own dial codes
+                items: castList // add your own dial codes
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -283,7 +352,7 @@ class _MyHomePageState extends State<Cast> {
               alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
               child: Text(
-                'This will appear on Shadi-App, however you can choose to hide or show your religion and cast.',
+                'This will appear on Shadi-App, however you can choose to hide or show your religion and caste.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 13,
@@ -327,8 +396,8 @@ class _MyHomePageState extends State<Cast> {
                           Toaster.show(context, "Pelase select religion");
 
                         }else{
-                          if(cast == "Select cast"){
-                            Toaster.show(context, "Pelase select cast");
+                          if(cast == "Select caste"){
+                            Toaster.show(context, "Pelase select caste");
                           }else {
                             updateUser();
                           }
@@ -341,6 +410,24 @@ class _MyHomePageState extends State<Cast> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            InkWell(
+              onTap: (){
+                Navigator.of(context).pushNamed('NameDOB');
+              },
+              child: Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
+                child: Text(
+                  'SKIP',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ],

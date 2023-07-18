@@ -63,6 +63,18 @@ class _MyHomePageState extends State<NameDOB> {
     }
   }
 
+  String zodiac_sign = "";
+  String education_level = "";
+  String covid_vaccine = "";
+  String pets = "";
+  String dietary_preference = "";
+  String sleeping_habits = "";
+  String social_media = "";
+  String workout = "";
+  String smoking = "";
+  String health = "";
+  String drinking = "";
+  String personality_type = "";
   Future<void> userDetail() async {
     _preferences = await SharedPreferences.getInstance();
     _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId)}");
@@ -72,8 +84,8 @@ class _MyHomePageState extends State<NameDOB> {
       if(_userDetailModel.data![0].birthDate == null){
         intialdateval.text = "";
       }else {
-        intialdateval.text =
-            _userDetailModel.data![0].birthDate.toString().substring(0, 10).replaceAll("-", "/");
+        intialdateval.text = convertDateFormat(_userDetailModel.data![0].birthDate.toString().substring(0, 10).replaceAll("-", "/"));
+        // intialdateval.text = _userDetailModel.data![0].birthDate.toString().substring(0, 10).replaceAll("-", "/");
       }
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
@@ -89,11 +101,28 @@ class _MyHomePageState extends State<NameDOB> {
       education = _userDetailModel.data![0].education.toString();
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
+      personality_type = _userDetailModel.data![0].personalityType.toString();
       setState(() {
 
       });
     }
   }
+
+
+  String convertDateFormat(String inputDate) {
+    // Define the input date format
+    final inputFormat = DateFormat('yyyy/MM/dd');
+
+    // Parse the input date string to a DateTime object
+    final dateTime = inputFormat.parseStrict(inputDate);
+
+    // Define the desired output date format
+    final outputFormat = DateFormat('dd/MM/yyyy');
+
+    // Format the DateTime object to the desired output format
+    return outputFormat.format(dateTime);
+  }
+
 
   Future<void> updateUser() async {
     setState(() {
@@ -106,9 +135,14 @@ class _MyHomePageState extends State<NameDOB> {
     DateTime dateTime = inputFormat.parse(intialdateval.text);
     DateFormat outputFormat = DateFormat("yyyy-MM-dd");
     String outputDate = outputFormat.format(dateTime);
-    _updateUserModel = await Services.UpdateUser("${_preferences?.getString(ShadiApp.userId)}", firstName.text,
-        lastName.text,outputDate, gender, country, city,state, height, weight, maritalStatus, email, lookingFor,
-        religion, caste, about, education, company, jobTitle);
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "first_name": firstName.text,
+          "last_name": lastName.text,
+          "birth_date": outputDate,
+        }
+    );
     if(_updateUserModel.status == 1){
       Toaster.show(context, _updateUserModel.message.toString());
       Navigator.of(context).pushNamed('HeightWeight');

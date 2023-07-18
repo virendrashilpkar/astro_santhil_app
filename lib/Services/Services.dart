@@ -3,6 +3,9 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:shadiapp/Models/CasteModel.dart';
+import 'package:shadiapp/Models/DropdownModel.dart';
+import 'package:shadiapp/Models/ReligionModel.dart';
 import 'package:shadiapp/Models/age_height_range_model.dart';
 import 'package:shadiapp/Models/city_list_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
@@ -36,6 +39,7 @@ class Services {
   static String OtpVerify = BaseUrl + "otp-verify";
   static String UserDetail = BaseUrl + "userDetails";
   static String UserUpdate = BaseUrl + "update";
+  static String username = BaseUrl + "update/username";
   static String UploadImge = BaseUrl + "user/uploadImage/";
   static String ViewImage = BaseUrl + "user/images";
   static String PrefList = BaseUrl + "user/preference";
@@ -50,9 +54,12 @@ class Services {
   static String ListPlan = BaseUrl + "plan/list";
   static String TopPicks = BaseUrl + "top/pics";
   static String NewMatch = BaseUrl + "new/match";
+  static String keytype = BaseUrl + "keytype";
   static String Country = BaseUrl + "country/list";
   static String City = BaseUrl + "city/list";
   static String State = BaseUrl + "state/list";
+  static String religion = BaseUrl + "religion/list";
+  static String caste = BaseUrl + "caste/list";
   static String ImageDelete = BaseUrl + "user/delete/image";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
@@ -101,6 +108,37 @@ class Services {
       throw Exception('Failed');
     }
   }
+  static Future<ReligionModel> ReligionMethod() async {
+
+    http.Response response = await http.post(Uri.parse(religion));
+    print("ReligionModel" + response.body);
+
+    if(response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      ReligionModel user = ReligionModel.fromJson(data);
+      return user;
+    }else{
+      var data = jsonDecode(response.body);
+      ReligionModel user = ReligionModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<CasteModel> CasteMethod(String name) async {
+    final params = {"name": name};
+    print("CasteModel $params");
+    http.Response response = await http.post(Uri.parse(caste), body: params);
+    print("CasteModel" + response.body);
+
+    if(response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      CasteModel user = CasteModel.fromJson(data);
+      return user;
+    }else{
+      var data = jsonDecode(response.body);
+      CasteModel user = CasteModel.fromJson(data);
+      return user;
+    }
+  }
 
   static Future<OtpVerifyModel> Otp(String Id, String otp) async {
     final params = {"userId": Id, "otp": otp};
@@ -125,13 +163,12 @@ class Services {
       'GET',
       Uri.parse(UserDetail),
     );
-
     request.fields["userId"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("UserDetailMethodParams ${request.fields}");
     print("UserDetailMethodResponse ${response2.body}");
-    if (response2.statusCode == 200) {
+    if (response2.statusCode==200) {
       var data = json.decode(response2.body);
       UserDetailModel user = UserDetailModel.fromJson(data);
       return user;
@@ -159,7 +196,23 @@ class Services {
       String about,
       String education,
       String company,
-      String jobTitle) async {
+      String jobTitle,
+      String zodiac_sign,
+      String education_level,
+      String covid_vaccine,
+      String pets,
+      String dietary_preference,
+      String sleeping_habits,
+      String social_media,
+      String workout,
+      String smoking,
+      String health,
+      String drinking,
+      String personality_type,
+      String marriage_plan,
+      String mother_tongue,
+      String managedBy,
+      ) async {
     final params = {
       "userId": uId,
       "first_name": firstName,
@@ -176,9 +229,25 @@ class Services {
       "looking_for": lookinFor,
       "religion": religion,
       "caste": caste,
+      "about": about,
       "education": education,
       "job_title": jobTitle,
-      "company": company
+      "company": company,
+      "zodiac_sign":zodiac_sign,
+      "education_level":education_level,
+      "covid_vaccine":covid_vaccine,
+      "pets":pets,
+      "dietary_preference":dietary_preference,
+      "sleeping_habits":sleeping_habits,
+      "social_media":social_media,
+      "workout":workout,
+      "smoking":smoking,
+      "health":health,
+      "drinking":drinking,
+      "personality_type":personality_type,
+      "marriage_plan":marriage_plan,
+      "mother_tongue":mother_tongue,
+      "managedBy":managedBy
     };
 
     print("UpdateUserParams " + params.toString());
@@ -191,8 +260,47 @@ class Services {
       UpdateUserModel user = UpdateUserModel.fromJson(data);
       return user;
     } else {
-      print(response.body);
-      throw Exception('Failed');
+      var data = jsonDecode(response.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+
+    }
+  }
+
+  static Future<UpdateUserModel> UpdateUser2(final object) async {
+    final params = object;
+    print("UpdateUserParams " + params.toString());
+    http.Response response =
+    await http.post(Uri.parse(UserUpdate), body: params);
+    print("UpdateUserResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+
+    }
+  }
+  static Future<UpdateUserModel> CheckUpdateUser2(final object) async {
+    final params = object;
+    print("UpdateUserParams " + params.toString());
+    http.Response response =
+    await http.post(Uri.parse(username), body: params);
+    print("UpdateUserResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+
     }
   }
 
@@ -271,8 +379,27 @@ class Services {
       AddPreferenceModel user = AddPreferenceModel.fromJson(data);
       return user;
     } else {
-      print(response.body);
-      throw Exception('Failed');
+      var data = jsonDecode(response.body);
+      AddPreferenceModel user = AddPreferenceModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<AddPreferenceModel> AddCustomPrefsMethod(
+      String uId, title) async {
+    final params = {"userId": uId, "title": title};
+
+    print("AddPrefsMethodParams " + params.toString());
+    http.Response response = await http.post(Uri.parse(AddPrefs), body: params);
+    print("AddPrefsMethodResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      AddPreferenceModel user = AddPreferenceModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      AddPreferenceModel user = AddPreferenceModel.fromJson(data);
+      return user;
     }
   }
 
@@ -466,6 +593,33 @@ class Services {
       throw Exception('Failed');
     }
   }
+  static Future<DropdownModel> DropdownList(String id) async {
+    // final params = {
+    //   "id": id,
+    // };
+    //
+    // print("DropdownModel " + params.toString());
+    // http.Response response = await http.get(Uri.parse(keytype), body: params);
+    // print("DropdownModel" + response.body);
+
+    var request = http.MultipartRequest(
+      'GET',
+      Uri.parse(keytype),
+    );
+
+    request.fields["id"] = id;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("DropdownModel${response2.body}");
+    if (response2.statusCode == 200) {
+      var data = jsonDecode(response2.body);
+      DropdownModel user = DropdownModel.fromJson(data);
+      return user;
+    } else {
+      print(response2.body);
+      throw Exception('Failed');
+    }
+  }
 
   static Future<CountryListModel> CountryList() async {
 
@@ -513,9 +667,9 @@ class Services {
       "countryCode":countryCode
     };
 
-    print("CityListResponse $params");
+    print("CityListResponse??? $params");
     http.Response response = await http.post(Uri.parse(City), body: params);
-    print("CityListResponse" + response.body);
+    print("CityListResponse???" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

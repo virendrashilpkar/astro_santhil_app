@@ -250,7 +250,7 @@ class _MyHomePageState extends State<AddPhotos> {
                             decoration: BoxDecoration(
                               color: CommonColors.themeblack,
                               borderRadius: const BorderRadius.all(Radius.circular(5)),
-                              border: imagelist[index] != null ?  null : Border.all(color: Colors.white),
+                              border: /*imagelist[index] != null ?  null :*/ Border.all(color: Colors.white),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.1),
@@ -315,12 +315,12 @@ class _MyHomePageState extends State<AddPhotos> {
                                       customBorder: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      child:  Container(
-                                          decoration: BoxDecoration(
-                                            // color: Colors.white,
-                                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                          ),
-                                          child: Icon(Icons.close,color: Colors.white,)),
+                                      // child:  Container(
+                                      //     decoration: BoxDecoration(
+                                      //       // color: Colors.white,
+                                      //       borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                      //     ),
+                                      //     child: Icon(Icons.close,color: Colors.white,)),
                                     ),
                                   ),
                                 ),),

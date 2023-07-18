@@ -40,6 +40,7 @@ class UserDatum {
   String? state;
   String? height;
   String? weight;
+  String? religion;
   String? country;
   String? maritalStatus;
   String? image;
@@ -54,6 +55,7 @@ class UserDatum {
     this.state,
     this.height,
     this.weight,
+    this.religion,
     this.country,
     this.maritalStatus,
     this.image,
@@ -69,6 +71,7 @@ class UserDatum {
     state: json["state"],
     height: json["height"].toString(),
     weight: json["weight"].toString(),
+    religion: json["religion"].toString(),
     country: json["country"],
     maritalStatus: json["marital_status"],
     image: json["image"],
@@ -84,6 +87,7 @@ class UserDatum {
     "state": state,
     "height": height,
     "weight": weight,
+    "religion": religion,
     "country": country,
     "marital_status": maritalStatus,
     "image": image,
