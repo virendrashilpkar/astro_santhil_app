@@ -83,8 +83,12 @@ void navigateUser(BuildContext context) async{
   bool? status = _preferences.getBool(ShadiApp.status);
   if (status == true) {
 
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      'Home',
+          (Route<dynamic> route) => false,
+    );
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) => Home()), (route) => false);
   }else{
     // Navigator.of(context).pushNamed('Home');
     // Navigator.of(context).pushNamed('FreeSub');

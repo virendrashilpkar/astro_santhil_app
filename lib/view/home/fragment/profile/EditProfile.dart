@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/CasteModel.dart';
 import 'package:shadiapp/Models/ReligionModel.dart';
@@ -21,10 +22,12 @@ import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/commonpackage/SearchChoices.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
+import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayoutview.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 
 
 
@@ -49,8 +52,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   late UpdateUserModel _updateUserModel;
   late PreferenceListModel _preferenceListModel;
   late DeleteImageModel _deleteImageModel;
-  String firstName = "";
-  String lastName = "";
+  String firstName = "demo";
+  String lastName = "user";
   String dateOfBirth = "";
   String gender = "";
   String height = "";
@@ -156,6 +159,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   String personaltyped = "";
   String drinkingsd = "";
   String personality_typed = "";
+  String user_plan = "";
+  double rating = 3.5;
+  bool isVerified = false;
 
   Future<void> userDetail() async {
     _preferences = await SharedPreferences.getInstance();
@@ -199,12 +205,14 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       marriage_plan = _userDetailModel.data![0].marriagePlan.toString();
       mother_tongue = _userDetailModel.data![0].motherTongue.toString();
       managedBy = _userDetailModel.data![0].managedBy.toString();
+      user_plan = _userDetailModel.data![0].plan.toString();
       is_age = _userDetailModel.data![0].isAge ?? false;
       is_height = _userDetailModel.data![0].isHeight ?? false;
       is_weight = _userDetailModel.data![0].isWeight ?? false;
       is_smoke = _userDetailModel.data![0].isSmoke ?? false;
       is_drink = _userDetailModel.data![0].isDrink ?? false;
       is_diet = _userDetailModel.data![0].isDiet ?? false;
+      isVerified = _userDetailModel.data![0].isVerified ?? false;
       setState(() {
 
       });
@@ -642,6 +650,47 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
   // String zodiac="Add",eduction="Add",covid="Add",health="Add",personaltype="Add";
   // String pets="Add",drinking="Add",smoking="Add",working="Add",workout="Add",dietary="Add",socialmedia="Add",sleeping="Add";
+
+
+  FlutterSoundRecorder _soundRecorder = FlutterSoundRecorder();
+  FlutterSoundPlayer _soundPlayer = FlutterSoundPlayer();
+  bool _playAudio = false;
+
+  void startRecording() async {
+    try {
+      await _soundRecorder.startRecorder(toFile: 'path_to_save_file', codec: Codec.aacMP4);
+    } catch (e) {
+      // Handle any errors
+    }
+  }
+
+  void stopRecording() async {
+    try {
+      String? path = await _soundRecorder.stopRecorder();
+      playAudio(path!);
+      // Upload the recorded file to the API
+    } catch (e) {
+      // Handle any errors
+    }
+  }
+
+  void playAudio(String filePath) async {
+    try {
+      await _soundPlayer.startPlayer(fromURI: filePath);
+    } catch (e) {
+      // Handle any errors
+    }
+  }
+
+  void stopAudio() async {
+    try {
+      await _soundPlayer.stopPlayer();
+    } catch (e) {
+      // Handle any errors
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1704,8 +1753,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               personality_typed=selectedItem;
                             });
                           },),
-
-
                         new SizedBox(height: 40,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -1817,9 +1864,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               sleeping_habitsd=selectedItem;
                             });
                             },),
-
-
-
                         new SizedBox(height: 20,),
                         new Container(
                           alignment:Alignment.centerLeft,
@@ -2565,18 +2609,27 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               color: CommonColors.editblack,
                               borderRadius: BorderRadius.circular(37)
                           ),
-                          child: Row(
-                            children: [
-                              // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Add a voice message to your profile",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
-                              ),
-                              Spacer(),
-                              new Container(
-                                  child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
-                              ),
-                              // new SizedBox(width: 20,),
-                            ],
+                          child: InkWell(
+                            onTap: (){
+                              setState(() {
+                                _playAudio = !_playAudio;
+                              });
+                              if (_playAudio) startRecording();
+                              if (!_playAudio) stopRecording();
+                            },
+                            child: Row(
+                              children: [
+                                // new SizedBox(width: 20,),
+                                new Container(
+                                  child: new Text("Add a voice message to your profile",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                                ),
+                                Spacer(),
+                                new Container(
+                                    child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                                ),
+                                // new SizedBox(width: 20,),
+                              ],
+                            ),
                           ),
                         ),
                         new SizedBox(height: 12,),
@@ -2730,6 +2783,310 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                   ),
 
                   // second tab bar view widget
+                  // SingleChildScrollView(
+                  //   child: Center(
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: <Widget>[
+                  //         Container(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
+                  //           child: Column(
+                  //             mainAxisAlignment: MainAxisAlignment.start,
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               // Container(
+                  //               //   height: MediaQuery.of(context).padding.top+60,
+                  //               // ),
+                  //               Stack(
+                  //                 children: [
+                  //                   Container(
+                  //                       child:  ClipRRect(
+                  //                         borderRadius: BorderRadius.circular(15.0),
+                  //                         child: Image.network(_list.isNotEmpty ? "${_list[0].image}":"",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                  //                       )
+                  //                   ),
+                  //                   // Container(
+                  //                   //   padding: EdgeInsets.all(8.0),
+                  //                   //   child: InkWell(
+                  //                   //     onTap: (){
+                  //                   //       Navigator.pop(context);
+                  //                   //     },
+                  //                   //     child: Icon(
+                  //                   //       Icons.arrow_back_ios,
+                  //                   //       color: Colors.white,
+                  //                   //     ),
+                  //                   //   ),
+                  //                   // )
+                  //                 ],
+                  //               ),
+                  //               new SizedBox(height: 15,),
+                  //               Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.start,
+                  //                 crossAxisAlignment: CrossAxisAlignment.center,
+                  //                 children: [
+                  //                   Container(
+                  //                     alignment: Alignment.topLeft,
+                  //                     // margin: const EdgeInsets.symmetric(horizontal: 20),
+                  //                     child: Text(
+                  //                       "${firstName[0].toUpperCase()+firstName.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
+                  //                       style: TextStyle(
+                  //                         color: Colors.white,
+                  //                         fontSize: 26,
+                  //                         fontWeight: FontWeight.w700,
+                  //                       ),
+                  //                       textAlign: TextAlign.left,
+                  //                     ),
+                  //                   ),
+                  //                   new SizedBox(width: 15,),
+                  //                   if(isVerified) SizedBox(
+                  //                     height: 25,
+                  //                     width: 25,
+                  //                     child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //               new SizedBox(height: 11,),
+                  //               Container(
+                  //                 alignment: Alignment.topLeft,
+                  //                 // margin: const EdgeInsets.symmetric(horizontal: 20),
+                  //                 child: Text(
+                  //                   "${city},${state},${country} \n"
+                  //                       " ${height.replaceAll(".", "`")},"
+                  //                       " ${weight}kg,"
+                  //                       " ${religion},"
+                  //                       " ${maritalStatus}",
+                  //                   style: TextStyle(
+                  //                     color: Colors.white,
+                  //                     fontSize: 14,
+                  //                     fontWeight: FontWeight.w400,
+                  //                   ),
+                  //                   textAlign: TextAlign.left,
+                  //                 ),
+                  //               ),
+                  //
+                  //               new SizedBox(height: 14,),
+                  //               Row(
+                  //                 children: [
+                  //                   Container(
+                  //                     height:26,
+                  //                     decoration: BoxDecoration(
+                  //                       color:CommonColors.yellow,
+                  //                       border: Border.all(
+                  //                           width: 1.0
+                  //                       ),
+                  //                       borderRadius: BorderRadius.all(
+                  //                           Radius.circular(32.0) //                 <--- border radius here
+                  //                       ),
+                  //                     ),
+                  //                     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                  //                     alignment: Alignment.center,
+                  //                     child: Text("$user_plan",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                  //                   ),
+                  //                   Container(
+                  //                       padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                  //                       child: StarRating(
+                  //                         color: CommonColors.yellow,
+                  //                         rating: rating,
+                  //                         size:26,
+                  //                         onRatingChanged: (rating) => setState(() => rating = rating),
+                  //                       )
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //               new SizedBox(height: 11,),
+                  //
+                  //               Row(
+                  //                 children: [
+                  //                   Container(
+                  //                     height:23,
+                  //                     // width: 120,
+                  //                     decoration: BoxDecoration(
+                  //                       color:CommonColors.buttonorg,
+                  //                       border: Border.all(
+                  //                           width: 1.0
+                  //                       ),
+                  //                       borderRadius: BorderRadius.all(
+                  //                           Radius.circular(32.0) //                 <--- border radius here
+                  //                       ),
+                  //                     ),
+                  //                     padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
+                  //                     alignment: Alignment.centerLeft,
+                  //                     child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               new SizedBox(height: 40,),
+                  //               new Container(height: 1,width: double.infinity,color: Colors.white,),
+                  //               if(about.text!="null") new SizedBox(height: 40,),
+                  //               if(about.text!="null") Container(
+                  //                 alignment: Alignment.centerLeft,
+                  //                 child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  //               ),
+                  //               if(about.text!="null") new SizedBox(height: 10,),
+                  //               if(about.text!="null") Container(
+                  //                 alignment: Alignment.centerLeft,
+                  //                 child: Text("${about.text}",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                  //               ),
+                  //               // new SizedBox(height: 10,),
+                  //               // Container(
+                  //               //   alignment: Alignment.centerLeft,
+                  //               //   child: Wrap(
+                  //               //     children: [
+                  //               //       ...List.generate(
+                  //               //         about.length,
+                  //               //             (index) => GestureDetector(
+                  //               //           child: Container(
+                  //               //               margin: const EdgeInsets.only(right: 5,top:5),
+                  //               //               decoration: BoxDecoration(
+                  //               //                 color: CommonColors.buttonorg,
+                  //               //                 borderRadius: BorderRadius.circular(65),
+                  //               //               ),
+                  //               //               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                  //               //               child: Row(
+                  //               //                 mainAxisSize: MainAxisSize.min,
+                  //               //                 children: [
+                  //               //                   Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
+                  //               //                 ],
+                  //               //               )
+                  //               //           ),
+                  //               //         ),
+                  //               //       )
+                  //               //     ],
+                  //               //   ),
+                  //               // ),
+                  //               if(prefList.isNotEmpty)  new SizedBox(height: 40,),
+                  //               if(prefList.isNotEmpty)  Container(
+                  //                 alignment: Alignment.centerLeft,
+                  //                 child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  //               ),
+                  //               if(prefList.isNotEmpty) SizedBox(height: 20,),
+                  //               Container(
+                  //                 alignment: Alignment.centerLeft,
+                  //                 child: Wrap(
+                  //                   children: [
+                  //                     ...List.generate(
+                  //                       prefList.length,
+                  //                           (index) => prefList[index].is_select ?? false ? GestureDetector(
+                  //                         child: Container(
+                  //                             margin: const EdgeInsets.only(right: 5,top:5),
+                  //                             decoration: BoxDecoration(
+                  //                               border: Border.all(color: Colors.white),
+                  //                               // color: CommonColors.buttonorg,
+                  //                               borderRadius: BorderRadius.circular(65),
+                  //                             ),
+                  //                             padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                  //                             child: Row(
+                  //                               mainAxisSize: MainAxisSize.min,
+                  //                               children: [
+                  //                                 Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                  //                               ],
+                  //                             )
+                  //                         ),
+                  //                       ):Container()
+                  //                     )
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //               new SizedBox(height: 40,),
+                  //               Container(
+                  //                 alignment: Alignment.centerLeft,
+                  //                 child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  //               ),
+                  //               new SizedBox(height: 20,),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //
+                  //         CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
+                  //         CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
+                  //         CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
+                  //         CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
+                  //         CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
+                  //
+                  //         new SizedBox(height: 40,),
+                  //         Container(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
+                  //           alignment: Alignment.centerLeft,
+                  //           child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  //         ),
+                  //         new SizedBox(height: 20,),
+                  //         CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
+                  //         CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
+                  //         CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
+                  //         CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
+                  //         CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
+                  //         CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
+                  //         CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
+                  //         new SizedBox(height: 20,),
+                  //         customwidget("Marriage plan","${marriage_plan}"),
+                  //         customwidget("Job title","${jobTitle.text}"),
+                  //         customwidget("Company","${company.text}"),
+                  //         customwidget("Education","${education.text}"),
+                  //         customwidget("Living in","${country}\n${state}\n${city}"),
+                  //         customwidget("Religion","${religion}"),
+                  //         customwidget("Caste","${caste}"),
+                  //         customwidget("Mother tongue","${mother_tongue}"),
+                  //         Container(
+                  //             padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                  //             child: Column(
+                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               children: [
+                  //                 Container(
+                  //                   child: Text("Record voice message",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                  //                 ),
+                  //                 SizedBox(height: 10,),
+                  //                 Container(
+                  //                   height:50,
+                  //                   padding: const EdgeInsets.symmetric(horizontal: 15),
+                  //                   decoration: BoxDecoration(
+                  //                       // color: CommonColors.editblack,
+                  //                       borderRadius: BorderRadius.circular(37),
+                  //                     border: Border.all(
+                  //                       color: Colors.white,
+                  //                       width: 1.0,
+                  //                     ),
+                  //                   ),
+                  //                   // child: InkWell(
+                  //                   //   onTap: (){
+                  //                   //     setState(() {
+                  //                   //       _playAudio = !_playAudio;
+                  //                   //     });
+                  //                   //     if (_playAudio) startRecording();
+                  //                   //     if (!_playAudio) stopRecording();
+                  //                   //   },
+                  //                     child: Row(
+                  //                       mainAxisAlignment: MainAxisAlignment.center,
+                  //                       crossAxisAlignment: CrossAxisAlignment.center,
+                  //                       children: [
+                  //                         // new SizedBox(width: 20,),
+                  //                         new Container(
+                  //                           child: new Text("Voice not added",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                  //                         ),
+                  //                         // Spacer(),
+                  //                         // new Container(
+                  //                         //     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                  //                         // ),
+                  //                         // new SizedBox(width: 20,),
+                  //                       ],
+                  //                     ),
+                  //                   // ),
+                  //                 ),
+                  //               ],
+                  //             )
+                  //         ),
+                  //         new SizedBox(height: 40,),
+                  //         Container(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
+                  //           alignment: Alignment.center,
+                  //           child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  //         ),
+                  //         new SizedBox(height: 60,),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // )
                   Center(
                     child: Text("Comming soon",style: TextStyle(color: Colors.white),),
                   )
@@ -2743,6 +3100,25 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       )
     );
   }
+}
+
+Widget customwidget(String key,value){
+  return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          child: Text(key,style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+        ),
+        SizedBox(height: 5,),
+        Container(
+          child: Text(value,style: TextStyle(color: Colors.white.withOpacity(0.5),fontSize: 13,fontWeight: FontWeight.w600),),
+        ),
+      ],
+    )
+  );
 }
 
 class EditText extends StatelessWidget {

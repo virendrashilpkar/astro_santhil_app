@@ -69,7 +69,11 @@ class _MyHomePageState extends State<OTPVerify> {
           _preferences!.getString(ShadiApp.userId).toString(), otp.toString());
       if (otpVerifyModel.status == 1) {
         if(otpVerifyModel.data?.firstName!="" || otpVerifyModel.data?.lastName!="" || otpVerifyModel.data?.birthDate!=""){
-          Navigator.of(context).pushNamed('Home');
+          // Navigator.of(context).pushNamed('Home');
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            'Home',
+                (Route<dynamic> route) => false,
+          );
         }else{
           Navigator.of(context).pushNamed('CountryCity');
         }

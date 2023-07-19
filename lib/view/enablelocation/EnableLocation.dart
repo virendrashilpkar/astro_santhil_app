@@ -48,7 +48,10 @@ class _MyHomePageState extends State<EnableLocation> {
     if (status.isDenied) {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }else{
-      Navigator.of(context).pushNamed("Home");
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        'Home',
+            (Route<dynamic> route) => false,
+      );
     }
     if (await Permission.location.isRestricted) {
       // The OS restricts access, for example because of parental controls.
@@ -165,7 +168,10 @@ class _MyHomePageState extends State<EnableLocation> {
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
                           Toaster.show(context, "Allow for batter experience");
-                          Navigator.of(context).pushNamed("Home");
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            'Home',
+                                (Route<dynamic> route) => false,
+                          );
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

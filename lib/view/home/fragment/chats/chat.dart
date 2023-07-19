@@ -78,7 +78,7 @@ class _ChatState extends State <Chat> {
     });
     _preferences = await SharedPreferences.getInstance();
     _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
-    if(_newMatchesModel.status == 200){
+    if(_newMatchesModel.status == 1){
       for(var i = 0; i < _newMatchesModel.data!.length; i++){
         _list = _newMatchesModel.data ?? <MatchDatum> [];
       }

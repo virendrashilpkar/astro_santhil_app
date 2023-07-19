@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MatchPro> {
     isLoad = true;
     _preferences = await SharedPreferences.getInstance();
     _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
-    if(_newMatchesModel.status == 200){
+    if(_newMatchesModel.status == 1){
       for(var i = 0; i < _newMatchesModel.data!.length; i++){
         _list = _newMatchesModel.data ?? <MatchDatum> [];
       }
@@ -204,9 +204,16 @@ class _MyHomePageState extends State<MatchPro> {
                                     width: MediaQuery.of(context).size.width/3.5,
                                     height: MediaQuery.of(context).size.width/2-50,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey,
+                                      border: Border.all(width: 1,color: colorList[index]),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(15.0) //                 <--- border radius here
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15.0),
+                                        child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
                                       ),
                                     ),
                                   ),
@@ -256,7 +263,11 @@ class _MyHomePageState extends State<MatchPro> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
-                          Navigator.of(context).pushNamed("Home");
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            'Home',
+                                (Route<dynamic> route) => false,
+                          );
+                          // Navigator.of(context).pushNamed("Home");
                         },splashColor: Colors.blue.withOpacity(0.2),
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),

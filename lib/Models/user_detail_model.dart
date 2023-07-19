@@ -70,6 +70,7 @@ class Datum {
   String? username;
   bool? isAge;
   bool? isDiet;
+  bool? isVerified;
   bool? isDrink;
   bool? isHeight;
   bool? isSmoke;
@@ -128,6 +129,7 @@ class Datum {
     this.username,
     this.isAge,
     this.isDiet,
+    this.isVerified,
     this.isDrink,
     this.isHeight,
     this.isSmoke,
@@ -187,6 +189,7 @@ class Datum {
     username: json["username"],
     isAge: json["is_age"],
     isDiet: json["is_diet"],
+    isVerified: json["is_verified"],
     isDrink: json["is_drink"],
     isHeight: json["is_height"],
     isSmoke: json["is_smoke"],
@@ -246,6 +249,7 @@ class Datum {
     "username": username,
     "is_age": isAge,
     "is_diet": isDiet,
+    "is_verified": isVerified,
     "is_drink": isDrink,
     "is_height": isHeight,
     "is_smoke": isSmoke,
