@@ -53,6 +53,8 @@ dependencies:
   uuid: ^3.0.7
   flutter_login_facebook: ^1.8.0
   flutter_sound: ^9.2.13
+  geolocator: ^7.0.1
+  geocoding: ^2.0.0
 #  search_choices: ^2.2.5
 
 dev_dependencies:

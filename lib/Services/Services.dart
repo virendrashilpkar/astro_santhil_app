@@ -21,6 +21,7 @@ import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/statelistmodel.dart';
 import 'package:shadiapp/Models/top_picks_model.dart';
 import 'package:shadiapp/Models/update_image_model.dart';
+import 'package:shadiapp/Models/update_setting_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_delete_model.dart';
@@ -277,10 +278,10 @@ class Services {
 
   static Future<UpdateUserModel> UpdateUser2(final object) async {
     final params = object;
-    print("UpdateUserParams " + params.toString());
+    print("UpdateUserParams2 " + params.toString());
     http.Response response =
     await http.post(Uri.parse(UserUpdate), body: params);
-    print("UpdateUserResponse" + response.body);
+    print("UpdateUserResponse2" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -295,10 +296,10 @@ class Services {
   }
   static Future<UpdateUserModel> CheckUpdateUser2(final object) async {
     final params = object;
-    print("UpdateUserParams " + params.toString());
+    print("CheckUpdateUser2Params " + params.toString());
     http.Response response =
     await http.post(Uri.parse(username), body: params);
-    print("UpdateUserResponse" + response.body);
+    print("CheckUpdateUser2Response" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -783,6 +784,25 @@ class Services {
       return user;
     } else {
       throw Exception('Failed');
+    }
+  }
+
+  static Future<UpdateSettingModel> updateSetting(final object) async{
+    final params = object;
+    print("updateSettingParams " + params.toString());
+    http.Response response =
+    await http.post(Uri.parse(UserUpdate), body: params);
+    print("updateSettingResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UpdateSettingModel user = UpdateSettingModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      UpdateSettingModel user = UpdateSettingModel.fromJson(data);
+      return user;
+
     }
   }
 }
