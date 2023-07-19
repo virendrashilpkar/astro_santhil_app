@@ -165,7 +165,7 @@ class Datum {
     about: json["about"],
     maritalStatus: json["marital_status"],
     country: json["country"],
-    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    location: json["location"] == null || json["location"]=="" ? null : Location.fromJson(json["location"]),
     plan: json["plan"],
     caste: json["caste"],
     managedBy: json["managedBy"],

@@ -28,6 +28,7 @@ import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_list_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Models/user_view_preference_model.dart';
+import 'package:shadiapp/Models/verifiedModel.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
 import 'package:shadiapp/Models/view_like_sent_model.dart';
 import 'package:shadiapp/Models/view_profile_model.dart';
@@ -45,6 +46,7 @@ class Services {
   static String UploadImge = BaseUrl + "user/uploadImage/";
   static String ViewImage = BaseUrl + "user/images";
   static String PrefList = BaseUrl + "user/preference";
+  static String Verify = BaseUrl + "profile/copmplete";
   static String AddPrefs = BaseUrl + "user/addpreference";
   static String UserList = BaseUrl + "users/list";
   static String ViewPrefs = BaseUrl + "user/preferenceList";
@@ -86,6 +88,7 @@ class Services {
     print("GoogleCrdentials " + params.toString());
     http.Response response = await http.post(Uri.parse(GoogleLogin), body: params);
     print("GoogleCrdentials" + response.body);
+
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -367,6 +370,29 @@ class Services {
       return user;
     } else {
       throw Exception('Failed');
+    }
+  }
+  static Future<VerifiedModel> VerifyMethod(String uId,File image) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(Verify),
+    );
+    var file = await http.MultipartFile.fromPath("image", image.path);
+    request.files.add(file);
+
+    request.fields["id"] = uId;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("VerifyMethod ${request.fields}");
+    print("VerifyMethod ${response2.body}");
+    if (response2.statusCode == 200) {
+      var data = json.decode(response2.body);
+      VerifiedModel user = VerifiedModel.fromJson(data);
+      return user;
+    } else {
+      var data = json.decode(response2.body);
+      VerifiedModel user = VerifiedModel.fromJson(data);
+      return user;
     }
   }
 

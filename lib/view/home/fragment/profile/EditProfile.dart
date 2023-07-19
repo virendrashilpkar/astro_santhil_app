@@ -17,6 +17,7 @@ import 'package:shadiapp/Models/user_add_preference_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Models/user_view_preference_model.dart';
+import 'package:shadiapp/Models/verifiedModel.dart';
 import 'package:shadiapp/Models/view_image_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
@@ -304,6 +305,38 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     setState(() {
 
     });
+  }
+  Future<void> Verifyuser() async {
+
+    PickedFile? pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      _preferences = await SharedPreferences.getInstance();
+      VerifiedModel verified = await Services.VerifyMethod("${_preferences?.getString(ShadiApp.userId).toString()}",File(pickedFile.path));
+      if(verified.status == 1){
+        Toaster.show(context, verified.message.toString());
+        isVerified=verified.data?.isVerified ?? false;
+      }
+      // setState((){
+      //   imagelist[index] = File(pickedFile.path);
+      //   uploadImage(File(pickedFile.path));
+      // });
+    }
+
+    // isLoad = true;
+    // _preferences = await SharedPreferences.getInstance();
+    // VerifiedModel verified = await Services.VerifyMethod("${_preferences?.getString(ShadiApp.userId).toString()}");
+    // if(verified.status == 1){
+    //   Toaster.show(context, verified.message.toString());
+    //   isVerified=verified.data?.isVerified ?? false;
+    // }
+    // isLoad = false;
+    // setState(() {
+    //
+    // });
   }
 
   // Future<void> userViewPreference() async {
@@ -1070,7 +1103,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               child: Text("Get verified",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 16,color:Colors.white),),
                             ),
                             new SizedBox(width: 10,),
-                            SizedBox(
+                            if(isVerified) SizedBox(
                               height: 20,
                               width: 20,
                               child: Image.asset("assets/blue_tick.png",height: 20,width: 20,fit: BoxFit.cover,),
@@ -1078,26 +1111,35 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ],
                         ),
                         new SizedBox(height: 15,),
-                        Container(
-                          height:50,
-                          margin: const EdgeInsets.only(left: 30,right: 30),
-                          decoration: BoxDecoration(
-                              color: CommonColors.editblack,
-                              borderRadius: BorderRadius.circular(37)
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                          child: Row(
-                            children: [
-                              // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Take a selfie",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
-                              ),
-                              new Spacer(),
-                              new Container(
-                                  child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
-                              ),
-                              // new SizedBox(width: 20,),
-                            ],
+                        InkWell(
+                          onTap:(){
+                            if(isVerified){
+                              Toaster.show(context, "Already Verified");
+                            }else {
+                              Verifyuser();
+                            }
+                          },
+                          child: Container(
+                            height:50,
+                            margin: const EdgeInsets.only(left: 30,right: 30),
+                            decoration: BoxDecoration(
+                                color: CommonColors.editblack,
+                                borderRadius: BorderRadius.circular(37)
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                            child: Row(
+                              children: [
+                                // new SizedBox(width: 20,),
+                                new Container(
+                                  child: new Text(isVerified ? "Request sented":"Take a selfie",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
+                                ),
+                                new Spacer(),
+                                new Container(
+                                    child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                                ),
+                                // new SizedBox(width: 20,),
+                              ],
+                            ),
                           ),
                         ),
 
@@ -2783,313 +2825,313 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                   ),
 
                   // second tab bar view widget
-                  // SingleChildScrollView(
-                  //   child: Center(
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: <Widget>[
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
-                  //           child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.start,
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               // Container(
-                  //               //   height: MediaQuery.of(context).padding.top+60,
-                  //               // ),
-                  //               Stack(
-                  //                 children: [
-                  //                   Container(
-                  //                       child:  ClipRRect(
-                  //                         borderRadius: BorderRadius.circular(15.0),
-                  //                         child: Image.network(_list.isNotEmpty ? "${_list[0].image}":"",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
-                  //                       )
-                  //                   ),
-                  //                   // Container(
-                  //                   //   padding: EdgeInsets.all(8.0),
-                  //                   //   child: InkWell(
-                  //                   //     onTap: (){
-                  //                   //       Navigator.pop(context);
-                  //                   //     },
-                  //                   //     child: Icon(
-                  //                   //       Icons.arrow_back_ios,
-                  //                   //       color: Colors.white,
-                  //                   //     ),
-                  //                   //   ),
-                  //                   // )
-                  //                 ],
-                  //               ),
-                  //               new SizedBox(height: 15,),
-                  //               Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.start,
-                  //                 crossAxisAlignment: CrossAxisAlignment.center,
-                  //                 children: [
-                  //                   Container(
-                  //                     alignment: Alignment.topLeft,
-                  //                     // margin: const EdgeInsets.symmetric(horizontal: 20),
-                  //                     child: Text(
-                  //                       "${firstName[0].toUpperCase()+firstName.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
-                  //                       style: TextStyle(
-                  //                         color: Colors.white,
-                  //                         fontSize: 26,
-                  //                         fontWeight: FontWeight.w700,
-                  //                       ),
-                  //                       textAlign: TextAlign.left,
-                  //                     ),
-                  //                   ),
-                  //                   new SizedBox(width: 15,),
-                  //                   if(isVerified) SizedBox(
-                  //                     height: 25,
-                  //                     width: 25,
-                  //                     child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //               new SizedBox(height: 11,),
-                  //               Container(
-                  //                 alignment: Alignment.topLeft,
-                  //                 // margin: const EdgeInsets.symmetric(horizontal: 20),
-                  //                 child: Text(
-                  //                   "${city},${state},${country} \n"
-                  //                       " ${height.replaceAll(".", "`")},"
-                  //                       " ${weight}kg,"
-                  //                       " ${religion},"
-                  //                       " ${maritalStatus}",
-                  //                   style: TextStyle(
-                  //                     color: Colors.white,
-                  //                     fontSize: 14,
-                  //                     fontWeight: FontWeight.w400,
-                  //                   ),
-                  //                   textAlign: TextAlign.left,
-                  //                 ),
-                  //               ),
-                  //
-                  //               new SizedBox(height: 14,),
-                  //               Row(
-                  //                 children: [
-                  //                   Container(
-                  //                     height:26,
-                  //                     decoration: BoxDecoration(
-                  //                       color:CommonColors.yellow,
-                  //                       border: Border.all(
-                  //                           width: 1.0
-                  //                       ),
-                  //                       borderRadius: BorderRadius.all(
-                  //                           Radius.circular(32.0) //                 <--- border radius here
-                  //                       ),
-                  //                     ),
-                  //                     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                  //                     alignment: Alignment.center,
-                  //                     child: Text("$user_plan",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
-                  //                   ),
-                  //                   Container(
-                  //                       padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                  //                       child: StarRating(
-                  //                         color: CommonColors.yellow,
-                  //                         rating: rating,
-                  //                         size:26,
-                  //                         onRatingChanged: (rating) => setState(() => rating = rating),
-                  //                       )
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //               new SizedBox(height: 11,),
-                  //
-                  //               Row(
-                  //                 children: [
-                  //                   Container(
-                  //                     height:23,
-                  //                     // width: 120,
-                  //                     decoration: BoxDecoration(
-                  //                       color:CommonColors.buttonorg,
-                  //                       border: Border.all(
-                  //                           width: 1.0
-                  //                       ),
-                  //                       borderRadius: BorderRadius.all(
-                  //                           Radius.circular(32.0) //                 <--- border radius here
-                  //                       ),
-                  //                     ),
-                  //                     padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
-                  //                     alignment: Alignment.centerLeft,
-                  //                     child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //               new SizedBox(height: 40,),
-                  //               new Container(height: 1,width: double.infinity,color: Colors.white,),
-                  //               if(about.text!="null") new SizedBox(height: 40,),
-                  //               if(about.text!="null") Container(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                  //               ),
-                  //               if(about.text!="null") new SizedBox(height: 10,),
-                  //               if(about.text!="null") Container(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: Text("${about.text}",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
-                  //               ),
-                  //               // new SizedBox(height: 10,),
-                  //               // Container(
-                  //               //   alignment: Alignment.centerLeft,
-                  //               //   child: Wrap(
-                  //               //     children: [
-                  //               //       ...List.generate(
-                  //               //         about.length,
-                  //               //             (index) => GestureDetector(
-                  //               //           child: Container(
-                  //               //               margin: const EdgeInsets.only(right: 5,top:5),
-                  //               //               decoration: BoxDecoration(
-                  //               //                 color: CommonColors.buttonorg,
-                  //               //                 borderRadius: BorderRadius.circular(65),
-                  //               //               ),
-                  //               //               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                  //               //               child: Row(
-                  //               //                 mainAxisSize: MainAxisSize.min,
-                  //               //                 children: [
-                  //               //                   Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
-                  //               //                 ],
-                  //               //               )
-                  //               //           ),
-                  //               //         ),
-                  //               //       )
-                  //               //     ],
-                  //               //   ),
-                  //               // ),
-                  //               if(prefList.isNotEmpty)  new SizedBox(height: 40,),
-                  //               if(prefList.isNotEmpty)  Container(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                  //               ),
-                  //               if(prefList.isNotEmpty) SizedBox(height: 20,),
-                  //               Container(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: Wrap(
-                  //                   children: [
-                  //                     ...List.generate(
-                  //                       prefList.length,
-                  //                           (index) => prefList[index].is_select ?? false ? GestureDetector(
-                  //                         child: Container(
-                  //                             margin: const EdgeInsets.only(right: 5,top:5),
-                  //                             decoration: BoxDecoration(
-                  //                               border: Border.all(color: Colors.white),
-                  //                               // color: CommonColors.buttonorg,
-                  //                               borderRadius: BorderRadius.circular(65),
-                  //                             ),
-                  //                             padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-                  //                             child: Row(
-                  //                               mainAxisSize: MainAxisSize.min,
-                  //                               children: [
-                  //                                 Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
-                  //                               ],
-                  //                             )
-                  //                         ),
-                  //                       ):Container()
-                  //                     )
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //               new SizedBox(height: 40,),
-                  //               Container(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                  //               ),
-                  //               new SizedBox(height: 20,),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //
-                  //         CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
-                  //         CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
-                  //         CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
-                  //         CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
-                  //         CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
-                  //
-                  //         new SizedBox(height: 40,),
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
-                  //           alignment: Alignment.centerLeft,
-                  //           child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                  //         ),
-                  //         new SizedBox(height: 20,),
-                  //         CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
-                  //         CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
-                  //         CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
-                  //         CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
-                  //         CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
-                  //         CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
-                  //         CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
-                  //         new SizedBox(height: 20,),
-                  //         customwidget("Marriage plan","${marriage_plan}"),
-                  //         customwidget("Job title","${jobTitle.text}"),
-                  //         customwidget("Company","${company.text}"),
-                  //         customwidget("Education","${education.text}"),
-                  //         customwidget("Living in","${country}\n${state}\n${city}"),
-                  //         customwidget("Religion","${religion}"),
-                  //         customwidget("Caste","${caste}"),
-                  //         customwidget("Mother tongue","${mother_tongue}"),
-                  //         Container(
-                  //             padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
-                  //             child: Column(
-                  //               crossAxisAlignment: CrossAxisAlignment.start,
-                  //               mainAxisAlignment: MainAxisAlignment.start,
-                  //               children: [
-                  //                 Container(
-                  //                   child: Text("Record voice message",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
-                  //                 ),
-                  //                 SizedBox(height: 10,),
-                  //                 Container(
-                  //                   height:50,
-                  //                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  //                   decoration: BoxDecoration(
-                  //                       // color: CommonColors.editblack,
-                  //                       borderRadius: BorderRadius.circular(37),
-                  //                     border: Border.all(
-                  //                       color: Colors.white,
-                  //                       width: 1.0,
-                  //                     ),
-                  //                   ),
-                  //                   // child: InkWell(
-                  //                   //   onTap: (){
-                  //                   //     setState(() {
-                  //                   //       _playAudio = !_playAudio;
-                  //                   //     });
-                  //                   //     if (_playAudio) startRecording();
-                  //                   //     if (!_playAudio) stopRecording();
-                  //                   //   },
-                  //                     child: Row(
-                  //                       mainAxisAlignment: MainAxisAlignment.center,
-                  //                       crossAxisAlignment: CrossAxisAlignment.center,
-                  //                       children: [
-                  //                         // new SizedBox(width: 20,),
-                  //                         new Container(
-                  //                           child: new Text("Voice not added",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
-                  //                         ),
-                  //                         // Spacer(),
-                  //                         // new Container(
-                  //                         //     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
-                  //                         // ),
-                  //                         // new SizedBox(width: 20,),
-                  //                       ],
-                  //                     ),
-                  //                   // ),
-                  //                 ),
-                  //               ],
-                  //             )
-                  //         ),
-                  //         new SizedBox(height: 40,),
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 30),
-                  //           alignment: Alignment.center,
-                  //           child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
-                  //         ),
-                  //         new SizedBox(height: 60,),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // )
-                  Center(
-                    child: Text("Comming soon",style: TextStyle(color: Colors.white),),
+                  SingleChildScrollView(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Container(
+                                //   height: MediaQuery.of(context).padding.top+60,
+                                // ),
+                                Stack(
+                                  children: [
+                                    Container(
+                                        child:  ClipRRect(
+                                          borderRadius: BorderRadius.circular(15.0),
+                                          child: Image.network(_list.isNotEmpty ? "${_list[0].image}":"",fit: BoxFit.cover,height: 400,width: MediaQuery.of(context).size.width,),
+                                        )
+                                    ),
+                                    // Container(
+                                    //   padding: EdgeInsets.all(8.0),
+                                    //   child: InkWell(
+                                    //     onTap: (){
+                                    //       Navigator.pop(context);
+                                    //     },
+                                    //     child: Icon(
+                                    //       Icons.arrow_back_ios,
+                                    //       color: Colors.white,
+                                    //     ),
+                                    //   ),
+                                    // )
+                                  ],
+                                ),
+                                new SizedBox(height: 15,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      // margin: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        "${firstName[0].toUpperCase()+firstName.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    new SizedBox(width: 15,),
+                                    if(isVerified) SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
+                                    )
+                                  ],
+                                ),
+                                new SizedBox(height: 11,),
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  // margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: Text(
+                                    "${city},${state},${country} \n"
+                                        " ${height.replaceAll(".", "`")},"
+                                        " ${weight}kg,"
+                                        " ${religion},"
+                                        " ${maritalStatus}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+
+                                new SizedBox(height: 14,),
+                                Row(
+                                  children: [
+                                    Container(
+                                      height:26,
+                                      decoration: BoxDecoration(
+                                        color:CommonColors.yellow,
+                                        border: Border.all(
+                                            width: 1.0
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(32.0) //                 <--- border radius here
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                      alignment: Alignment.center,
+                                      child: Text("$user_plan",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                                    ),
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                        child: StarRating(
+                                          color: CommonColors.yellow,
+                                          rating: rating,
+                                          size:26,
+                                          onRatingChanged: (rating) => setState(() => rating = rating),
+                                        )
+                                    )
+                                  ],
+                                ),
+                                new SizedBox(height: 11,),
+
+                                Row(
+                                  children: [
+                                    Container(
+                                      height:23,
+                                      // width: 120,
+                                      decoration: BoxDecoration(
+                                        color:CommonColors.buttonorg,
+                                        border: Border.all(
+                                            width: 1.0
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(32.0) //                 <--- border radius here
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                                    ),
+                                  ],
+                                ),
+                                new SizedBox(height: 40,),
+                                new Container(height: 1,width: double.infinity,color: Colors.white,),
+                                if(about.text!="null") new SizedBox(height: 40,),
+                                if(about.text!="null") Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                ),
+                                if(about.text!="null") new SizedBox(height: 10,),
+                                if(about.text!="null") Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("${about.text}",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                                ),
+                                // new SizedBox(height: 10,),
+                                // Container(
+                                //   alignment: Alignment.centerLeft,
+                                //   child: Wrap(
+                                //     children: [
+                                //       ...List.generate(
+                                //         about.length,
+                                //             (index) => GestureDetector(
+                                //           child: Container(
+                                //               margin: const EdgeInsets.only(right: 5,top:5),
+                                //               decoration: BoxDecoration(
+                                //                 color: CommonColors.buttonorg,
+                                //                 borderRadius: BorderRadius.circular(65),
+                                //               ),
+                                //               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                //               child: Row(
+                                //                 mainAxisSize: MainAxisSize.min,
+                                //                 children: [
+                                //                   Text("${about[index]}",style: new TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: Colors.white),),
+                                //                 ],
+                                //               )
+                                //           ),
+                                //         ),
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+                                if(prefList.isNotEmpty)  new SizedBox(height: 40,),
+                                if(prefList.isNotEmpty)  Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                ),
+                                if(prefList.isNotEmpty) SizedBox(height: 20,),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Wrap(
+                                    children: [
+                                      ...List.generate(
+                                        prefList.length,
+                                            (index) => prefList[index].is_select ?? false ? GestureDetector(
+                                          child: Container(
+                                              margin: const EdgeInsets.only(right: 5,top:5),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.white),
+                                                // color: CommonColors.buttonorg,
+                                                borderRadius: BorderRadius.circular(65),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                                                ],
+                                              )
+                                          ),
+                                        ):Container()
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                new SizedBox(height: 40,),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                ),
+                                new SizedBox(height: 20,),
+                              ],
+                            ),
+                          ),
+
+                          CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
+                          CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
+                          CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
+                          CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
+                          CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
+
+                          new SizedBox(height: 40,),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            alignment: Alignment.centerLeft,
+                            child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          ),
+                          new SizedBox(height: 20,),
+                          CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
+                          CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
+                          CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
+                          CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
+                          CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
+                          CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
+                          CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
+                          new SizedBox(height: 20,),
+                          customwidget("Marriage plan","${marriage_plan}"),
+                          customwidget("Job title","${jobTitle.text}"),
+                          customwidget("Company","${company.text}"),
+                          customwidget("Education","${education.text}"),
+                          customwidget("Living in","${country}\n${state}\n${city}"),
+                          customwidget("Religion","${religion}"),
+                          customwidget("Caste","${caste}"),
+                          customwidget("Mother tongue","${mother_tongue}"),
+                          Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Text("Record voice message",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    height:50,
+                                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                                    decoration: BoxDecoration(
+                                        // color: CommonColors.editblack,
+                                        borderRadius: BorderRadius.circular(37),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    // child: InkWell(
+                                    //   onTap: (){
+                                    //     setState(() {
+                                    //       _playAudio = !_playAudio;
+                                    //     });
+                                    //     if (_playAudio) startRecording();
+                                    //     if (!_playAudio) stopRecording();
+                                    //   },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          // new SizedBox(width: 20,),
+                                          new Container(
+                                            child: new Text("Voice not added",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                                          ),
+                                          // Spacer(),
+                                          // new Container(
+                                          //     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                                          // ),
+                                          // new SizedBox(width: 20,),
+                                        ],
+                                      ),
+                                    // ),
+                                  ),
+                                ],
+                              )
+                          ),
+                          new SizedBox(height: 40,),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            alignment: Alignment.center,
+                            child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          ),
+                          new SizedBox(height: 60,),
+                        ],
+                      ),
+                    ),
                   )
+                  // Center(
+                  //   child: Text("Comming soon",style: TextStyle(color: Colors.white),),
+                  // )
                 ],
               ),
             ),

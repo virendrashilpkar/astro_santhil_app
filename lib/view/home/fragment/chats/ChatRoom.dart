@@ -17,7 +17,8 @@ class ChatRoom extends StatefulWidget {
   String user_id;
   String room_id;
   String user_name;
-  ChatRoom(this.image,this.user_id,this.room_id,this.user_name);
+  String msg;
+  ChatRoom(this.image,this.user_id,this.room_id,this.user_name,this.msg);
 
   @override
   State<ChatRoom> createState() => _ChatRoom();
@@ -35,6 +36,7 @@ class _ChatRoom extends State<ChatRoom> {
   @override
   void initState() {
     userDetail();
+    _message.text=widget.msg;
   }
 
   String firstName = "";

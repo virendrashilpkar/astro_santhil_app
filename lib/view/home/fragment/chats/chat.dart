@@ -58,7 +58,7 @@ class _ChatState extends State <Chat> {
     isLoad = true;
     _preferences = await SharedPreferences.getInstance();
     matchList = await Services.MatchListMethod("${_preferences?.getString(ShadiApp.userId).toString()}");
-    if(matchList.status == 200) {
+    if(matchList.status == 1) {
       for(var i = 0; i < matchList.data!.length; i++){
         _matchList = matchList.data ?? <Datum> [];
       }
@@ -322,9 +322,10 @@ class _ChatState extends State <Chat> {
                             ),
                             InkWell(
                               onTap: (){
+                                // print(">>>${_matchList[index].id}");
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder: (context) => ChatRoom(_matchList[index].image ?? "",_matchList[index].id ?? "",_matchList[index].id ?? "","${_matchList[index].firstName}${_matchList[index].lastName}")
+                                        builder: (context) => ChatRoom(_matchList[index].image ?? "",_matchList[index].id ?? "",_matchList[index].id ?? "","${_matchList[index].firstName}${_matchList[index].lastName}","")
                                     )
                                 );
                               },

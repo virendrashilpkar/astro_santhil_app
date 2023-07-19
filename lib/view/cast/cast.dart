@@ -200,7 +200,7 @@ class _MyHomePageState extends State<Cast> {
       }
     }
     setState(() {
-      isloadcaste=true;
+      isloadcaste=false;
     });
   }
 
@@ -313,7 +313,7 @@ class _MyHomePageState extends State<Cast> {
                 border: Border.all(color: Colors.white),
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
-              child: DropdownButton<String>(
+              child:isloadcaste==false ? DropdownButton<String>(
                 value: castList.isEmpty ? "":cast,
                 underline: Container(
                   // height: 1,
@@ -345,7 +345,7 @@ class _MyHomePageState extends State<Cast> {
                     child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
                   );
                 }).toList(),
-              ),
+              ):Container(),
             ),
 
             Container(

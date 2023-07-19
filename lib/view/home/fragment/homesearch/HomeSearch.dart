@@ -49,6 +49,7 @@ class _MyHomePageState extends State<HomeSearch> {
   String religion = "";
   String maratialStatus = "";
   String type = "";
+  String image = "";
 
   Future CheckUserConnection() async {
     try {
@@ -96,6 +97,7 @@ class _MyHomePageState extends State<HomeSearch> {
       country = _userDetailModel.data![0].country.toString();
       height = _userDetailModel.data![0].height.toString();
       weight = _userDetailModel.data![0].weight.toString();
+      image = _userDetailModel.data![0].image.toString();
       maratialStatus = _userDetailModel.data![0].maritalStatus.toString();
     }
 
@@ -115,13 +117,13 @@ class _MyHomePageState extends State<HomeSearch> {
     });
   }
 
-  Future<void> like(String id, String type) async {
+  Future<void> like(String id, String type,String image,other_image,fullname) async {
     _preferences = await SharedPreferences.getInstance();
     _likeModel = await Services.LikeMethod(_preferences!.getString(ShadiApp.userId).toString(), id, type);
     if(_likeModel.status == 1){
       if (_likeModel.data![0].matched == true) {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Match()
+            MaterialPageRoute(builder: (context) => Match(image,other_image,_likeModel.data![0].id.toString(),fullname)
             )
         );
 
@@ -139,152 +141,6 @@ class _MyHomePageState extends State<HomeSearch> {
     userList();
     super.initState();
   }
-
-
-  var datastring = {
-    "data": [
-      {
-        "image": "https://w0.peakpx.com/wallpaper/564/224/HD-wallpaper-beautiful-girl-bengali-eyes-holi-indian.jpg",
-        "name": "Annamika Sinha",
-        "age": "25",
-        "place": "Los Angeles | USA | Panjabi",
-        "height": "5'6",
-        "weight": "56kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/396/511/HD-wallpaper-bong-angel-bengali.jpg",
-        "name": "Shalu Singh",
-        "age": "22",
-        "place": "Indore | Bhopal | Gujrati",
-        "height": "5'2",
-        "weight": "20kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/798/474/HD-wallpaper-beauty-123-beautiful-ivana-saree.jpg",
-        "name": "Ivana Sinha",
-        "age": "25",
-        "place": "Los Angeles | USA | Panjabi",
-        "height": "5'6",
-        "weight": "56kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/366/237/HD-wallpaper-vaishnavi-beautiful-saree.jpg",
-        "name": "Priya Singh",
-        "age": "22",
-        "place": "Indore | Bhopal | Gujrati",
-        "height": "5'2",
-        "weight": "20kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/233/819/HD-wallpaper-vaishnavi-shanu-short-film-software-developer.jpg",
-        "name": "Vaishnavi Shanu",
-        "age": "25",
-        "place": "Los Angeles | USA | Panjabi",
-        "height": "5'6",
-        "weight": "56kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/344/1000/HD-wallpaper-ashika-ranganath-saree-lover-model.jpg",
-        "name": "Ashika Ranganath",
-        "age": "22",
-        "place": "Indore | Bhopal | Gujrati",
-        "height": "5'2",
-        "weight": "20kg",
-        "region": "Hindu",
-        "status": "Never Married"
-      },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/280/777/HD-wallpaper-anju-kurien-mallu-actress-saree-lover.jpg",
-  "name": "Jasmine Lee",
-  "age": "26",
-  "place": "Seoul | South Korea | Korean",
-  "height": "5'5",
-  "weight": "50kg",
-  "religion": "Buddhist",
-  "status": "Never Married"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/373/1013/HD-wallpaper-anju-32-actress-girl-mallu-anju-kurian.jpg",
-  "name": "Emily Smith",
-  "age": "35",
-  "place": "Sydney | Australia | Caucasian",
-  "height": "5'8",
-  "weight": "60kg",
-  "religion": "Christian",
-  "status": "Divorced"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/306/75/HD-wallpaper-anju-kurian-babu-suren.jpg",
-  "name": "Maria Rodriguez",
-  "age": "29",
-  "place": "Buenos Aires | Argentina | Latina",
-  "height": "5'6",
-  "weight": "55kg",
-  "religion": "Catholic",
-  "status": "Single"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/504/652/HD-wallpaper-anju-kurian-anju-kurian-mallu.jpg",
-  "name": "Lucy Garcia",
-  "age": "22",
-  "place": "Madrid | Spain | Hispanic",
-  "height": "5'4",
-  "weight": "48kg",
-  "religion": "Agnostic",
-  "status": "Never Married"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/290/185/HD-wallpaper-anju-kurian-flash-graphy-lip.jpg",
-  "name": "Sarah Johnson",
-  "age": "31",
-  "place": "New York | USA | African American",
-  "height": "5'9",
-  "weight": "65kg",
-  "religion": "Protestant",
-  "status": "Divorced"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/320/566/HD-wallpaper-jisoo-jisoo-blackpink.jpg",
-  "name": "Hannah Nguyen",
-  "age": "27",
-  "place": "Hanoi | Vietnam | Asian",
-  "height": "5'6",
-  "weight": "52kg",
-  "religion": "Buddhist",
-  "status": "Single"
-  },
-  {
-  "image": "https://w0.peakpx.com/wallpaper/862/303/HD-wallpaper-jisoo-blackpink-blackpink-jisoo-k-pop.jpg",
-  "name": "Emma Williams",
-  "age": "24",
-  "place": "London | UK | Caucasian",
-  "height": "5'7",
-  "weight": "57kg",
-  "religion": "Atheist",
-  "status": "Never Married"
-  },
-      {
-        "image": "https://w0.peakpx.com/wallpaper/509/744/HD-wallpaper-jisoo-blackpink-cute-k-pop-love-music.jpg",
-        "name": "Grace Kim",
-        "age": "32",
-        "place": "Tokyo | Japan | Asian",
-        "height": "5'4",
-        "weight": "49kg",
-        "religion": "Shinto",
-        "status": "Divorced"
-      }
-  ]
-  };
 
   late Content content;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -454,7 +310,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           _matchEngine.currentItem?.nope();
-                                          like(_userList![index].id.toString(), "disLike");
+                                          like(_userList![index].id.toString(), "disLike",image,_userList![index].image,"${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}");
                                         },
                                         child: Container(
                                           height: 50,
@@ -477,7 +333,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                       InkWell(
                                         onTap:(){
                                           _matchEngine!.currentItem?.superLike();
-                                          like(_userList![index].id.toString(), "superLike");
+                                          like(_userList![index].id.toString(), "superLike",image,_userList![index].image,"${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}");
                                         },
                                         child: Container(
                                           height: 50,
@@ -501,7 +357,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                         onTap:(){
                                           print("like");
                                           _matchEngine!.currentItem?.like();
-                                          like(_userList![index].id.toString(), "like");
+                                          like(_userList![index].id.toString(), "like",image,_userList![index].image,"${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}");
                                         },
                                         child: Container(
                                           height: 50,
@@ -641,7 +497,7 @@ class _MyHomePageState extends State<HomeSearch> {
                     },
                     itemChanged: (SwipeItem item, int index) {
                       print("item: ${_userList![index].firstName}, index: $index");
-                      like(_userList![index-1].id.toString(), type);
+                      like(_userList![index-1].id.toString(), type,image,_userList![index-1].image,"${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}");
                     },
                     leftSwipeAllowed: true,
                     rightSwipeAllowed: true,

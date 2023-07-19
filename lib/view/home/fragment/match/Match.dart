@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/view/home/Home.dart';
+import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
 
 class Match extends StatefulWidget {
+  String id;
+  String image;
+  String user_image;
+  String full_name;
+  Match(this.image,this.user_image,this.id,this.full_name);
+
   @override
   State<Match> createState() => _MatchState();
 
 }
 
 class _MatchState extends State<Match> {
+
+  TextEditingController _message = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    print(">>>>${widget.id}");
+    print(">>>>${widget.image}");
+    print(">>>>${widget.user_image}");
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: Container(
@@ -46,16 +58,30 @@ class _MatchState extends State<Match> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          margin: EdgeInsets.all(10.0),
-                          child: Image.asset("assets/match_female.png",
-                            width: 100,height: 100,),
+                        SizedBox(
+                          height:100,
+                          width: 100,
+                          child: Container(
+                            margin: EdgeInsets.all(10.0),
+                            child:  ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Image.network("${widget.image}",
+                                width: 100,height: 100,fit: BoxFit.cover,),
+                            ),
+                          ),
                         ),
                         Spacer(),
-                        Container(
-                          margin: EdgeInsets.all(10.0),
-                          child: Image.asset("assets/match_male.png",
-                            width: 100,height: 100,),
+                        SizedBox(
+                          height:100,
+                          width: 100,
+                          child: Container(
+                            margin: EdgeInsets.all(10.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Image.network("${widget.user_image}",
+                                width: 100,height: 100,fit: BoxFit.cover,),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -75,27 +101,51 @@ class _MatchState extends State<Match> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, top: 40.0, right: 20.0, bottom: 10.0),
                   child: Container(
+                    height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(
                           Radius.circular(30.0)),
                       color: Colors.white,
                     ),
                     child:  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        height: 50,
-                        margin: EdgeInsets.only(top: 5.0, left: 5.0),
-                        alignment: Alignment.center,
-                        child: TextFormField(
-                          maxLength: 10,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              counterText: "",
-                              hintText: "send a message"
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            // height: 50,
+                            // margin: EdgeInsets.only(top: 5.0, left: 5.0),
+                            // alignment: Alignment.center,
+                            child: TextFormField(
+                              maxLines: 1,
+                              controller: _message,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  counterText: "",
+                                  hintText: "send a message"
+                              ),
+                              style: TextStyle(fontSize: 16.0),
+                            ),
                           ),
-                          style: TextStyle(fontSize: 18.0),
-                        ),
+                          new InkWell(
+                            onTap: () {
+
+                              // addCustomPrefs(tagsearch.text!);
+
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatRoom(widget.user_image,widget.id,widget.id,widget.full_name,_message.text)
+                                  )
+                              );
+                            },
+                            child: SizedBox(
+                              child: Icon(
+                                Icons.done,
+                                color: Colors.cyan,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
