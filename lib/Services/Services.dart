@@ -20,8 +20,10 @@ import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
 import 'package:shadiapp/Models/statelistmodel.dart';
 import 'package:shadiapp/Models/top_picks_model.dart';
+import 'package:shadiapp/Models/update_image_model.dart';
 import 'package:shadiapp/Models/upload_image_model.dart';
 import 'package:shadiapp/Models/user_add_preference_model.dart';
+import 'package:shadiapp/Models/user_delete_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_list_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
@@ -61,6 +63,8 @@ class Services {
   static String religion = BaseUrl + "religion/list";
   static String caste = BaseUrl + "caste/list";
   static String ImageDelete = BaseUrl + "user/delete/image";
+  static String UserDelete = BaseUrl + "delete/account";
+  static String ImageUpdate = BaseUrl + "user/updateImage/";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
     final params = {"phone": phone};
@@ -538,9 +542,12 @@ class Services {
     }
   }
 
-  static Future<PlanListModel> PlanList() async {
+  static Future<PlanListModel> PlanList(String id) async {
+    final params = {
+      "id": id,
+    };
 
-    http.Response response = await http.get(Uri.parse(ListPlan));
+    http.Response response = await http.post(Uri.parse(ListPlan),body: params);
     print("PlanListResponse" + response.body);
     print("PlanListResponse ${response.statusCode}");
 
@@ -593,6 +600,7 @@ class Services {
       throw Exception('Failed');
     }
   }
+
   static Future<DropdownModel> DropdownList(String id) async {
     // final params = {
     //   "id": id,
@@ -700,6 +708,53 @@ class Services {
       return user;
     } else {
       print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<UserDeleteModel> DeleteUser(String id) async {
+
+    final params = {
+      "id": id
+    };
+
+    print("DeleteUserResponse $params");
+    http.Response response = await http.delete(Uri.parse(UserDelete), body: params);
+    print("DeleteUserResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UserDeleteModel user = UserDeleteModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+
+  static Future<UpdateImageModel> UpdateImage(String id, String imageId, File image) async {
+
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse("${ImageUpdate}${id}"),
+    );
+
+    request.fields["id"] = imageId;
+
+    var file = await http.MultipartFile.fromPath("fileUrl", image.path);
+    request.files.add(file);
+
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+
+    print(response.toString());
+    print("ImageUpload " + response2.body);
+
+    if (response2.statusCode == 200) {
+      var data = json.decode(response2.body);
+      UpdateImageModel user = UpdateImageModel.fromJson(data);
+      return user;
+    } else {
       throw Exception('Failed');
     }
   }

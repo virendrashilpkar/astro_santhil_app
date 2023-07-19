@@ -7,6 +7,7 @@ import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/plan_list_model.dart';
+import 'package:shadiapp/Models/update_image_model.dart';
 import 'package:shadiapp/Models/view_profile_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
@@ -30,6 +31,7 @@ class _MyHomePageState extends State<Profile> {
   late ViewProfileModel _viewProfileModel = ViewProfileModel();
   late PlanListModel _planListModel;
   late SharedPreferences _preferences;
+  late UpdateImageModel _updateImageModel;
   List<planDatum> _list = [];
   bool clickLoad = false;
   bool isLoad = false;
@@ -66,10 +68,11 @@ class _MyHomePageState extends State<Profile> {
   }
 
   Future<void> planList() async {
+    _preferences = await SharedPreferences.getInstance();
     setState(() {
       isLoad = true;
     });
-    _planListModel = await Services.PlanList();
+    _planListModel = await Services.PlanList(_preferences.getString(ShadiApp.userId).toString());
     if(_planListModel.status ==1){
       for (var i = 0; i < _planListModel.data!.length; i++){
         _list = _planListModel.data ?? <planDatum> [];
@@ -161,6 +164,7 @@ class _MyHomePageState extends State<Profile> {
     if (pickedFile != null) {
       setState((){
         image = File(pickedFile.path);
+        updateImage(image!);
       });
     }
   }
@@ -173,11 +177,22 @@ class _MyHomePageState extends State<Profile> {
     if (pickedFile != null) {
       setState((){
         image = File(pickedFile.path);
+        updateImage(image!);
       });
 
     }
   }
 
+  void updateImage(File image) async {
+    _preferences = await SharedPreferences.getInstance();
+    _updateImageModel = await Services.UpdateImage(_preferences.getString(ShadiApp.userId).toString(),
+        _viewProfileModel.data![0].imageId.toString(), image!);
+    if(_updateImageModel.status == 1){
+      Toaster.show(context, _updateImageModel.message.toString());
+    }else{
+      Toaster.show(context, _updateImageModel.message.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +251,9 @@ class _MyHomePageState extends State<Profile> {
                       new Positioned(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(90.0),
-                            child: Image.network(_viewProfileModel.data![0].image.toString(),
+                            child: image != null ? Image.file(image!,
+                              fit: BoxFit.cover,height: 180,width: 180,
+                            ):Image.network(_viewProfileModel.data![0].image.toString(),
                               fit: BoxFit.cover,height: 180,width: 180,),
                           )
                       ),
