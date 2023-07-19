@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/age_height_range_model.dart';
+import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/user_delete_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/commonpackage/SearchChoices.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +28,7 @@ class _MyHomePageState extends State<Settings> {
   late SharedPreferences _preferences;
   late AgeHeightRangeModel _rangeModel;
   late UserDeleteModel _userDeleteModel;
+  late CountryListModel _countryListModel;
   String email = "";
   String phone = "";
   int? minAge;
@@ -35,6 +38,12 @@ class _MyHomePageState extends State<Settings> {
   bool isLoad = false;
   bool clickLoad = false;
   bool deleteLoad = false;
+  String country = 'Select country';
+  List<DropdownMenuItem> countryitems = [];
+
+  List<String> countryList = [
+    "Select country"
+  ];
 
   Future CheckUserConnection() async {
     try {
@@ -111,9 +120,32 @@ class _MyHomePageState extends State<Settings> {
     clickLoad = false;
     setState(() {});
   }
+  Future<void> ListCountry() async {
+    isLoad = true;
+
+    _countryListModel = await Services.CountryList();
+    if (_countryListModel.status == true){
+
+      for(var i = 0; i < _countryListModel.data!.length; i++){
+        countryList.add(_countryListModel.data![i].name.toString());
+        countryitems.add(DropdownMenuItem(
+          value: _countryListModel.data![i].name.toString(),
+          child: Text(_countryListModel.data![i].name.toString()),
+        ));
+      }
+      // if(country!=""){
+      //   ListCity(country);
+      // }
+      // country = _userDetailModel.data?[0].country ?? "Select country";
+    }
+    isLoad = false;
+    setState(() {
+    });
+  }
 
   @override
   void initState() {
+    ListCountry();
     userDetail();
     CheckUserConnection();
     super.initState();
@@ -621,39 +653,39 @@ class _MyHomePageState extends State<Settings> {
                             color: Colors.white.withOpacity(0.6)),
                       ),
                     ),
-                    new SizedBox(
-                      height: 50,
-                    ),
-                    new Container(
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: CommonColors.editblack,
-                          borderRadius: BorderRadius.circular(37)),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 20),
-                      child: Row(
-                        children: [
-                          // new SizedBox(width: 20,),
-                          new Container(
-                            child: new Text(
-                              "Restore Account",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonColors.edittextblack),
-                            ),
-                          ),
-                          Spacer(),
-                          new Container(
-                              child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: CommonColors.edittextblack,
-                            size: 20,
-                          )),
-                          // new SizedBox(width: 20,),
-                        ],
-                      ),
-                    ),
+                    // new SizedBox(
+                    //   height: 50,
+                    // ),
+                    // new Container(
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.editblack,
+                    //       borderRadius: BorderRadius.circular(37)),
+                    //   padding: const EdgeInsets.symmetric(
+                    //       vertical: 15, horizontal: 20),
+                    //   child: Row(
+                    //     children: [
+                    //       // new SizedBox(width: 20,),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Restore Account",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: CommonColors.edittextblack),
+                    //         ),
+                    //       ),
+                    //       Spacer(),
+                    //       new Container(
+                    //           child: Icon(
+                    //         Icons.arrow_forward_ios,
+                    //         color: CommonColors.edittextblack,
+                    //         size: 20,
+                    //       )),
+                    //       // new SizedBox(width: 20,),
+                    //     ],
+                    //   ),
+                    // ),
                     new SizedBox(
                       height: 50,
                     ),
@@ -705,16 +737,24 @@ class _MyHomePageState extends State<Settings> {
                               new SizedBox(
                                 width: 10,
                               ),
-                              new Container(
-                                alignment: Alignment.centerLeft,
-                                child: new Text(
-                                  "Add country or continent",
-                                  style: new TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: CommonColors.edittextblack),
-                                ),
+                               Expanded(
+                                 child: SearchChoices.single(
+                                  items: countryitems,
+                                  value: country,
+                                  hint: "Add country or continent",
+                                  disabledHint: "Disabled",
+                                  searchHint: "Select country",
+                                  style: TextStyle(color: Colors.white),
+                                  underline: Container(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      country = value;
+                                    });
+                                  },
+                                  displayClearIcon: false,
+                                  isExpanded: true,
                               ),
+                               ),
                             ],
                           ),
                           // new SizedBox(width: 20,),
@@ -1494,21 +1534,21 @@ class _MyHomePageState extends State<Settings> {
                             ),
                           ),
                           Spacer(),
-        Transform.scale(
-          scale: 0.8,
-          child: CupertinoSwitch(
-            value: isNotification,
-            onChanged: (value) {
-              isNotification = value;
+                          Transform.scale(
+                            scale: 0.8,
+                            child: CupertinoSwitch(
+                              value: isEmail,
+                              onChanged: (value) {
+                                isEmail = value;
 
-              Updateuser();
-              setState(() {});
-            },
-            thumbColor: CupertinoColors.black,
-            activeColor: CupertinoColors.white,
-            trackColor: CupertinoColors.white,
-          ),
-        ),
+                                Updateuser();
+                                setState(() {});
+                              },
+                              thumbColor: CupertinoColors.black,
+                              activeColor: CupertinoColors.white,
+                              trackColor: CupertinoColors.white,
+                            ),
+                          ),
                           // new SizedBox(width: 20,),
                         ],
                       ),
