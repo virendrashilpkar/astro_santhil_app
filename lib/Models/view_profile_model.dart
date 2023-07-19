@@ -41,6 +41,7 @@ class Datum {
   String? state;
   bool? isVerified;
   String? image;
+  String? imageId;
 
   Datum({
     this.id,
@@ -51,6 +52,7 @@ class Datum {
     this.state,
     this.isVerified,
     this.image,
+    this.imageId,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -62,6 +64,7 @@ class Datum {
     state: json["state"],
     isVerified: json["is_verified"],
     image: json["image"],
+    imageId: json["imageId"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -73,5 +76,6 @@ class Datum {
     "state": state,
     "is_verified": isVerified,
     "image": image,
+    "imageId": imageId,
   };
 }
