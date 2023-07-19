@@ -83,12 +83,12 @@ class _MyHomePageState extends State<HomeSearch> {
     });
   }
 
-  Future<void> userDetail(String id) async {
+  Future<void> userDetail() async {
     setState(() {
       clickLoad = true;
     });
     _preferences = await SharedPreferences.getInstance();
-    _userDetailModel = await Services.UserDetailMethod(id);
+    _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_userDetailModel.status == 1){
       name = _userDetailModel.data![0].firstName.toString();
       lastName = _userDetailModel.data![0].lastName.toString();
@@ -136,6 +136,7 @@ class _MyHomePageState extends State<HomeSearch> {
 
   @override
   void initState() {
+    userDetail();
     CheckUserConnection();
     Getdata();
     userList();
@@ -269,7 +270,7 @@ class _MyHomePageState extends State<HomeSearch> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                new Container(
+                                Container(
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -380,31 +381,57 @@ class _MyHomePageState extends State<HomeSearch> {
                                     ],
                                   ),
                                 ),
-                                new Container(
+                                Container(
                                   child: Row(
                                     children: [
                                       // new SizedBox(width: 40,),
-                                      new Expanded(
+                                      Expanded(
                                           child: Container(
                                             child: Column(
                                               children: [
-                                                new SizedBox(height: 15,),
+                                                SizedBox(height: 15,),
                                                 Row(
                                                   children: [
                                                     Expanded(
                                                       child: Container(
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                                        child: Text(
-                                                          "${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}"
-                                                              "  ${_userList[index].age}",
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 20,
-                                                            fontWeight: FontWeight.w900,
-                                                            // height: 1.4
-                                                          ),
-                                                          textAlign: TextAlign.left,
+                                                        child: Row(
+                                                          children: [
+                                                           if(_userList[index].firstName!="null")
+                                                             Text(
+                                                              "${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)}",
+                                                              style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.w900,
+                                                                // height: 1.4
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                           if(_userList[index].lastName!="null")
+                                                             Text(
+                                                              " ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}",
+                                                              style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.w900,
+                                                                // height: 1.4
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                           if(_userList[index].age!="null")
+                                                             Text(
+                                                               "  ${_userList[index].age}",
+                                                              style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.w900,
+                                                                // height: 1.4
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -416,51 +443,114 @@ class _MyHomePageState extends State<HomeSearch> {
                                                       child: Container(
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                                        child: Text(
-                                                          "${_userList[index].city} | "
-                                                          "${_userList[index].state} | "
-                                                          "${_userList[index].country}",
-                                                          style: TextStyle(
-                                                            color: CommonColors.lightblue,
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w800,
-                                                          ),
-                                                          textAlign: TextAlign.left,
+                                                        child: Row(
+                                                          children: [
+                                                            if(_userList[index].city!="null") Text(
+                                                             "${_userList[index].city} | ",
+                                                              style: TextStyle(
+                                                                color: CommonColors.lightblue,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                            if(_userList[index].state!="null") Text(
+                                                              "${_userList[index].state} | ",
+                                                              style: TextStyle(
+                                                                color: CommonColors.lightblue,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                            if(_userList[index].country!="null") Text(
+                                                              "${_userList[index].country}",
+                                                              style: TextStyle(
+                                                                color: CommonColors.lightblue,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
 
-                                                new SizedBox(height: 5,),
+                                                SizedBox(height: 5,),
                                                 Row(
                                                   children: [
                                                     Expanded(
                                                       child: Container(
                                                         alignment: Alignment.topLeft,
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                                        child: Text(
-                                                          "${_userList[index].height?.replaceAll(".", "`") } | "
-                                                              "${_userList[index].weight}kg | "
-                                                              "${_userList[index].religion} |"
-                                                              "${_userList[index].maritalStatus}",
-                                                          style: TextStyle(
-                                                            color: CommonColors.white,
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w800,
-                                                          ),
-                                                          textAlign: TextAlign.left,
+                                                        child: Row(
+                                                          children: [
+                                                           if(_userList[index].height!="null") Text(
+                                                              "${_userList[index].height?.replaceAll(".", "`") } | ",
+                                                                  // "${_userList[index].weight}kg | "
+                                                                  // "${_userList[index].religion} |"
+                                                                  // "${_userList[index].maritalStatus}",
+                                                              style: TextStyle(
+                                                                color: CommonColors.white,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                            if(_userList[index].weight!="null") Text(
+                                                              // "${_userList[index].height?.replaceAll(".", "`") } | "
+                                                                  "${_userList[index].weight}kg | "
+                                                                  // "${_userList[index].religion} |"
+                                                                  // "${_userList[index].maritalStatus}"
+                                                              ,
+                                                              style: TextStyle(
+                                                                color: CommonColors.white,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                            if(_userList[index].religion!="null") Text(
+                                                              // "${_userList[index].height?.replaceAll(".", "`") } | "
+                                                                  // "${_userList[index].weight}kg | "
+                                                                  "${_userList[index].religion} |"
+                                                                  // "${_userList[index].maritalStatus}"
+                                                              ,
+                                                              style: TextStyle(
+                                                                color: CommonColors.white,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                            if(_userList[index].maritalStatus!="null") Text(
+                                                              // "${_userList[index].height?.replaceAll(".", "`") } | "
+                                                                  // "${_userList[index].weight}kg | "
+                                                                  // "${_userList[index].religion} |"
+                                                                  "${_userList[index].maritalStatus}"
+                                                              ,
+                                                              style: TextStyle(
+                                                                color: CommonColors.white,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w800,
+                                                              ),
+                                                              textAlign: TextAlign.left,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                                new SizedBox(height: 10,),
+                                                SizedBox(height: 10,),
                                               ],
                                             ),
                                           )
                                       ),
-                                      new SizedBox(width: 20,),
+                                      SizedBox(width: 20,),
                                       InkWell(
                                         onTap:(){
                                           SwipeItem item = _swipeItems[index];
@@ -828,7 +918,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
   String smokings = "";
   String healths = "";
   String drinkings = "";
-
+  bool isVerified=false;
   String personality_type = "";
 
   Future<void> userDetail() async {
@@ -865,6 +955,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
       personality_type = _userDetailModel.data![0].personalityType.toString();
       plan_user = _userDetailModel.data![0].plan.toString();
       intrest = _userDetailModel.data![0].preference ?? [];
+      isVerified = _userDetailModel.data![0].isVerified ?? false;
     }
 
     setState(() {
@@ -947,7 +1038,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                             )
                           ],
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -955,44 +1046,132 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                             Container(
                               alignment: Alignment.topLeft,
                               // margin: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                "${name[0].toUpperCase()+name.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.left,
+                              child: Row(
+                                children: [
+                                 if(name!="null") Text(
+                                     "${name[0].toUpperCase()+name.substring(1)}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(lastName!="null") Text(
+                                     " ${lastName[0].toUpperCase()+lastName.substring(1)}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(age!="null") Text(
+                                     " ${age}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
                               ),
                             ),
-                            new SizedBox(width: 15,),
-                            SizedBox(
+                            SizedBox(width: 15,),
+                           if(isVerified) SizedBox(
                               height: 25,
                               width: 25,
                               child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
                             )
                           ],
                         ),
-                        new SizedBox(height: 11,),
+                        SizedBox(height: 11,),
                         Container(
                           alignment: Alignment.topLeft,
                           // margin: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            "${place},${state},${country} \n"
-                                " ${height.replaceAll(".", "`")},"
-                                " ${weight}kg,"
-                                " ${religion},"
-                                " ${maratialStatus}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            textAlign: TextAlign.left,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                 if(place!="null") Text(
+                                    "${place},",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(state!="null") Text(
+                                    "${state},",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(country!="null") Text(
+                                    "${country} ",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                 if(height!="null") Text(
+                                        " ${height.replaceAll(".", "`")},",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(weight!="null") Text(
+                                        " ${weight}kg,",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(religion!="null") Text(
+                                   " ${religion},",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                 if(maratialStatus!="null") Text(
+                                        " ${maratialStatus}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Row(
                           children: [
                             Container(
@@ -1008,7 +1187,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                               alignment: Alignment.center,
-                              child: Text("$plan_user",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                              child: Text(plan_user!="null" ? "$plan_user":"Basic",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                             ),
                             Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
@@ -1021,9 +1200,9 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                             )
                           ],
                         ),
-                        new SizedBox(height: 11,),
+                        SizedBox(height: 11,),
 
-                        Row(
+                        if(marriagePlan!="null")  Row(
                           children: [
                             Container(
                               height:23,
@@ -1039,21 +1218,21 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
                               alignment: Alignment.centerLeft,
-                              child: Text("$marriagePlan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                              child: Text("$marriagePlan",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                             ),
                           ],
                         ),
-                        new SizedBox(height: 40,),
-                        new Container(height: 1,width: double.infinity,color: Colors.white,),
-                        if(aboutme!="null") new SizedBox(height: 40,),
+                        SizedBox(height: 40,),
+                        Container(height: 1,width: double.infinity,color: Colors.white,),
+                        if(aboutme!="null") SizedBox(height: 40,),
                        if(aboutme!="null") Container(
                           alignment: Alignment.centerLeft,
-                          child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          child: Text("ABOUT ME",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
-                        if(aboutme!="null") new SizedBox(height: 10,),
+                        if(aboutme!="null") SizedBox(height: 10,),
                         if(aboutme!="null") Container(
                           alignment: Alignment.centerLeft,
-                          child: Text("$aboutme",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                          child: Text("$aboutme",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
                         ),
                         // new SizedBox(height: 10,),
                         // Container(
@@ -1082,10 +1261,10 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                         //     ],
                         //   ),
                         // ),
-                        if(intrest.isNotEmpty)  new SizedBox(height: 40,),
+                        if(intrest.isNotEmpty)  SizedBox(height: 40,),
                         if(intrest.isNotEmpty)  Container(
                           alignment: Alignment.centerLeft,
-                          child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          child: Text("My Interests",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
                         if(intrest.isNotEmpty) SizedBox(height: 20,),
                         Container(
@@ -1106,7 +1285,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("${intrest[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                                          Text("${intrest[index]}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
                                         ],
                                       )
                                   ),
@@ -1115,43 +1294,43 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                             ],
                           ),
                         ),
-                        new SizedBox(height: 40,),
+                        SizedBox(height: 40,),
                         Container(
                           alignment: Alignment.centerLeft,
-                          child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          child: Text("General Info",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
-                        new SizedBox(height: 20,),
+                        SizedBox(height: 20,),
                       ],
                     ),
                   ),
 
-                  CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
-                  CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
-                  CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
-                  CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
-                  CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
+                  CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: zodiac_sign!="null" ?'$zodiac_sign':"",),
+                  CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: education_level!="null" ?'$education_level':"",),
+                  CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: covid_vaccine!="null" ?'$covid_vaccine':"",),
+                  CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: healths!="null" ?'$healths':"",),
+                  CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: personality_type!="null" ?"$personality_type":"",),
 
-                  new SizedBox(height: 40,),
+                  SizedBox(height: 40,),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     alignment: Alignment.centerLeft,
-                    child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                    child: Text("Lifestyle",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                   ),
-                  new SizedBox(height: 20,),
-                  CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
-                  CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
-                  CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
-                  CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
-                  CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
-                  CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
-                  CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
-                  new SizedBox(height: 40,),
+                  SizedBox(height: 20,),
+                  CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: petss!="null" ?'$petss':"",),
+                  CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: drinkings!="null" ?"$drinkings":"",),
+                  CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: smokings!="null" ?'$smokings':"",),
+                  CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: workouts!="null" ?'$workouts':"",),
+                  CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: dietary_preference!="null" ?'$dietary_preference':"",),
+                  CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: social_media!="null" ?'$social_media':"",),
+                  CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: social_media!="null" ?'$sleeping_habits':"",),
+                  SizedBox(height: 40,),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     alignment: Alignment.center,
-                    child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                    child: Text("SHARE THIS PROFILE ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                   ),
-                  new SizedBox(height: 60,),
+                  SizedBox(height: 60,),
                 ],
               ),
             ),

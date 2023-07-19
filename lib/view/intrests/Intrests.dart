@@ -74,11 +74,11 @@ class _MyHomePageState extends State<Intrests> {
     _addPreferenceModel = await Services.AddPrefsMethod(
         "${_preferences?.getString(ShadiApp.userId)}", preferenceId);
     // viewPrefs();
-    if (_addPreferenceModel.status == 1) {
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    } else {
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    }
+    // if (_addPreferenceModel.status == 1) {
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // } else {
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // }
     setState(() {
       clickLoad = false;
     });
@@ -93,12 +93,12 @@ class _MyHomePageState extends State<Intrests> {
     tagsearch.text="";
     ischeck = false;
     viewPrefs();
-    if (_addPreferenceModel.status == 1) {
-
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    } else {
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    }
+    // if (_addPreferenceModel.status == 1) {
+    //
+    //   // Toaster.show(context, _addPreferenceModel.message.toString());
+    // } else {
+    //   // Toaster.show(context, _addPreferenceModel.message.toString());
+    // }
     setState(() {
       clickLoad = false;
     });
@@ -343,7 +343,15 @@ class _MyHomePageState extends State<Intrests> {
                                                   onTap: () {
                                                     setState(() {
                                                       addPrefs(prefList![index].id.toString());
+                                                      if (prefList[index].is_select==true) {
+                                                        prefList[index].is_select=false;
+                                                      }else{
+                                                        prefList[index].is_select=true;
+                                                      }
                                                     });
+                                                    // setState(() {
+                                                    //   addPrefs(prefList![index].id.toString());
+                                                    // });
                                                   },
                                                   child: Padding(
                                                     padding:

@@ -88,6 +88,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
   Future<void> viewImage() async {
     isLoad = true;
+    // _list.clear();
     _preferences = await SharedPreferences.getInstance();
     _viewImageModel = await Services.ImageView("${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_viewImageModel.status == 1) {
@@ -109,7 +110,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     _uploadImageModel = await Services.ImageUpload(image, "${_preferences?.getString(ShadiApp.userId).toString()}");
     if(_uploadImageModel.status == 1){
       Toaster.show(context, _uploadImageModel.message.toString());
-
+      viewImage();
     }else{
       Toaster.show(context, _uploadImageModel.message.toString());
     }
@@ -124,6 +125,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     if(_deleteImageModel.status == 1){
       Toaster.show(context, _deleteImageModel.message.toString());
       viewImage();
+      // _list[index].image=null;
     }else{
       Toaster.show(context, _deleteImageModel.message.toString());
     }
@@ -163,6 +165,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   String user_plan = "";
   double rating = 3.5;
   bool isVerified = false;
+  bool isPhotoOption = false;
 
   Future<void> userDetail() async {
     _preferences = await SharedPreferences.getInstance();
@@ -214,6 +217,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       is_drink = _userDetailModel.data![0].isDrink ?? false;
       is_diet = _userDetailModel.data![0].isDiet ?? false;
       isVerified = _userDetailModel.data![0].isVerified ?? false;
+      isPhotoOption = _userDetailModel.data![0].isPhotoOption ?? false;
       setState(() {
 
       });
@@ -267,6 +271,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
           "is_smoke":is_smoke.toString(),
           "is_drink":is_drink.toString(),
           "is_diet":is_diet.toString(),
+          "is_photo_option":isPhotoOption.toString(),
         }
 
         // "${_preferences?.getString(ShadiApp.userId)}",
@@ -320,10 +325,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
         Toaster.show(context, verified.message.toString());
         isVerified=verified.data?.isVerified ?? false;
       }
-      // setState((){
+      setState((){
       //   imagelist[index] = File(pickedFile.path);
       //   uploadImage(File(pickedFile.path));
-      // });
+      });
     }
 
     // isLoad = true;
@@ -608,6 +613,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   bool PhotoOptions=false;
   bool Interests=true;
   bool managedby=true;
+  bool basicinfo=true;
   bool Lifestyle=true;
   bool Living=true;
   bool diet=true;
@@ -648,11 +654,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     _preferences = await SharedPreferences.getInstance();
     _addPreferenceModel = await Services.AddPrefsMethod(
         "${_preferences?.getString(ShadiApp.userId)}", preferenceId);
-    if (_addPreferenceModel.status == 1) {
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    } else {
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    }
+    // if (_addPreferenceModel.status == 1) {
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // } else {
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // }
     setState(() {
       clickLoad = false;
     });
@@ -667,11 +673,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     tagsearch.text="";
     ischeck2 = false;
     viewPrefs();
-    if(_addPreferenceModel.status == 1){
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    }else{
-      Toaster.show(context, _addPreferenceModel.message.toString());
-    }
+    // if(_addPreferenceModel.status == 1){
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // }else{
+    //   Toaster.show(context, _addPreferenceModel.message.toString());
+    // }
     setState(() {
       clickLoad = false;
     });
@@ -854,7 +860,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 decoration: BoxDecoration(
                                   color: CommonColors.themeblack,
                                   borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                  border: imagelist[index] != null ?  null : Border.all(color: Colors.white),
+                                  border:Border.all(color: Colors.white),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.withOpacity(0.1),
@@ -869,14 +875,21 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   children: <Widget>[
 
                                     ClipRRect(
-                                        borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
-                                        child: index >= 0  && index < _list.length ?
-                                        Image.network(
-                                          "${_list![index].image}",fit: BoxFit.cover,
-                                          height: itemHeight,
-                                          width: itemWidth,
-                                        ) : imagelist[index] == null ? Image.asset(
-                                          "assets/add_photos2.png",
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        child: _viewImageModel.status == 1 ?
+                                        Container(
+                                          child: index >= 0  && index < _list.length ?Image.network(
+                                            "${_list![index].image}",fit: BoxFit.cover,
+                                            height: itemHeight,
+                                            width: itemWidth,
+                                          ):Image.asset(
+                                            "assets/add_photos.png",
+                                            fit: BoxFit.cover,
+                                            // height: itemHeight,
+                                          ),
+                                        )     // width: itemWidth,
+                                            :imagelist[index] == null ? Image.asset(
+                                          "assets/add_photos.png",
                                           fit: BoxFit.cover,
                                           // height: itemHeight,
                                           // width: itemWidth,
@@ -884,11 +897,32 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           height: itemHeight,
                                           width: itemWidth,)
                                     ),
+
+                                    // ClipRRect(
+                                    //     borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
+                                    //     child: index >= 0  && index < _list.length ?
+                                    //     Image.network(
+                                    //       "${_list![index].image}",fit: BoxFit.cover,
+                                    //       height: itemHeight,
+                                    //       width: itemWidth,
+                                    //     ) : imagelist[index] == null ? Image.asset(
+                                    //       "assets/add_photos2.png",
+                                    //       fit: BoxFit.cover,
+                                    //       // height: itemHeight,
+                                    //       // width: itemWidth,
+                                    //     ):Image.file(imagelist[index]!,fit: BoxFit.cover,
+                                    //       height: itemHeight,
+                                    //       width: itemWidth,)
+                                    // ),
                                     SizedBox.expand(
                                       child: Material(
                                         type: MaterialType.transparency,
                                         child: InkWell(onTap: () {
-                                          _pickedImage(index);
+                                          if(index >= 0  && index < _list.length){
+
+                                          }else{
+                                            _pickedImage(index);
+                                          }
                                         },splashColor: Colors.blue.withOpacity(0.2),
                                           customBorder: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(5),
@@ -912,12 +946,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                             customBorder: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(15),
                                             ),
-                                            child:  Container(
-                                                decoration: BoxDecoration(
-                                                  // color: Colors.white,
-                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                ),
-                                                child: Icon(Icons.close,color: Colors.white,)),
+                                            // child:  Container(
+                                            //     decoration: BoxDecoration(
+                                            //       // color: Colors.white,
+                                            //       borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                            //     ),
+                                            //     child: Icon(Icons.close,color: Colors.white,)),
                                           ),
                                         ),
                                       ),),
@@ -945,7 +979,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           child: InkWell(onTap: () {
                                             setState((){
                                               deleteImage(_list[index].id.toString());
-                                              // _list[index].image=null;
                                             });
                                           },splashColor: Colors.blue.withOpacity(0.2),
                                             customBorder: RoundedRectangleBorder(
@@ -1033,7 +1066,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           //     color: CommonColors.editblack,
                           //     borderRadius: BorderRadius.circular(37)
                           // ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
@@ -1044,12 +1077,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               new Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value:PhotoOptions,
+                                  value:isPhotoOption,
                                   onChanged: (value){
-                                    PhotoOptions = value;
+                                    isPhotoOption = value;
                                     setState(() {});
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: isPhotoOption ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -1060,8 +1093,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        new SizedBox(height: 10,),
-                        Container(
+                        if(isPhotoOption) new SizedBox(height: 10,),
+                        if(isPhotoOption) Container(
                           height:50,
                           margin: const EdgeInsets.only(left: 30,right: 30),
                           decoration: BoxDecoration(
@@ -1079,8 +1112,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             ],
                           ),
                         ),
-                        new SizedBox(height: 10,),
-                        Container(
+                        if(isPhotoOption) new SizedBox(height: 10,),
+                        if(isPhotoOption) Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
                           child: Text(
@@ -1113,11 +1146,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         new SizedBox(height: 15,),
                         InkWell(
                           onTap:(){
-                            if(isVerified){
-                              Toaster.show(context, "Already Verified");
-                            }else {
+                            // if(isVerified){
+                            //   Toaster.show(context, "Already Verified");
+                            // }else {
                               Verifyuser();
-                            }
+                            // }
                           },
                           child: Container(
                             height:50,
@@ -1187,7 +1220,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           //     color: CommonColors.editblack,
                           //     borderRadius: BorderRadius.circular(37)
                           // ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
@@ -1204,7 +1237,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: Interests ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -1273,7 +1306,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             // ),
                             Container(
                               height: 50,
-                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              margin: const EdgeInsets.symmetric(horizontal: 20),
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               // decoration: BoxDecoration(
                               //   // color: Colors.white,
@@ -1363,7 +1396,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 strokeWidth: 3.0,
                               ),
                             ):Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 27),
+                              margin: const EdgeInsets.symmetric(horizontal: 25),
                               alignment: Alignment.centerLeft,
                               child: Wrap(
                                 children: [
@@ -1411,8 +1444,16 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               prefList[index].is_select ?? false ? new SizedBox(
                                                 child: InkWell(onTap: (){
                                                   setState(() {
-                                                    selectedIndex.remove(index);
+                                                    addPrefs(prefList![index].id.toString());
+                                                    if (prefList[index].is_select==true) {
+                                                      prefList[index].is_select=false;
+                                                    }else{
+                                                      prefList[index].is_select=true;
+                                                    }
                                                   });
+                                                  // setState(() {
+                                                  //   selectedIndex.remove(index);
+                                                  // });
                                                 },child: Padding(
                                                   padding: const EdgeInsets.all(0.0),
                                                   child: Icon(Icons.close,color: Colors.white,),
@@ -1440,7 +1481,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           //     color: CommonColors.editblack,
                           //     borderRadius: BorderRadius.circular(37)
                           // ),
-                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
@@ -1457,7 +1498,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: managedby ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -1616,7 +1657,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                          ],
                        ),
                         new Container(
-                          margin: const EdgeInsets.only(left: 37,right: 37),
+                          margin: const EdgeInsets.only(left: 30,right: 30),
                           alignment: Alignment.centerLeft,
                           child: new Text("Marriage plan",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
@@ -1724,80 +1765,126 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         //   ),
                         // ),
                         new SizedBox(height: 50,),
+
+
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 30),
-                          alignment: Alignment.centerLeft,
-                          child: Text("Basic info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          margin: const EdgeInsets.only(left: 20,right: 20),
+                          // decoration: BoxDecoration(
+                          //     color: CommonColors.editblack,
+                          //     borderRadius: BorderRadius.circular(37)
+                          // ),
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                          child: Row(
+                            children: [
+                              // new SizedBox(width: 20,),
+                              new Container(
+                                child: new Text("Basic info",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              ),
+                              Spacer(),
+                              new Transform.scale(
+                                scale: 0.8,
+                                child: CupertinoSwitch(
+                                  value:basicinfo,
+                                  onChanged: (value){
+                                    basicinfo = value;
+                                    setState(() {
+                                    });
+                                  },
+                                  thumbColor: basicinfo ? CommonColors.buttonorg:CupertinoColors.black,
+                                  activeColor: CupertinoColors.white,
+                                  trackColor: CupertinoColors.white,
+                                ),
+                              ),
+                              // new SizedBox(width: 20,),
+                            ],
+                          ),
                         ),
-                        new SizedBox(height: 20,),
+
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 30),
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Text("Basic info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                        // ),
                         // InkWell(onTap:(){openDialog(context,"eduction");},child:Customlayout(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$eduction',),),
                         // InkWell(onTap:(){openDialog(context,"covid");},child:Customlayout(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid',),),
                         // InkWell(onTap:(){openDialog(context,"health");},child:Customlayout(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$health',),),
                         // InkWell(onTap:(){openDialog(context,"personaltype");},child:Customlayout(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: '$personaltype',),),
 
-                        Customlayout(icon: 'assets/zodiac_icon.png',title: 'Zodiac',selectedItem:"$zodiac_sign",dropdownItems: "645a24f6c46146c70ceef85e",
-                          onDropdownChanged: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              zodiac_sign=selectedItem;
-                            });
-                          },onDropdownChanged2: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              zodiac_signd=selectedItem;
-                            });
-                          },),
-                        Customlayout(icon: 'assets/education_bottom.png',title: 'Education',selectedItem:"$education_level",dropdownItems: "644f86833153f40588bbd101",
-                          onDropdownChanged: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              education_level=selectedItem;
-                            });
-                          },onDropdownChanged2: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              education_leveld=selectedItem;
-                            });
-                          },),
-                        Customlayout(icon: 'assets/covid_bottom.png',title: 'COVID vaccine',selectedItem:"$covid_vaccine",dropdownItems: "644fa1dbbf73df1a4d885a56",
-                          onDropdownChanged: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              covid_vaccine=selectedItem;
-                            });
-                          },onDropdownChanged2: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              covid_vaccined=selectedItem;
-                            });
-                          },),
-                        Customlayout(icon: 'assets/health_bottom.png',title: 'Health',selectedItem:"$healths",dropdownItems: "64afe579de520a14346455bc",
-                          onDropdownChanged: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              healths=selectedItem;
-                            });
-                          }, onDropdownChanged2: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              healthsd=selectedItem;
-                            });
-                          },),
-                        Customlayout(icon: 'assets/persional_bottom.png',title: 'Personality type',selectedItem:"$personality_type",dropdownItems: "64affcb625a4f99a26baf001",
-                          onDropdownChanged: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              personality_type=selectedItem;
-                            });
-                          },onDropdownChanged2: (selectedItem) {
-                            // Handle the selected item
-                            setState(() {
-                              personality_typed=selectedItem;
-                            });
-                          },),
-                        new SizedBox(height: 40,),
+                       if(basicinfo) Column(
+                          children: [
+                            new SizedBox(height: 20,),
+                            Customlayout(icon: 'assets/zodiac_icon.png',title: 'Zodiac',selectedItem:"$zodiac_sign",dropdownItems: "645a24f6c46146c70ceef85e",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  zodiac_sign=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  zodiac_signd=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/education_bottom.png',title: 'Education',selectedItem:"$education_level",dropdownItems: "644f86833153f40588bbd101",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  education_level=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  education_leveld=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/covid_bottom.png',title: 'COVID vaccine',selectedItem:"$covid_vaccine",dropdownItems: "644fa1dbbf73df1a4d885a56",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  covid_vaccine=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  covid_vaccined=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/health_bottom.png',title: 'Health',selectedItem:"$healths",dropdownItems: "64afe579de520a14346455bc",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  healths=selectedItem;
+                                });
+                              }, onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  healthsd=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/persional_bottom.png',title: 'Personality type',selectedItem:"$personality_type",dropdownItems: "64affcb625a4f99a26baf001",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  personality_type=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  personality_typed=selectedItem;
+                                });
+                              },),
+                            new SizedBox(height: 40,),
+                          ],
+                        ),
+
+
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          margin: const EdgeInsets.only(left: 20,right: 20),
+                          // decoration: BoxDecoration(
+                          //     color: CommonColors.editblack,
+                          //     borderRadius: BorderRadius.circular(37)
+                          // ),
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
@@ -1814,7 +1901,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: Lifestyle ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -1823,90 +1910,123 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             ],
                           ),
                         ),
-                        new SizedBox(height: 20,),
-                        Customlayout(icon: 'assets/pet_icon.png',title: 'Pets',selectedItem:"$petss",dropdownItems: "644f87093153f40588bbd111",
-                          onDropdownChanged: (selectedItem) {
-                            setState(() {
-                              petss=selectedItem;
-                            });
-                              // Handle the selected item
-                            },onDropdownChanged2: (selectedItem) {
-                            setState(() {
-                              petssd=selectedItem;
-                            });
-                              // Handle the selected item
-                            },),
-                        Customlayout(icon: 'assets/drink_bottom.png',title: 'Drinking',selectedItem:"$drinkings",dropdownItems: "644f9c91bf73df1a4d885a20",
-                          onDropdownChanged: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              drinkings=selectedItem;
-                            });
-                            },onDropdownChanged2: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              drinkingsd=selectedItem;
-                            });
-                            },),
-                        Customlayout(icon: 'assets/smoke_bottom.png',title: 'Smoking',selectedItem:"$smokings",dropdownItems: "644f9d6cbf73df1a4d885a2e",
-                          onDropdownChanged: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              smokings=selectedItem;
-                            });
-                            },onDropdownChanged2: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              smokingsd=selectedItem;
-                            });
-                            },),
-                        Customlayout(icon: 'assets/workout_bottom.png',title: 'Workout',selectedItem:"$workouts",dropdownItems: "644fa0bebf73df1a4d885a3a",
-                          onDropdownChanged: (selectedItem) {
-                            setState(() {
-                              workouts=selectedItem;
-                            });
-                            },onDropdownChanged2: (selectedItem) {
-                            setState(() {
-                              workoutsd=selectedItem;
-                            });
-                            },),
-                        Customlayout(icon: 'assets/dientary_bottom.png',title: 'Dietary preference',selectedItem:"$dietary_preference",dropdownItems: "644fa116bf73df1a4d885a44",
-                          onDropdownChanged: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              dietary_preference=selectedItem;
-                            });
-                            },onDropdownChanged2: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              dietary_preferenced=selectedItem;
-                            });
-                            },),
-                        Customlayout(icon: 'assets/social_bottom.png',title: 'Social media',selectedItem:"$social_media",dropdownItems: "64affcd725a4f99a26baf005",
-                          onDropdownChanged: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              social_media=selectedItem;
-                            });
-                            },onDropdownChanged2: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              social_mediad=selectedItem;
-                            });
-                            },),
-                        Customlayout(icon: 'assets/sleep_bottom.png',title: 'Sleeping habits',selectedItem:"$sleeping_habits",dropdownItems: "6452a9626abdec919eed862c",
-                          onDropdownChanged: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              sleeping_habits=selectedItem;
-                            });
-                            }, onDropdownChanged2: (selectedItem) {
-                              // Handle the selected item
-                            setState(() {
-                              sleeping_habitsd=selectedItem;
-                            });
-                            },),
-                        new SizedBox(height: 20,),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 30),
+                        //   child: Row(
+                        //     children: [
+                        //       // new SizedBox(width: 20,),
+                        //       new Container(
+                        //         child: new Text("Lifestyle",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                        //       ),
+                        //       Spacer(),
+                        //       new Transform.scale(
+                        //         scale: 0.8,
+                        //         child: CupertinoSwitch(
+                        //           value:Lifestyle,
+                        //           onChanged: (value){
+                        //             Lifestyle = value;
+                        //             setState(() {
+                        //             });
+                        //           },
+                        //           thumbColor: Lifestyle ? CommonColors.buttonorg:CupertinoColors.black,
+                        //           activeColor: CupertinoColors.white,
+                        //           trackColor: CupertinoColors.white,
+                        //         ),
+                        //       ),
+                        //       // new SizedBox(width: 20,),
+                        //     ],
+                        //   ),
+                        // ),
+                       if(Lifestyle) Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Customlayout(icon: 'assets/pet_icon.png',title: 'Pets',selectedItem:"$petss",dropdownItems: "644f87093153f40588bbd111",
+                              onDropdownChanged: (selectedItem) {
+                                setState(() {
+                                  petss=selectedItem;
+                                });
+                                // Handle the selected item
+                              },onDropdownChanged2: (selectedItem) {
+                                setState(() {
+                                  petssd=selectedItem;
+                                });
+                                // Handle the selected item
+                              },),
+                            Customlayout(icon: 'assets/drink_bottom.png',title: 'Drinking',selectedItem:"$drinkings",dropdownItems: "644f9c91bf73df1a4d885a20",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  drinkings=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  drinkingsd=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/smoke_bottom.png',title: 'Smoking',selectedItem:"$smokings",dropdownItems: "644f9d6cbf73df1a4d885a2e",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  smokings=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  smokingsd=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/workout_bottom.png',title: 'Workout',selectedItem:"$workouts",dropdownItems: "644fa0bebf73df1a4d885a3a",
+                              onDropdownChanged: (selectedItem) {
+                                setState(() {
+                                  workouts=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                setState(() {
+                                  workoutsd=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/dientary_bottom.png',title: 'Dietary preference',selectedItem:"$dietary_preference",dropdownItems: "644fa116bf73df1a4d885a44",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  dietary_preference=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  dietary_preferenced=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/social_bottom.png',title: 'Social media',selectedItem:"$social_media",dropdownItems: "64affcd725a4f99a26baf005",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  social_media=selectedItem;
+                                });
+                              },onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  social_mediad=selectedItem;
+                                });
+                              },),
+                            Customlayout(icon: 'assets/sleep_bottom.png',title: 'Sleeping habits',selectedItem:"$sleeping_habits",dropdownItems: "6452a9626abdec919eed862c",
+                              onDropdownChanged: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  sleeping_habits=selectedItem;
+                                });
+                              }, onDropdownChanged2: (selectedItem) {
+                                // Handle the selected item
+                                setState(() {
+                                  sleeping_habitsd=selectedItem;
+                                });
+                              },),
+                            new SizedBox(height: 20,),
+                          ],
+                        ),
+
+
                         new Container(
                           alignment:Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -2025,7 +2145,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: Living ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2035,128 +2155,133 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 15,),
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: CommonColors.editblack,
-                            // border: Border.all(color: Colors.white),
-                            borderRadius: const BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child:
-                          SearchChoices.single(
-                            items: countryitems,
-                            value: country,
-                            hint: "Select country",
-                            disabledHint: "Disabled",
-                            searchHint: "Select country",
-                            style: TextStyle(color: Colors.white),
-                            underline: Container(),
-                            onChanged: (value) {
-                              setState(() {
-                                country = value;
-                                city = "Select city";
-                                cityList.clear();
-                                cityList.add("Select city");
-                                state = 'Select state';
-                                city = 'Select city';
-                                Liststate(country,"");
-                              });
-                            },
-                            displayClearIcon: false,
-                            isExpanded: true,
-                          ),
-                          // DropdownButton<String>(
-                          //   value: country,
-                          //   underline: Container(
-                          //     // height: 1,
-                          //     // margin:const EdgeInsets.only(top: 20),
-                          //     // color: Colors.white,
-                          //   ),
-                          //   isExpanded: true,
-                          //   style: TextStyle(color: Colors.white,fontSize: 16),
-                          //   onChanged: (newValue) {
-                          //     setState(() {
-                          //       country = newValue!;
-                          //     });
-                          //   },
-                          //   selectedItemBuilder: (BuildContext context) {
-                          //     return ['Select country', 'India', 'pakistan', 'china'].map((String value) {
-                          //       return DropdownMenuItem<String>(
-                          //         value: value,
-                          //         child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
-                          //       );
-                          //     }).toList();
-                          //   },
-                          //   iconSize: 24,
-                          //   icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
-                          //   iconDisabledColor: Colors.white,
-                          //   items: <String>['Select country', 'India', 'pakistan', 'china'] // add your own dial codes
-                          //       .map<DropdownMenuItem<String>>((String value) {
-                          //     return DropdownMenuItem<String>(
-                          //       value: value,
-                          //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
-                          //     );
-                          //   }).toList(),
-                          // ),
-                        ),
-                        new SizedBox(height: 15,),
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: CommonColors.editblack,
-                            // border: Border.all(color: Colors.white),
-                            borderRadius: const BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child:
-                          SearchChoices.single(
-                            items: stateitems,
-                            value: state,
-                            hint: "Select State",
-                            searchHint: "Select State",
-                            style: TextStyle(color: Colors.white),
-                            underline: Container(),
-                            onChanged: (value) {
-                              setState(() {
-                                state = value;
-                                city="Select city";
-                                ListCity(state,"");
-                              });
-                            },
-                            displayClearIcon: false,
-                            isExpanded: true,
-                          ),
-                        ),
 
-                        new SizedBox(height: 15,),
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: CommonColors.editblack,
-                            // border: Border.all(color: Colors.white),
-                            borderRadius: const BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: SearchChoices.single(
-                            items: cityitems,
-                            value: city,
-                            hint: "Select city",
-                            searchHint: "Select city",
-                            style: TextStyle(color: Colors.white),
-                            underline: Container(),
-                            onChanged: (value) {
-                              setState(() {
-                                city = value;
-                              });
-                            },
-                            displayClearIcon: false,
-                            isExpanded: true,
-                          ),
+                        if(Living) Column(
+                          children: [
+                            new SizedBox(height: 15,),
+                            Container(
+                              height: 50,
+                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: CommonColors.editblack,
+                                // border: Border.all(color: Colors.white),
+                                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                              ),
+                              child:
+                              SearchChoices.single(
+                                items: countryitems,
+                                value: country,
+                                hint: "Select country",
+                                disabledHint: "Disabled",
+                                searchHint: "Select country",
+                                style: TextStyle(color: Colors.white),
+                                underline: Container(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    country = value;
+                                    city = "Select city";
+                                    cityList.clear();
+                                    cityList.add("Select city");
+                                    state = 'Select state';
+                                    city = 'Select city';
+                                    Liststate(country,"");
+                                  });
+                                },
+                                displayClearIcon: false,
+                                isExpanded: true,
+                              ),
+                              // DropdownButton<String>(
+                              //   value: country,
+                              //   underline: Container(
+                              //     // height: 1,
+                              //     // margin:const EdgeInsets.only(top: 20),
+                              //     // color: Colors.white,
+                              //   ),
+                              //   isExpanded: true,
+                              //   style: TextStyle(color: Colors.white,fontSize: 16),
+                              //   onChanged: (newValue) {
+                              //     setState(() {
+                              //       country = newValue!;
+                              //     });
+                              //   },
+                              //   selectedItemBuilder: (BuildContext context) {
+                              //     return ['Select country', 'India', 'pakistan', 'china'].map((String value) {
+                              //       return DropdownMenuItem<String>(
+                              //         value: value,
+                              //         child: Text(value,style: TextStyle(color: Colors.white,fontSize: 16),),
+                              //       );
+                              //     }).toList();
+                              //   },
+                              //   iconSize: 24,
+                              //   icon: Icon(Icons.arrow_forward_ios,color: country=="Select country"? CommonColors.edittextblack : Colors.white,size: 20,),
+                              //   iconDisabledColor: Colors.white,
+                              //   items: <String>['Select country', 'India', 'pakistan', 'china'] // add your own dial codes
+                              //       .map<DropdownMenuItem<String>>((String value) {
+                              //     return DropdownMenuItem<String>(
+                              //       value: value,
+                              //       child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
+                              //     );
+                              //   }).toList(),
+                              // ),
+                            ),
+                             new SizedBox(height: 15,),
+                            Container(
+                              height: 50,
+                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: CommonColors.editblack,
+                                // border: Border.all(color: Colors.white),
+                                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                              ),
+                              child:
+                              SearchChoices.single(
+                                items: stateitems,
+                                value: state,
+                                hint: "Select State",
+                                searchHint: "Select State",
+                                style: TextStyle(color: Colors.white),
+                                underline: Container(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    state = value;
+                                    city="Select city";
+                                    ListCity(state,"");
+                                  });
+                                },
+                                displayClearIcon: false,
+                                isExpanded: true,
+                              ),
+                            ),
+
+                            new SizedBox(height: 15,),
+                            Container(
+                              height: 50,
+                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: CommonColors.editblack,
+                                // border: Border.all(color: Colors.white),
+                                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                              ),
+                              child: SearchChoices.single(
+                                items: cityitems,
+                                value: city,
+                                hint: "Select city",
+                                searchHint: "Select city",
+                                style: TextStyle(color: Colors.white),
+                                underline: Container(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    city = value;
+                                  });
+                                },
+                                displayClearIcon: false,
+                                isExpanded: true,
+                              ),
+                            ),
+                          ],
                         ),
                         new SizedBox(height: 25,),
                         Container(
@@ -2177,7 +2302,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: Religion ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2187,8 +2312,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 10,),
-                        Container(
+                        if(Religion) new SizedBox(height: 10,),
+                        if(Religion) Container(
                           margin: const EdgeInsets.symmetric(horizontal: 27),
                           alignment: Alignment.centerLeft,
                           child: Wrap(
@@ -2262,7 +2387,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 25,),
+                         new SizedBox(height: 25,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
@@ -2281,7 +2406,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: casteb ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2292,7 +2417,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        Container(
+                       if(casteb) Container(
                           height: 50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
                           padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -2335,8 +2460,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             }).toList(),
                           ),
                         ),
-                        new SizedBox(height: 0,),
-                        new Container(
+                        if(casteb) new Container(
                           margin: const EdgeInsets.symmetric(horizontal: 30),
                           child: new Text("If you do not select caste, you will be shown all matches within your search requirements",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w400,color: CommonColors.white.withOpacity(0.6)),),
                         ),
@@ -2360,7 +2484,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: mothertongue ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2371,7 +2495,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        Container(
+                       if(mothertongue) Container(
                           height: 50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
                           padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -2445,7 +2569,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_age ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2481,7 +2605,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_height ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2517,7 +2641,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_weight ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2553,7 +2677,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_smoke ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2590,7 +2714,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_drink ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),
@@ -2626,7 +2750,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     setState(() {
                                     });
                                   },
-                                  thumbColor: CupertinoColors.black,
+                                  thumbColor: is_diet ? CommonColors.buttonorg:CupertinoColors.black,
                                   activeColor: CupertinoColors.white,
                                   trackColor: CupertinoColors.white,
                                 ),

@@ -174,7 +174,11 @@ class _MyHomePageState extends State<Cast> {
   String cast = 'Select caste';
   List<String> religionList=['Select religion'];
   List<String> castList=["Select caste"];
+  bool isloadreligion=false;
   void Religionmethod() async{
+    setState(() {
+      isloadreligion=true;
+    });
     religionList.clear();
     ReligionModel religionModel = await Services.ReligionMethod();
     if(religionModel.data?.isNotEmpty ?? false){
@@ -184,6 +188,7 @@ class _MyHomePageState extends State<Cast> {
       }
     }
     setState(() {
+      isloadreligion=false;
     });
   }
   bool isloadcaste=false;
@@ -253,7 +258,7 @@ class _MyHomePageState extends State<Cast> {
                 border: Border.all(color: Colors.white),
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
-              child: DropdownButton<String>(
+              child: isloadreligion==false ? DropdownButton<String>(
                 value: religion,
                 underline: Container(
                   // height: 1,
@@ -287,7 +292,7 @@ class _MyHomePageState extends State<Cast> {
                     child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 16),),
                   );
                 }).toList(),
-              ),
+              ):Container(),
             ),
             new SizedBox(height: 15,),
             Container(

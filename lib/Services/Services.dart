@@ -47,6 +47,7 @@ class Services {
   static String ViewImage = BaseUrl + "user/images";
   static String PrefList = BaseUrl + "user/preference";
   static String Verify = BaseUrl + "profile/copmplete";
+  static String Verifypro = BaseUrl + "profile/verify";
   static String AddPrefs = BaseUrl + "user/addpreference";
   static String UserList = BaseUrl + "users/list";
   static String ViewPrefs = BaseUrl + "user/preferenceList";
@@ -375,7 +376,7 @@ class Services {
   static Future<VerifiedModel> VerifyMethod(String uId,File image) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(Verify),
+      Uri.parse(Verifypro),
     );
     var file = await http.MultipartFile.fromPath("image", image.path);
     request.files.add(file);

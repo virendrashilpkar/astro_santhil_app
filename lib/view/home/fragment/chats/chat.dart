@@ -171,24 +171,24 @@ class _ChatState extends State <Chat> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            new SizedBox(height: MediaQuery.of(context).padding.top+10,),
+            new SizedBox(height: MediaQuery.of(context).padding.top+15,),
             new Row(
               children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.of(context).pop();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Image.asset(
-                        'assets/back_icon.png',
-                      ),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                //   alignment: Alignment.centerLeft,
+                //   // child: InkWell(
+                //   //   onTap: (){
+                //   //     Navigator.of(context).pop();
+                //   //   },
+                //   //   child: Padding(
+                //   //     padding: const EdgeInsets.all(10.0),
+                //   //     child: Image.asset(
+                //   //       'assets/back_icon.png',
+                //   //     ),
+                //   //   ),
+                //   // ),
+                // ),
                 Spacer(),
                 InkWell(
                   onTap:(){
@@ -376,7 +376,7 @@ class _ChatState extends State <Chat> {
                                       ],
                                     ),
                                     Spacer(),
-                                    index==0 ? Container(
+                                    index==10000 ? Container(
                                       height: 26,
                                       width: 26,
                                       margin: EdgeInsets.only(right: 45.0),
@@ -394,7 +394,7 @@ class _ChatState extends State <Chat> {
                                     ):Container(
                                       alignment: Alignment.topCenter,
                                         margin: EdgeInsets.only( right: 45.0,),
-                                        child: Text("1h",
+                                        child: Text("${DateTime.now().difference(_matchList[index].createdAt!).inHours}h",
                                           style: TextStyle(
                                               color: Colors.white30, fontSize: 15,fontWeight: FontWeight.w400
                                           ),

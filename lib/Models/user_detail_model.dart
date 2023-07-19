@@ -71,6 +71,7 @@ class Datum {
   bool? isAge;
   bool? isDiet;
   bool? isVerified;
+  bool? isPhotoOption;
   bool? isDrink;
   bool? isHeight;
   bool? isSmoke;
@@ -130,6 +131,7 @@ class Datum {
     this.isAge,
     this.isDiet,
     this.isVerified,
+    this.isPhotoOption,
     this.isDrink,
     this.isHeight,
     this.isSmoke,
@@ -190,6 +192,7 @@ class Datum {
     isAge: json["is_age"],
     isDiet: json["is_diet"],
     isVerified: json["is_verified"],
+    isPhotoOption: json["is_photo_option"],
     isDrink: json["is_drink"],
     isHeight: json["is_height"],
     isSmoke: json["is_smoke"],
@@ -250,6 +253,7 @@ class Datum {
     "is_age": isAge,
     "is_diet": isDiet,
     "is_verified": isVerified,
+    "is_photo_option": isPhotoOption,
     "is_drink": isDrink,
     "is_height": isHeight,
     "is_smoke": isSmoke,

@@ -73,6 +73,7 @@ class _MyHomePageState extends State<Home> {
       backgroundColor: CommonColors.themeblack,
       bottomNavigationBar: Container(
         height: 60,
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
           color: CommonColors.themeblack,
           borderRadius: const BorderRadius.only(
