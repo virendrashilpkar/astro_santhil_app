@@ -3,6 +3,7 @@ import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -22,10 +23,63 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: SplashScreen(),
     );
   }
 }
+
+class SplashScreen extends StatefulWidget {
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    getContactPermission();
+    super.initState();
+    Future.delayed(Duration(seconds: 3), () {
+      navigate();
+    });
+  }
+  void navigate() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    bool? status  = _preferences.getBool("_login");
+
+    if(status == true){
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => Home()));
+    }else{
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => MyHomePage()));
+    }
+  }
+
+  void getContactPermission() async {
+
+    if(await Permission.contacts.isGranted) {
+      // getContacts();
+    }else {
+      await Permission.contacts.request();
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Image.asset("assets/green text-01.png")
+        ),
+      ),
+    );
+  }
+}
+
 
 class MyHomePage extends StatefulWidget {
   @override

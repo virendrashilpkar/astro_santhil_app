@@ -135,7 +135,7 @@ class Services {
   }
 
   static Future<AddCustomerModel> customerAdd(String name, String gender, String city, String dob, String birt_time,
-      String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
+      String email, String phone, String catId, String subCatId, String text, String birthPlace,
       File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
     var Image = await http.MultipartFile.fromPath("u_image", image.path);
@@ -150,7 +150,6 @@ class Services {
     request.fields["phone"] = phone;
     request.fields["cat_id"] = catId;
     request.fields["sub_cat_id"] = subCatId;
-    request.fields["place"] = place;
     request.fields["text"] = text;
     request.fields["birth_place"] = birthPlace;
     request.files.add(Image);

@@ -222,7 +222,7 @@ class _AddAppointmentState extends State<AddAppointment> {
     });
     _addCustomerModel = await Services.customerAdd(userName.text,
         selectedGender, city.text, dob.toString(), selectTimes, email.text, phoneNumber.text,
-        categoryId, subCategoryId, place.text, text.text, birthPlace.text, image!, horoscopeImage!);
+        categoryId, subCategoryId, text.text, birthPlace.text, image!, horoscopeImage!);
     if(_addCustomerModel.status == true){
       Fluttertoast.showToast(msg: "${_addCustomerModel.msg}",
           toastLength: Toast.LENGTH_SHORT,
@@ -268,6 +268,7 @@ class _AddAppointmentState extends State<AddAppointment> {
     userName.text = widget.name;
     phoneNumber.text = widget.number;
     categoryMethod();
+    getContactPermission();
     super.initState();
   }
 
@@ -457,37 +458,37 @@ class _AddAppointmentState extends State<AddAppointment> {
                                   }).toList(),
                                 )
                               ),
+                              // Container(
+                              //   margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              //   child: Text("Place"),
+                              // ),
+                              // Container(
+                              //   padding: EdgeInsets.only(left: 10.0, top: 5.0, bottom: 5.0),
+                              //   decoration: BoxDecoration(
+                              //       color: Color(0xffF8F8F9),
+                              //       borderRadius: BorderRadius.all(
+                              //           Radius.circular(5.0)
+                              //       )
+                              //   ),
+                              //   child: TextField(
+                              //     controller: place,
+                              //       textAlignVertical: TextAlignVertical.center,
+                              //       textAlign: TextAlign.left,
+                              //       keyboardType: TextInputType.text,
+                              //       decoration: InputDecoration(
+                              //         isDense: true,
+                              //         hintText: 'Place',
+                              //         hintStyle: const TextStyle(
+                              //           fontSize: 14.0,
+                              //           color: Color(0xff6C7480),
+                              //         ),
+                              //         border: InputBorder.none,
+                              //       )
+                              //   ),
+                              // ),
                               Container(
                                 margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                                child: Text("Place"),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 10.0, top: 5.0, bottom: 5.0),
-                                decoration: BoxDecoration(
-                                    color: Color(0xffF8F8F9),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(5.0)
-                                    )
-                                ),
-                                child: TextField(
-                                  controller: place,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    textAlign: TextAlign.left,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      hintText: 'Place',
-                                      hintStyle: const TextStyle(
-                                        fontSize: 14.0,
-                                        color: Color(0xff6C7480),
-                                      ),
-                                      border: InputBorder.none,
-                                    )
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                                child: Text("City"),
+                                child: Text("Current City"),
                               ),
                               Container(
                                 padding: EdgeInsets.only(left: 10.0, top: 5.0, bottom: 5.0),
@@ -504,7 +505,7 @@ class _AddAppointmentState extends State<AddAppointment> {
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
                                       isDense: true,
-                                      hintText: 'City',
+                                      hintText: 'Current City',
                                       hintStyle: const TextStyle(
                                         fontSize: 14.0,
                                         color: Color(0xff6C7480),
@@ -532,6 +533,7 @@ class _AddAppointmentState extends State<AddAppointment> {
                                             onTap: () async{
                                               date = await showDatePicker(
                                                   context: context,
+
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(1950),
                                                   lastDate: DateTime.now());
@@ -905,10 +907,8 @@ class _AddAppointmentState extends State<AddAppointment> {
                                     Fluttertoast.showToast(msg: "Upload image");
                                   }else if(userName.text.isEmpty){
                                     Fluttertoast.showToast(msg: "Enter name");
-                                  }else if(place.text.isEmpty){
-                                    Fluttertoast.showToast(msg: "Enter place");
                                   }else if(city.text.isEmpty){
-                                    Fluttertoast.showToast(msg: "Enter city");
+                                    Fluttertoast.showToast(msg: "Enter current city");
                                   }else if(dob == "(DD/MM/YYYY)"){
                                     Fluttertoast.showToast(msg: "Enter Date of bith");
                                   }else if(selectTimes == "Select Time"){
@@ -921,6 +921,8 @@ class _AddAppointmentState extends State<AddAppointment> {
                                     Fluttertoast.showToast(msg: "Select Category");
                                   }else if(selectedSubCategory == "Select Sub Category"){
                                     Fluttertoast.showToast(msg: "Select Sub Category");
+                                  }else if(horoscopeImage == null){
+                                    Fluttertoast.showToast(msg: "Upload horscope image");
                                   }else if(birthPlace.text.isEmpty){
                                     Fluttertoast.showToast(msg: "Enter birth place");
                                   }else if(text.text.isEmpty){

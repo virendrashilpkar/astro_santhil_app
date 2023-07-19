@@ -75,16 +75,15 @@ class _MenuState extends State<Menu> {
               ),
               Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 25.0),
-                    child: CircleAvatar(
-                      radius: 50.0,
-                      backgroundColor: Color(0xffFFDA66),
-                      child: Container(
-                          padding: EdgeInsets.only(top: 12.0),
-                          child: Image.asset("assets/user_ic.png")),
-                    ),
-                  ),
+              Container(
+              child: CircleAvatar(
+              radius: 50.0,
+                backgroundColor: Colors.white,
+                child: Container(
+                    child: Image.asset("assets/green text-01.png",
+                      width: 90,)),
+              ),
+        ),
                   Container(
                     margin: EdgeInsets.only(top: 5.0, bottom: 20.0),
                     child: Text("Astro Senthil",
