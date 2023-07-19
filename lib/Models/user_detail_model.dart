@@ -68,6 +68,8 @@ class Datum {
   bool? goIncognito;
   bool? showPeopleInRange;
   String? username;
+  bool? isEmail;
+  bool? isPush;
   bool? isAge;
   bool? isDiet;
   bool? isVerified;
@@ -135,6 +137,8 @@ class Datum {
     this.isSmoke,
     this.isWeight,
     this.image,
+    this.isEmail,
+    this.isPush,
     this.age,
     this.zodiacSign,
     this.covidVaccine,
@@ -195,6 +199,8 @@ class Datum {
     isSmoke: json["is_smoke"],
     isWeight: json["is_weight"],
     image: json["image"],
+    isEmail: json["is_email"],
+    isPush: json["is_push"],
     age: json["age"],
     zodiacSign: json["zodiac_sign"],
     covidVaccine: json["covid_vaccine"],
@@ -247,6 +253,8 @@ class Datum {
     "go_incognito": goIncognito,
     "show_people_in_range": showPeopleInRange,
     "username": username,
+    "is_email": isEmail,
+    "is_push": isPush,
     "is_age": isAge,
     "is_diet": isDiet,
     "is_verified": isVerified,

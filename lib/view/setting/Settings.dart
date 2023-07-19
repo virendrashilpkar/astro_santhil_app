@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/age_height_range_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
+import 'package:shadiapp/Models/update_setting_model.dart';
 import 'package:shadiapp/Models/user_delete_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_update_model.dart';
@@ -15,6 +17,9 @@ import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class Settings extends StatefulWidget {
   @override
@@ -75,6 +80,7 @@ class _MyHomePageState extends State<Settings> {
   bool isNotification = false;
   bool isEmail = false;
   bool isPushNotification = false;
+
   Future<void> userDetail() async {
     isLoad = true;
     _preferences = await SharedPreferences.getInstance();
@@ -92,6 +98,8 @@ class _MyHomePageState extends State<Settings> {
       showme = _userDetailModel.data![0].isShowOnCard ?? false;
       incognito = _userDetailModel.data![0].goIncognito ?? false;
       isonline = _userDetailModel.data![0].isOnline ?? false;
+      isEmail = _userDetailModel.data![0].isEmail ?? false;
+      isNotification = _userDetailModel.data![0].isPush ?? false;
       _controllerusername.text = _userDetailModel.data![0].username ?? "";
       _currentRangeValues =
           RangeValues(minAge?.toDouble() ?? 18, maxAge?.toDouble() ?? 30);
@@ -143,10 +151,13 @@ class _MyHomePageState extends State<Settings> {
     });
   }
 
+
+
   @override
   void initState() {
     ListCountry();
     userDetail();
+    getCurrentLocation();
     CheckUserConnection();
     super.initState();
   }
@@ -196,17 +207,20 @@ class _MyHomePageState extends State<Settings> {
   }
 
   late UpdateUserModel _updateUserModel;
+  late UpdateSettingModel _updateSettingModel;
   void Updateuser() async {
     _preferences = await SharedPreferences.getInstance();
-    _updateUserModel = await Services.CheckUpdateUser2({
+    _updateSettingModel = await Services.updateSetting({
       "userId": "${_preferences?.getString(ShadiApp.userId)}",
       "is_online": isonline.toString(),
       "goGlidobel": GoGlobal.toString(),
       "go_incognito": incognito.toString(),
       "show_people_in_range": inrange.toString(),
       "is_showOnCard": showme.toString(),
+      "is_push": isNotification.toString(),
+      "is_email": isEmail.toString()
     });
-    if (_updateUserModel.status == 1) {
+    if (_updateSettingModel.status == 1) {
       userDetail();
     }
   }
@@ -241,6 +255,58 @@ class _MyHomePageState extends State<Settings> {
     setState(() {
       deleteLoad = false;
     });
+  }
+
+  void deleteDailog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          height: 300,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  alignment: Alignment.topRight,
+                  width: 70,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colors.black26
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
+  String placeName = "";
+
+  void getCurrentLocation() async{
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.best,
+    ).then((Position position) async {
+      // Retrieve the latitude and longitude from the 'position' object.
+      double latitude = position.latitude;
+      double longitude = position.longitude;
+
+      // Use geocoding to get the place name from the coordinates.
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      Placemark placemark = placemarks.first;
+
+      // Retrieve the place name from the 'placemark' object.
+      placeName = placemark.country.toString();
+      print("ashfkjdgsdhf $placeName");
+    }).catchError((e) {
+      print("objectjhgfdgsfxfcvgb $e");
+      // Handle any errors that occur during location fetching or geocoding.
+    });
+
   }
 
   @override
@@ -737,24 +803,15 @@ class _MyHomePageState extends State<Settings> {
                               new SizedBox(
                                 width: 10,
                               ),
-                               Expanded(
-                                 child: SearchChoices.single(
-                                  items: countryitems,
-                                  value: country,
-                                  hint: "Add country or continent",
-                                  disabledHint: "Disabled",
-                                  searchHint: "Select country",
-                                  style: TextStyle(color: Colors.white),
-                                  underline: Container(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      country = value;
-                                    });
-                                  },
-                                  displayClearIcon: false,
-                                  isExpanded: true,
-                              ),
-                               ),
+                              new Container(
+                                      child: new Text(
+                                        placeName,
+                                        style: new TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: CommonColors.edittextblack),
+                                      ),
+                                    ),
                             ],
                           ),
                           // new SizedBox(width: 20,),
@@ -770,29 +827,46 @@ class _MyHomePageState extends State<Settings> {
                           color: CommonColors.editblack,
                           borderRadius: BorderRadius.circular(37)),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 20),
-                      child: Row(
-                        children: [
-                          // new SizedBox(width: 20,),
-                          new Container(
-                            child: new Text(
-                              "Select",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonColors.edittextblack),
-                            ),
-                          ),
-                          Spacer(),
-                          new Container(
-                              child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: CommonColors.edittextblack,
-                            size: 20,
-                          )),
-                          // new SizedBox(width: 20,),
-                        ],
+                          vertical: 0, horizontal: 20),
+                      child: SearchChoices.single(
+                        items: countryitems,
+                        value: country,
+                        hint: "Select",
+                        disabledHint: "Disabled",
+                        searchHint: "Select country",
+                        style: TextStyle(color: Colors.white),
+                        underline: Container(),
+                        onChanged: (value) {
+                          setState(() {
+                            country = value;
+                          });
+                        },
+                        displayClearIcon: false,
+                        isExpanded: true,
                       ),
+                      // Row(
+                      //   children: [
+                      //     // new SizedBox(width: 20,),
+                      //
+                      //     // new Container(
+                      //     //   child: new Text(
+                      //     //     "Select",
+                      //     //     style: new TextStyle(
+                      //     //         fontSize: 14,
+                      //     //         fontWeight: FontWeight.w400,
+                      //     //         color: CommonColors.edittextblack),
+                      //     //   ),
+                      //     // ),
+                      //     Spacer(),
+                      //     new Container(
+                      //         child: Icon(
+                      //       Icons.arrow_forward_ios,
+                      //       color: CommonColors.edittextblack,
+                      //       size: 20,
+                      //     )),
+                      //     // new SizedBox(width: 20,),
+                      //   ],
+                      // ),
                     ),
                     new Container(
                       margin:
@@ -1870,51 +1944,51 @@ class _MyHomePageState extends State<Settings> {
                         ],
                       ),
                     ),
-                    new SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 50,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: CommonColors.buttonorg,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(25)),
-                      ),
-                      child: Stack(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: Center(
-                                child: Text(
-                                  "RESTORE PURCHASE",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                              )),
-                            ],
-                          ),
-                          SizedBox.expand(
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed("EnableLocation");
-                                },
-                                splashColor: Colors.blue.withOpacity(0.2),
-                                customBorder: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // new SizedBox(
+                    //   height: 20,
+                    // ),
+                    // Container(
+                    //   height: 50,
+                    //   margin: const EdgeInsets.symmetric(horizontal: 20),
+                    //   decoration: BoxDecoration(
+                    //     color: CommonColors.buttonorg,
+                    //     borderRadius:
+                    //         const BorderRadius.all(Radius.circular(25)),
+                    //   ),
+                    //   child: Stack(
+                    //     children: <Widget>[
+                    //       Row(
+                    //         children: <Widget>[
+                    //           Expanded(
+                    //               child: Center(
+                    //             child: Text(
+                    //               "RESTORE PURCHASE",
+                    //               style: TextStyle(
+                    //                   color: Colors.white,
+                    //                   fontSize: 20,
+                    //                   fontWeight: FontWeight.w900),
+                    //             ),
+                    //           )),
+                    //         ],
+                    //       ),
+                    //       SizedBox.expand(
+                    //         child: Material(
+                    //           type: MaterialType.transparency,
+                    //           child: InkWell(
+                    //             onTap: () {
+                    //               Navigator.of(context)
+                    //                   .pushNamed("EnableLocation");
+                    //             },
+                    //             splashColor: Colors.blue.withOpacity(0.2),
+                    //             customBorder: RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(25),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     new SizedBox(
                       height: 20,
                     ),
@@ -1999,7 +2073,7 @@ class _MyHomePageState extends State<Settings> {
                               type: MaterialType.transparency,
                               child: InkWell(
                                 onTap: () {
-                                  deleteUser();
+                                  deleteDailog();
                                 },
                                 splashColor: Colors.blue.withOpacity(0.2),
                                 customBorder: RoundedRectangleBorder(
