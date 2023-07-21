@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Astro Senthil',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -146,17 +146,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
    return Scaffold(
      // resizeToAvoidBottomInset: false,
-     body: SingleChildScrollView(
-       child: Container(
-         decoration: BoxDecoration(
-           image: DecorationImage(
-               image: AssetImage("assets/background.png"),
-           fit: BoxFit.fitWidth)
-         ),
+     body: SafeArea(
+       child: SingleChildScrollView(
          child: Container(
-           height: MediaQuery.of(context).size.height,
+           color: Colors.white,
+           // decoration: BoxDecoration(
+           //   image: DecorationImage(
+           //       image: AssetImage("assets/background.png"),
+           //   fit: BoxFit.fitWidth)
+           // ),
            child: Column(
-             mainAxisAlignment: MainAxisAlignment.center,
+             mainAxisAlignment: MainAxisAlignment.start,
              crossAxisAlignment: CrossAxisAlignment.center,
              children: [
                Container(
@@ -168,23 +168,69 @@ class _MyHomePageState extends State<MyHomePage> {
                    style: TextStyle(fontSize: 16, color: Colors.white),),
                ),
                Container(
-                 margin: EdgeInsets.only(top: 70.0),
+                 decoration: BoxDecoration(
+                   shape: BoxShape.circle,
+                   boxShadow: [
+                     BoxShadow(
+                       color: Colors.black26,
+                       spreadRadius: 2,
+                       blurRadius: 10,
+                       offset: Offset(5, 5),
+                     )
+                   ]
+                 ),
                  child: CircleAvatar(
                    radius: 70.0,
-                   backgroundColor: Colors.white,
+                   backgroundColor: Color(0xff009688),
                    child: Container(
-                     padding: EdgeInsets.only(top: 12.0),
+                     padding: EdgeInsets.only(top: 12.0, bottom: 10.0),
                        child: Image.asset("assets/green text-01.png",
+                       color: Colors.white,
                        width: 120,)),
                  ),
                ),
+               Text(
+                 'ASTRO SENTHIL',
+                 style: TextStyle(
+                   color: Colors.black,
+                   fontSize: 24.09,
+                   fontFamily: 'Poppins',
+                   fontWeight: FontWeight.w700,
+                 ),
+               ),
+               Text(
+                 'log in to continue',
+                 style: TextStyle(
+                   color: Colors.black,
+                   fontSize: 16,
+                   fontFamily: 'Inter',
+                   fontWeight: FontWeight.w400,
+                 ),
+               ),
+               SizedBox(
+                 height: 60,
+               ),
                Container(
-                 margin: EdgeInsets.only(left: 40.0, top: 20.0, right: 40.0),
-                 decoration: BoxDecoration(
-                   color: Colors.white,
-                   borderRadius: BorderRadius.all(
-                     Radius.circular(10.0)
-                   )
+                 alignment: Alignment.centerLeft,
+                 margin: EdgeInsets.only(left: 40.0),
+                 child: Text(
+                   'USERNAME',
+                   textAlign: TextAlign.start,
+                   style: TextStyle(
+                     color: Color(0xFF8A92A2),
+                     fontSize: 13.55,
+                     fontFamily: 'Poppins',
+                     fontWeight: FontWeight.w400,
+                   ),
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left: 40.0, top: 5.0, right: 40.0),
+                 decoration: ShapeDecoration(
+                     shape: RoundedRectangleBorder(
+                       side: BorderSide(width: 0.50, color: Color(0xFFD0D4E0)),
+                       borderRadius: BorderRadius.circular(5),
+                     )
                  ),
                  child: TextField(
                    controller: userName,
@@ -199,42 +245,49 @@ class _MyHomePageState extends State<MyHomePage> {
                        color: Colors.black26,
                      ),
                      border: InputBorder.none,
-                     prefixIcon: Container(
-                       margin: EdgeInsets.only(right: 16.0),
-                       decoration: BoxDecoration(
-                         color: Colors.black,
-                           borderRadius: BorderRadius.all(
-                               Radius.circular(5.0)
-                           )
-                       ),
-                       child: IconButton(
-                         icon: Image.asset("assets/user_ic_white.png", width: 20, height: 20,), onPressed: () { },
-                       ),
+                     prefixIcon: IconButton(
+                       icon: Image.asset("assets/Group 117.png", width: 20, height: 20,), onPressed: () { },
                      ),
                    ),
                  ),
                ),
+               SizedBox(
+                 height: 20.0,
+               ),
                Container(
-                 margin: EdgeInsets.only(left: 40.0, top: 20.0, right: 40.0),
-                 decoration: BoxDecoration(
-                   color: Colors.white,
-                   borderRadius: BorderRadius.all(
-                     Radius.circular(10.0)
-                   )
+                 alignment: Alignment.centerLeft,
+                 margin: EdgeInsets.only(left: 40.0),
+                 child: Text(
+                   'PASSWORD',
+                   style: TextStyle(
+                     color: Color(0xFF8A92A2),
+                     fontSize: 13.55,
+                     fontFamily: 'Poppins',
+                     fontWeight: FontWeight.w400,
+                   ),
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left: 40.0, top: 5.0, right: 40.0),
+                 decoration: ShapeDecoration(
+                     shape: RoundedRectangleBorder(
+                       side: BorderSide(width: 0.50, color: Color(0xFFD0D4E0)),
+                       borderRadius: BorderRadius.circular(5),
+                     )
                  ),
                  child: Row(
                    crossAxisAlignment: CrossAxisAlignment.center,
                    children: [
                      Container(
-                       margin: EdgeInsets.only(right: 16.0),
-                       decoration: BoxDecoration(
-                           color: Colors.black,
-                           borderRadius: BorderRadius.all(
-                               Radius.circular(5.0)
-                           )
-                       ),
+                       margin: EdgeInsets.only(right: 6.0),
+                       // decoration: BoxDecoration(
+                       //     color: Colors.black,
+                       //     borderRadius: BorderRadius.all(
+                       //         Radius.circular(5.0)
+                       //     )
+                       // ),
                        child: IconButton(
-                         icon: Image.asset("assets/pass_ic.png", width: 20, height: 20,), onPressed: () { },
+                         icon: Image.asset("assets/lock.png", width: 20, height: 20,), onPressed: () { },
                        ),
                      ),
                      Expanded(
@@ -262,8 +315,9 @@ class _MyHomePageState extends State<MyHomePage> {
                          margin: EdgeInsets.only(right: 8.0),
                          child: Icon(
                            _isHidden
-                               ? Icons.visibility
-                               : Icons.visibility_off,
+                               ? Icons.visibility_outlined
+                               : Icons.visibility_off_outlined,
+                           color: Color(0xff262A3F),
                          ),
                        ),
                      ),
@@ -292,39 +346,51 @@ class _MyHomePageState extends State<MyHomePage> {
                    ],
                  ),
                ),
-               Container(
-                 margin: EdgeInsets.only(top: 20.0),
-                 child: ElevatedButton(
-                   style: ButtonStyle(
-                     backgroundColor: MaterialStateProperty.all(Color(0xff303030))
-                   ),
-                     onPressed: () {
-                     if(userName.text.isEmpty){
-                       Fluttertoast.showToast(msg: "Please Enter User Name");
-                     }else if(password.text.isEmpty){
-                       Fluttertoast.showToast(msg: "Please Enter Password");
-                     }else{
-                       loginMethod();
-                     }
-                     },
-                     child: Container(
-                       margin: EdgeInsets.symmetric(horizontal: 20.44),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           crossAxisAlignment: CrossAxisAlignment.center,
-                           children: [
-                             clickLoad ? Container(
-                               width: 24,
-                               height: 24,
-                               padding: EdgeInsets.all(2.0),
-                               child: const CircularProgressIndicator(
-                                 color: Colors.white,
-                                 strokeWidth: 3.0,
-                               ),
-                             ):
-                             Text("Log in", style: TextStyle(color: Colors.white, fontSize: 19.37, fontWeight: FontWeight.w700),),
-                           ],
-                         ))),
+               InkWell(
+                 onTap: (){
+                   if(userName.text.isEmpty){
+                     Fluttertoast.showToast(msg: "Please Enter User Name");
+                   }else if(password.text.isEmpty){
+                     Fluttertoast.showToast(msg: "Please Enter Password");
+                   }else{
+                     loginMethod();
+                   }
+                 },
+                 child: Container(
+                   height: 50,
+                   margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+                     decoration: ShapeDecoration(
+                       color: Color(0xFF009688),
+                       shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(10),
+                       ),
+                     ),
+                   child: Container(
+                     margin: EdgeInsets.symmetric(horizontal: 20.44),
+                       child: Row(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         crossAxisAlignment: CrossAxisAlignment.center,
+                         children: [
+                           clickLoad ? Container(
+                             width: 24,
+                             height: 24,
+                             padding: EdgeInsets.all(2.0),
+                             child: const CircularProgressIndicator(
+                               color: Colors.white,
+                               strokeWidth: 3.0,
+                             ),
+                           ):
+                           Text(
+                             'Login',
+                             style: TextStyle(
+                               color: Colors.white,
+                               fontSize: 14,
+                               fontFamily: 'Poppins',
+                               fontWeight: FontWeight.w500,
+                             ),
+                           )                         ],
+                       )),
+                 ),
                ),
              ],
            ),

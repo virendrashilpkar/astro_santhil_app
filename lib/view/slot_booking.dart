@@ -52,9 +52,17 @@ class _SlotBookingState extends State<SlotBooking> {
         context: context,
         initialTime: _time,
         initialEntryMode: TimePickerEntryMode.dial,
-        builder: (context, Widget? child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+        builder: (BuildContext context, Widget? child){
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.black,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor:Colors.white,
+            ),
             child: child!,
           );
         });
@@ -227,7 +235,7 @@ class _SlotBookingState extends State<SlotBooking> {
                           InkWell(
                             onTap: () {
                               Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => Menu()));
+                                  MaterialPageRoute(builder: (context) => Menu("Slot Booking")));
                             },
                             child: Container(
                               child: Image.asset(
@@ -550,6 +558,7 @@ class _SlotBookingState extends State<SlotBooking> {
                               style: TextStyle(color: Color(0xFF8A92A2))),
                         ),
                         Container(
+                          height: 90,
                           decoration: BoxDecoration(
                               border: Border.all(color: Color(0xFFD0D4E0)),
                               borderRadius:

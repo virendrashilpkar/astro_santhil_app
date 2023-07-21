@@ -14,6 +14,7 @@ import 'package:astro_santhil_app/models/customer_name_model.dart';
 import 'package:astro_santhil_app/models/delete_customer_model.dart';
 import 'package:astro_santhil_app/models/login_model.dart';
 import 'package:astro_santhil_app/models/payment_view_model.dart';
+import 'package:astro_santhil_app/models/slot_view_model.dart';
 import 'package:astro_santhil_app/models/sub_category_model.dart';
 import 'package:astro_santhil_app/models/cancel_appointment_model.dart';
 import 'package:astro_santhil_app/models/update_appointment_model.dart';
@@ -138,8 +139,14 @@ class Services {
       String email, String phone, String catId, String subCatId, String text, String birthPlace,
       File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
-    var Image = await http.MultipartFile.fromPath("u_image", image.path);
-    var fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
+    var Image;
+    var fImage;
+    if(hImage.path.isNotEmpty){
+       fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
+    }
+    if(Image.path.isNotEmpty){
+      Image = await http.MultipartFile.fromPath("u_image", image.path);
+    }
 
     request.fields["name"] = name;
     request.fields["gender"] = gender;
@@ -152,9 +159,12 @@ class Services {
     request.fields["sub_cat_id"] = subCatId;
     request.fields["text"] = text;
     request.fields["birth_place"] = birthPlace;
-    request.files.add(Image);
-    request.files.add(fImage);
-
+    if(Image != null){
+      request.files.add(Image);
+    }
+    if(fImage != null) {
+      request.files.add(fImage);
+    }
 
 
     var response = await request.send();
@@ -378,8 +388,14 @@ class Services {
       String email, String phone, String catId, String subCatId, String place, String text, String birthPlace,
       File image, File hImage) async {
     var request = new http.MultipartRequest("POST", Uri.parse(nameList));
-    var fImage = await http.MultipartFile.fromPath("u_image", image.path);
-    var hImage = await http.MultipartFile.fromPath("h_image", image.path);
+    var Image;
+    var hImage;
+    if(hImage != null){
+      hImage = await http.MultipartFile.fromPath("h_image", hImage.path);
+    }
+    if(Image != null){
+      Image = await http.MultipartFile.fromPath("u_image", image.path);
+    }
 
     request.fields["flag"] = "edit_customer";
     request.fields["customer_id"] = cId;
@@ -395,10 +411,13 @@ class Services {
     request.fields["place"] = place;
     request.fields["text"] = text;
     request.fields["birth_place"] = birthPlace;
-    request.files.add(fImage);
-    request.files.add(hImage);
 
-
+    if(Image != null){
+      request.files.add(Image);
+    }
+    if(hImage != null) {
+      request.files.add(hImage);
+    }
 
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
@@ -433,6 +452,27 @@ class Services {
     } else {
       var data = jsonDecode(response.body);
       DeleteCustomerModel user = DeleteCustomerModel.fromJson(data);
+      return user;
+    }
+  }
+
+  static Future<ViewSlotModel> SlotView(String date) async {
+    final params = {
+      "flag": "slot_view",
+      "date": date
+    };
+
+    http.Response response = await http.post(Uri.parse(appointment), body: params);
+    print("SlotView ${params}");
+    print("SlotView ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      ViewSlotModel user = ViewSlotModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      ViewSlotModel user = ViewSlotModel.fromJson(data);
       return user;
     }
   }
