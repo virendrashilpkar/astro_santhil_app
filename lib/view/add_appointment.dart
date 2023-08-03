@@ -5,6 +5,7 @@ import 'package:astro_santhil_app/models/category_model.dart';
 import 'package:astro_santhil_app/models/sub_category_model.dart';
 import 'package:astro_santhil_app/networking/services.dart';
 import 'package:astro_santhil_app/view/home.dart';
+import 'package:astro_santhil_app/view/images.dart';
 import 'package:astro_santhil_app/view/menu.dart';
 import 'package:astro_santhil_app/view/slot_booking.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -16,12 +17,17 @@ import 'package:permission_handler/permission_handler.dart';
 class AddAppointment extends StatefulWidget {
   String name = "";
   String number = "";
-  AddAppointment(this.name, this.number);
+  File? image;
+  File? hImage;
+
+  AddAppointment(this.name, this.number, this.image, this.hImage);
+
   @override
   State<StatefulWidget> createState() => _AddAppointmentState();
 }
 
 class _AddAppointmentState extends State<AddAppointment> {
+
   List<String> gender = ["Male", "Female", "Other"];
   String selectedGender = "Male";
   List<String> categoryList = [
@@ -127,9 +133,9 @@ class _AddAppointmentState extends State<AddAppointment> {
     );
   }
 
-  _getFromGallery() async {
+  _getFromCamera() async {
     PickedFile? pickedFile = await ImagePicker().getImage(
-      source: ImageSource.gallery,
+      source: ImageSource.camera,
       maxWidth: 1800,
       maxHeight: 1800,
     );
@@ -140,9 +146,9 @@ class _AddAppointmentState extends State<AddAppointment> {
     }
   }
 
-  _getFromCamera() async {
+  _getFromGallery() async {
     PickedFile? pickedFile = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
       maxWidth: 1800,
       maxHeight: 1800,
     );
@@ -225,9 +231,11 @@ class _AddAppointmentState extends State<AddAppointment> {
   Future<void> addCustomer() async {
     File himage = horoscopeImage;
     File uimage = image;
+
     setState(() {
       clickLoad = true;
     });
+
     _addCustomerModel = await Services.customerAdd(
         userName.text,
         selectedGender,
@@ -303,8 +311,8 @@ class _AddAppointmentState extends State<AddAppointment> {
 
   @override
   void initState() {
-    // userName.text = widget.name;
-    // phoneNumber.text = widget.number;
+    image = widget.image!;
+    horoscopeImage = widget.hImage!;
     categoryMethod();
     getContactPermission();
     super.initState();

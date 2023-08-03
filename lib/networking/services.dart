@@ -141,10 +141,12 @@ class Services {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
     var Image;
     var fImage;
+    print("objectnjhgfxbc v $image");
+    print("objectnjhgfxbc v $hImage");
     if(hImage.path.isNotEmpty){
        fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
     }
-    if(Image.path.isNotEmpty){
+    if(image.path.isNotEmpty){
       Image = await http.MultipartFile.fromPath("u_image", image.path);
     }
 

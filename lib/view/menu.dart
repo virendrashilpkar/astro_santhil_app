@@ -3,6 +3,7 @@ import 'package:astro_santhil_app/view/add_appointment.dart';
 import 'package:astro_santhil_app/view/appointment.dart';
 import 'package:astro_santhil_app/view/category_managmet.dart';
 import 'package:astro_santhil_app/view/home.dart';
+import 'package:astro_santhil_app/view/images.dart';
 import 'package:astro_santhil_app/view/payments.dart';
 import 'package:astro_santhil_app/view/slot_booking.dart';
 import 'package:astro_santhil_app/view/view_customer.dart';
@@ -251,7 +252,7 @@ class _MenuState extends State<Menu> {
                   InkWell(
                     onTap: () {
                       onClick("Add Appointment");
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> AddAppointment("", ""),
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Images(),
                       ));
                     },
                     child: Container(
@@ -723,7 +724,7 @@ class _MenuState extends State<Menu> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 10.0),
                       margin: EdgeInsets.symmetric(horizontal: 20.0),
-                      decoration: tab.matchAsPrefix("Home") != null ? ShapeDecoration(
+                      decoration: tab.matchAsPrefix("log") != null ? ShapeDecoration(
                         gradient: LinearGradient(
                           end: Alignment(-1, 0),
                           begin: Alignment(1.00, 0.00),

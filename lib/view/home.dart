@@ -51,7 +51,6 @@ class _HomeState extends State<Home> {
     "Customer Managment"
   ];
   var navigate = [
-    AddAppointment("", ""),
     Appointment("today"),
     Appointment("today"),
     Appointment("pending"),
