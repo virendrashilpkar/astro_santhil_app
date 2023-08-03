@@ -11,6 +11,7 @@ import 'package:astro_santhil_app/models/category_model.dart';
 import 'package:astro_santhil_app/models/complete_appointment_model.dart';
 import 'package:astro_santhil_app/models/customer_detail_model.dart';
 import 'package:astro_santhil_app/models/customer_name_model.dart';
+import 'package:astro_santhil_app/models/dashboard.dart';
 import 'package:astro_santhil_app/models/delete_customer_model.dart';
 import 'package:astro_santhil_app/models/login_model.dart';
 import 'package:astro_santhil_app/models/payment_view_model.dart';
@@ -51,9 +52,9 @@ class Services {
 
   static Future<LoginModel> loginApi(String name, String pass) async {
     final params = {
-    "flag":"login",
-    "username":name,
-    "password":pass
+      "flag":"login",
+      "username":name,
+      "password":pass
     };
 
     http.Response response = await http.post(Uri.parse(login), body: params);
@@ -67,6 +68,25 @@ class Services {
     } else {
       var data = jsonDecode(response.body);
       LoginModel user = LoginModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<Dashboard> DashboardApi() async {
+    final params = {
+      "flag":"dashboard_count_view",
+    };
+
+    http.Response response = await http.post(Uri.parse(payment), body: params);
+    print("DashboardApi ${params}");
+    print("DashboardApi ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      Dashboard user = Dashboard.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      Dashboard user = Dashboard.fromJson(data);
       return user;
     }
   }
@@ -141,12 +161,10 @@ class Services {
     var request = new http.MultipartRequest("POST", Uri.parse(addCustomer));
     var Image;
     var fImage;
-    print("objectnjhgfxbc v $image");
-    print("objectnjhgfxbc v $hImage");
-    if(hImage.path.isNotEmpty){
-       fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
+    if(hImage!=null){
+      fImage = await http.MultipartFile.fromPath("h_image", hImage.path);
     }
-    if(image.path.isNotEmpty){
+    if(image!=null){
       Image = await http.MultipartFile.fromPath("u_image", image.path);
     }
 
@@ -205,7 +223,7 @@ class Services {
   }
 
   static Future<AddAppointmentModel> addAppointment(String cId, String date, String time, String msg, String fees,
-      String fessStatus) async {
+      String fessStatus,selectedSlot_id) async {
     final params = {
       "flag":"add_appointment",
       "c_id": cId,
@@ -214,6 +232,50 @@ class Services {
       "msg": msg,
       "fees": fees,
       "fees_status": fessStatus,
+      "slot_id":selectedSlot_id
+    };
+    http.Response response = await http.post(Uri.parse(appointment), body: params);
+    print("addAppointment ${params}");
+    print("addAppointment ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      AddAppointmentModel user = AddAppointmentModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      AddAppointmentModel user = AddAppointmentModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<AddAppointmentModel> addAppointment2(String date, String starttime, String endtime) async {
+    final params = {
+      "flag":"create_slot",
+      "date": date,
+      "from_time": starttime,
+      "to_time": endtime
+    };
+    http.Response response = await http.post(Uri.parse(appointment), body: params);
+    print("addAppointment ${params}");
+    print("addAppointment ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      AddAppointmentModel user = AddAppointmentModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      AddAppointmentModel user = AddAppointmentModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<AddAppointmentModel> EditAppointment2(String date, String starttime, String endtime,slot_id) async {
+    final params = {
+      "flag":"slot_edit",
+      "slot_id": slot_id,
+      "date": date,
+      "from_time": starttime,
+      "to_time": endtime
     };
     http.Response response = await http.post(Uri.parse(appointment), body: params);
     print("addAppointment ${params}");
@@ -444,6 +506,26 @@ class Services {
     };
 
     http.Response response = await http.post(Uri.parse(nameList), body: params);
+    print("customerDelete ${params}");
+    print("customerDelete ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      DeleteCustomerModel user = DeleteCustomerModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      DeleteCustomerModel user = DeleteCustomerModel.fromJson(data);
+      return user;
+    }
+  }
+  static Future<DeleteCustomerModel> SlotDelete(String id) async {
+    final params = {
+      "flag": "slot_delete",
+      "slot_id": id
+    };
+
+    http.Response response = await http.post(Uri.parse(appointment), body: params);
     print("customerDelete ${params}");
     print("customerDelete ${response.body}");
 
