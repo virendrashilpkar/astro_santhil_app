@@ -179,6 +179,8 @@ class _MyHomePageState extends State<NameDOB> {
   //     );
   // }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,6 +232,7 @@ class _MyHomePageState extends State<NameDOB> {
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
                 ),
                 child: TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   controller: firstName,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
@@ -261,6 +264,7 @@ class _MyHomePageState extends State<NameDOB> {
                 ),
                 child: TextFormField(
                   controller: lastName,
+                  textCapitalization: TextCapitalization.sentences,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
                     hintText: 'Surname',
@@ -337,7 +341,7 @@ class _MyHomePageState extends State<NameDOB> {
                 alignment: Alignment.center,
                 margin: const EdgeInsets.only(top: 14,bottom: 14,left: 28,right: 28),
                 child: Text(
-                  'This will appear on Shadi-App, and you will not be able to change it.',
+                  'This will appear on Shaadi-App, and you will not be able to change it.',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.6),
                     fontSize: 13,
@@ -383,7 +387,9 @@ class _MyHomePageState extends State<NameDOB> {
                             Toaster.show(context, "Pelase Enter surname");
                           }else if (intialdateval.text.isEmpty){
                             Toaster.show(context, "Pelase Enter Date of Birth");
-                          }else {
+                          }else if(!isDateValid(intialdateval.text)){
+                            Toaster.show(context, "Date of Birth is not valid");
+                          }else{
                             updateUser();
                           }
 
@@ -402,8 +408,35 @@ class _MyHomePageState extends State<NameDOB> {
         ),
       ),
     );
+
+
+
+  }
+  bool isDateValid(String input) {
+    final match = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})$').firstMatch(input);
+    if (match == null) {
+      return false; // Input doesn't match the expected format
+    }
+
+    try {
+      final day = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final year = int.parse(match.group(3)!);
+
+      if (day < 1 || day > 31 || month < 1 || month > 12) {
+        return false; // Invalid day or month
+      }
+
+      return true;
+    } catch (e) {
+      return false; // Date parsing failed
+    }
   }
 }
+
+
+
+
 
 class DateTextFormatter extends TextInputFormatter {
   static const _maxChars = 8;
@@ -467,4 +500,32 @@ class DateTextFormatter extends TextInputFormatter {
 
     return TextSelection.fromPosition(TextPosition(offset: selectionEnd));
   }
+
+
+  bool isDateValid(String input) {
+    final match = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})$').firstMatch(input);
+    if (match == null) {
+      return false; // Input doesn't match the expected format
+    }
+
+    try {
+      final day = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final year = int.parse(match.group(3)!);
+
+      if (day < 1 || day > 31) {
+        return false; // Invalid day
+      }
+
+      if (month < 1 || month > 12) {
+        return false; // Invalid month
+      }
+
+      return true;
+    } catch (e) {
+      return false; // Date parsing failed
+    }
+  }
+
+
 }

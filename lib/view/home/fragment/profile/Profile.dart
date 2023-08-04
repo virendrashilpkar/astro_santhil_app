@@ -54,6 +54,7 @@ class _MyHomePageState extends State<Profile> {
     }
   }
 
+
   Future<void> viewProfile() async {
     clickLoad = true;
     _preferences = await SharedPreferences.getInstance();
@@ -123,10 +124,11 @@ class _MyHomePageState extends State<Profile> {
 
 
 
-  Color getRandomColor() {
-    Random random = Random();
+  Color getRandomColor(int index) {
+    // Random random = Random();
 
-    return colorList[random.nextInt(5)];
+    // return colorList[random.nextInt(5)];
+    return colorList[index];
   }
 
 
@@ -193,6 +195,16 @@ class _MyHomePageState extends State<Profile> {
       Toaster.show(context, _updateImageModel.message.toString());
     }
   }
+
+  int selectpack=100;
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -645,19 +657,28 @@ class _MyHomePageState extends State<Profile> {
                             " ${_viewProfileModel.data![0].lastName![0].toUpperCase()+_viewProfileModel.data![0].lastName!.substring(1)}",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
                       ),
                     ),
-                    new SizedBox(width: 5,),
-                    SizedBox(
+                   if(_viewProfileModel.data![0].isVerified == true) new SizedBox(width: 5,),
+                    if(_viewProfileModel.data![0].isVerified == true)  SizedBox(
                       height: 15,
                       width: 15,
-                      child: _viewProfileModel.data![0].isVerified == true ? Center(
-                          child: Image.asset("assets/blue_tick.png",height: 15,width: 15)):Container(),
+                      child: Center(
+                          child: Image.asset("assets/blue_tick.png",height: 15,width: 15)),
                     )
                   ],
                 ),
                 new SizedBox(height: 5,),
                 new Container(
-                  child: Text("${_viewProfileModel.data![0].city}, ${_viewProfileModel.data![0].state}, ${_viewProfileModel.data![0].country}",
-                    style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                     if(_viewProfileModel.data![0].city!="null") Text("${_viewProfileModel.data![0].city}, ",
+                        style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
+                     if(_viewProfileModel.data![0].state!="null") Text("${_viewProfileModel.data![0].state}, ",
+                        style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
+                     if(_viewProfileModel.data![0].country!="null") Text("${_viewProfileModel.data![0].country}",
+                        style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 14,color:Colors.white.withOpacity(0.6)),),
+                    ],
+                  ),
                 ),
                 new SizedBox(height: 15,),
                 Container(
@@ -704,7 +725,7 @@ class _MyHomePageState extends State<Profile> {
                 ),
                 new SizedBox(height: 18,),
                 if(packagetittle.length >= parcasepackage) new Container(
-                  child: Text("You have Premium membership",style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color:Colors.white),),
+                  child: Text("You have membership",style: new TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color:Colors.white),),
                 ),
                 if(packagetittle.length >= parcasepackage) new Container(
                   margin: const EdgeInsets.symmetric(horizontal: 50),
@@ -796,23 +817,24 @@ class _MyHomePageState extends State<Profile> {
                             return index!=parcasepackage ? InkWell(
                               onTap: (){
                                 setState(() {
+                                  selectpack=index;
                                   // parcasepackage=index;
                                   // currentIndex=index;
-                                  if(_list[index].name=="BASIC"){
-                                    Navigator.of(context).pushNamed("FreeSub");
-                                  }else if(_list[index].name=="Premium"){
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => PremiumSub(_list[index].name.toString(),
-                                        _list[index].price!.toInt(), _list[index].feauture!.toList())));
-                                  }else if(_list[index].name=="Gold"){
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => GoldSub(_list[index].name.toString(),
-                                            _list[index].price!.toInt(), _list[index].feauture!.toList())));
-                                  }else if(_list[index].name=="Vip"){
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => VIPSub(_list[index].name.toString(),
-                                            _list[index].price!.toInt(), _list[index].feauture!.toList())));
-                                  }
+                                  // if(_list[index].name=="BASIC"){
+                                  //   Navigator.of(context).pushNamed("FreeSub");
+                                  // }else if(_list[index].name=="Premium"){
+                                  //   Navigator.of(context).push(MaterialPageRoute(
+                                  //       builder: (context) => PremiumSub(_list[index].name.toString(),
+                                  //       _list[index].price!.toInt(), _list[index].feauture!.toList())));
+                                  // }else if(_list[index].name=="Gold"){
+                                  //   Navigator.of(context).push(MaterialPageRoute(
+                                  //       builder: (context) => GoldSub(_list[index].name.toString(),
+                                  //           _list[index].price!.toInt(), _list[index].feauture!.toList())));
+                                  // }else if(_list[index].name=="Vip"){
+                                  //   Navigator.of(context).push(MaterialPageRoute(
+                                  //       builder: (context) => VIPSub(_list[index].name.toString(),
+                                  //           _list[index].price!.toInt(), _list[index].feauture!.toList())));
+                                  // }
                                 });
                               },
                               child: new Container(
@@ -822,12 +844,16 @@ class _MyHomePageState extends State<Profile> {
                                   alignment: Alignment.center,
                                   children: [
                                     Positioned(
-                                      bottom: 10,
+                                      bottom: 15,
                                       child: Container(
                                         width: MediaQuery.of(context).size.width/3.5,
                                         height: MediaQuery.of(context).size.width/2-50,
                                         decoration: BoxDecoration(
-                                          color:getRandomColor(),
+                                          color:getRandomColor(index),
+                                          border: Border.all(
+                                            color: Colors.white, // Border color
+                                            width: selectpack==index ? 2.0:0.0,          // Border width
+                                          ),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(17.0) //                 <--- border radius here
                                           ),
@@ -852,7 +878,8 @@ class _MyHomePageState extends State<Profile> {
                                     Positioned(
                                       bottom: 0,
                                       child: Container(
-                                          margin: const EdgeInsets.only(right: 5,top:5),
+                                        height:30,
+                                          // margin: const EdgeInsets.only(right: 5,top:5),
                                           decoration: BoxDecoration(
                                             color: CommonColors.red,
                                             borderRadius: BorderRadius.circular(5),
@@ -1067,7 +1094,7 @@ class _MyHomePageState extends State<Profile> {
                 //   ),
                 // ),
                 new SizedBox(height: 15,),
-                Container(
+               if(_list.isNotEmpty) Container(
                   height: 50,
                   margin: const EdgeInsets.only(right: 50,left: 50),
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -1092,581 +1119,216 @@ class _MyHomePageState extends State<Profile> {
                         child: Material(
                           type: MaterialType.transparency,
                           child: InkWell(onTap: () {
-                              // showModalBottomSheet<int>(
-                              //   backgroundColor: Colors.transparent,
-                              //   context: context,
-                              //   builder: (context) {
-                              //     return Container(
-                              //         height: MediaQuery.of(context).size.height/2,
-                              //         color: Colors.transparent,
-                              //         child: Stack(
-                              //           children: [
-                              //             Positioned(
-                              //               top:60,
-                              //               bottom: 0,
-                              //               right: 0,
-                              //               left: 0,
-                              //               child: new Container(
-                              //                 decoration: BoxDecoration(
-                              //                     color:Colors.white,
-                              //                     // border: Border.all(width: 1,color: Colors.black),
-                              //                     borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
-                              //                 ),
-                              //                 padding:const EdgeInsets.all(15),
-                              //                 child: Column(
-                              //                   children: [
-                              //                     InkWell(
-                              //                       onTap:(){
-                              //                         Navigator.of(context).pop();
-                              //                       },
-                              //                       child: new Container(
-                              //                         alignment: Alignment.centerRight,
-                              //                         child: SizedBox(
-                              //                           height: 32,
-                              //                           width: 32,
-                              //                           child: Container(
-                              //                               decoration: BoxDecoration(
-                              //                                 color: CommonColors.blue,
-                              //                                   // border: Border.all(width: 1,color: Colors.black),
-                              //                                   borderRadius: BorderRadius.circular(16)
-                              //                               ),
-                              //                               padding: const EdgeInsets.all(10),
-                              //                               child: Image.asset("assets/home_close.png",color: Colors.white,)),),
-                              //                       ),
-                              //                     ),
-                              //                     new SizedBox(height:50),
-                              //                     new Container(
-                              //                         height:156,
-                              //                         width: MediaQuery.of(context).size.width,
-                              //                         child: new Row(
-                              //                       children: [
-                              //                         Expanded(
-                              //                           child: ListView.builder(
-                              //                             physics: const AlwaysScrollableScrollPhysics(),
-                              //                             shrinkWrap: true,
-                              //                             itemCount: bottom_packageLike.length,
-                              //                             scrollDirection: Axis.horizontal,
-                              //                             controller: _scrollController,
-                              //                             itemBuilder: (ctx,index){
-                              //                               return  InkWell(
-                              //                                 onTap: (){
-                              //                                   setState(() {
-                              //                                     // parcasepackage=index;
-                              //                                     // currentIndex=index;
-                              //                                   });
-                              //                                 },
-                              //                                 child: Container(
-                              //                                   width:MediaQuery.of(context).size.width/3-40,
-                              //                                   height: MediaQuery.of(context).size.width/3,
-                              //                                   decoration: BoxDecoration(
-                              //                                     border: Border.all(width: 1,color: CommonColors.blue),
-                              //                                     borderRadius: BorderRadius.all(
-                              //                                         Radius.circular(10.0) //                 <--- border radius here
-                              //                                     ),
-                              //                                   ),
-                              //                                   child: Column(
-                              //                                     mainAxisAlignment: MainAxisAlignment.center,
-                              //                                     crossAxisAlignment: CrossAxisAlignment.center,
-                              //                                     children: [
-                              //
-                              //                                       new Container(
-                              //                                         child: Text("${bottom_packageLike[index]}",style: new TextStyle(color: Colors.black.withOpacity(0.7),fontSize: 40,fontWeight: FontWeight.w700),),
-                              //                                       ),
-                              //                                       new Container(
-                              //                                         child: Text("Super Like",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w700),),
-                              //                                       ),
-                              //                                       new Container(
-                              //                                         child: Column(
-                              //                                           children: [
-                              //                                             new Container(
-                              //                                               height: 1,
-                              //                                               width: double.infinity,
-                              //                                               color: CommonColors.blue,
-                              //                                             ),
-                              //                                             new Container(
-                              //                                               child: Text("Save ${bottom_packagediscount[index]}%",style: new TextStyle(color: Colors.black.withOpacity(0.6),fontSize: 16,fontWeight: FontWeight.w600),),
-                              //                                             ),
-                              //                                             new Container(
-                              //                                               child: Text("${bottom_packageeach[index]}",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w400),),
-                              //                                             ),
-                              //
-                              //                                           ],
-                              //                                         ),
-                              //                                       )
-                              //                                     ],
-                              //                                   ),
-                              //                                 ),
-                              //                               );
-                              //                             },
-                              //                           ),
-                              //                         )
-                              //                       ],
-                              //                     )
-                              //                     ),
-                              //                     new Container(
-                              //                       child: Text("${bottom_packageLike[]}",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w700),),
-                              //                     ),
-                              //                    ],
-                              //                 ),
-                              //               ),
-                              //             )
-                              //           ],
-                              //         )
-                              //       );
-                              //   },
-                              // );
 
+                            if(selectpack!=100) {
+                              // if (_list[selectpack].name == "BASIC") {
+                              //   Navigator.of(context).pushNamed("FreeSub");
+                              // } else if (_list[selectpack].name == "Premium") {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        PremiumSub(
+                                            getRandomColor(selectpack),
+                                            _list[selectpack].id.toString(),
+                                            _list[selectpack].name.toString(),
+                                            "${_preferences.getString(ShadiApp.userId).toString()}",
+                                            "${_list[selectpack].name}",
+                                            _list[selectpack].price!.toInt(),
+                                            _list[selectpack].feauture!.toList())));
+                              // } else if (_list[selectpack].name == "Gold") {
+                              //   Navigator.of(context).push(MaterialPageRoute(
+                              //       builder: (context) =>
+                              //           GoldSub(_list[selectpack].name.toString(),
+                              //               _list[selectpack].price!.toInt(),
+                              //               _list[selectpack].feauture!.toList())));
+                              // } else if (_list[selectpack].name == "Vip") {
+                              //   Navigator.of(context).push(MaterialPageRoute(
+                              //       builder: (context) =>
+                              //           VIPSub(_list[selectpack].name.toString(),
+                              //               _list[selectpack].price!.toInt(),
+                              //               _list[selectpack].feauture!.toList())));
+                              // }
+                            }else{
 
-                            showModalBottomSheet(
-                              context: context,
-                              elevation: 10,
-                              backgroundColor: Colors.transparent,
-                              builder: (BuildContext context) {
-                                return BottomSheet(
-                                  backgroundColor: Colors.transparent,
-                                  onClosing: () {},
-                                  builder: (BuildContext context) {
-                                    int selectindex = 1;
-                                    return StatefulBuilder(
-                                      builder: (BuildContext context, setState) => Container(
-                                          height: MediaQuery.of(context).size.height/1.3,
-                                          width: MediaQuery.of(context).size.width,
-                                          color: Colors.transparent,
-                                          child: Stack(
-                                            alignment: Alignment.topCenter,
-                                            children: [
-                                              Positioned(
-                                                top:60,
-                                                bottom: 0,
-                                                right: 0,
-                                                left: 0,
-                                                child: new Container(
-                                                  decoration: BoxDecoration(
-                                                    color:Colors.white,
-                                                    // border: Border.all(width: 1,color: Colors.black),
-                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
-                                                  ),
-                                                  padding:const EdgeInsets.all(15),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      InkWell(
-                                                        onTap:(){
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        child: new Container(
-                                                          alignment: Alignment.centerRight,
-                                                          child: SizedBox(
-                                                            height: 32,
-                                                            width: 32,
-                                                            child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    color: CommonColors.blue,
-                                                                    // border: Border.all(width: 1,color: Colors.black),
-                                                                    borderRadius: BorderRadius.circular(16)
-                                                                ),
-                                                                padding: const EdgeInsets.all(10),
-                                                                child: Image.asset("assets/home_close.png",color: Colors.white,)),),
-                                                        ),
-                                                      ),
-                                                      new SizedBox(height:30),
-                                                      new Container(
-                                                          height:156,
-                                                          width: MediaQuery.of(context).size.width,
-                                                          child: new Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              ListView.builder(
-                                                                physics: const AlwaysScrollableScrollPhysics(),
-                                                                shrinkWrap: true,
-                                                                itemCount: bottom_packageLike.length,
-                                                                scrollDirection: Axis.horizontal,
-                                                                itemBuilder: (ctx,index){
-                                                                  return  InkWell(
-                                                                    onTap: (){
-                                                                      setState(() {
-                                                                        selectindex=index;
-                                                                      });
-                                                                    },
-                                                                    child: Container(
-                                                                      width:MediaQuery.of(context).size.width/3-30,
-                                                                      height: MediaQuery.of(context).size.width/3,
-                                                                      decoration: BoxDecoration(
-                                                                        color: selectindex==index ? Color(0xffC9DEFF):Colors.transparent,
-                                                                        border: Border.all(width: selectindex==index ? 0:1,color: selectindex==index ? Colors.transparent:CommonColors.blue),
-                                                                        borderRadius: BorderRadius.all(
-                                                                            Radius.circular(10.0) //                 <--- border radius here
-                                                                        ),
-                                                                      ),
-                                                                      child: Column(
-                                                                        // mainAxisAlignment: MainAxisAlignment.center,
-                                                                        // crossAxisAlignment: CrossAxisAlignment.center,
-                                                                        children: [
-
-
-                                                                          new Expanded(
-                                                                              flex:3,
-                                                                              child: Container(child: Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                children: [
-                                                                                  new Container(
-                                                                                    child: Text("${bottom_packageLike[index]}",style: new TextStyle(color: Colors.black.withOpacity(0.7),fontSize: 40,fontWeight: FontWeight.w700),),
-                                                                                  ),
-                                                                                  new Container(
-                                                                                    child: Text("Super Like",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w700),),
-                                                                                  ),
-                                                                                ],
-                                                                              ),)),
-                                                                          if(selectindex!=index) new Container(
-                                                                            height: 1,
-                                                                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                                                                            width: double.infinity,
-                                                                            color: CommonColors.blue,
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:2,
-                                                                            child: new Container(
-                                                                              width:double.infinity,
-                                                                              decoration: BoxDecoration(
-                                                                                  color: selectindex==index ? CommonColors.blue:Colors.transparent,
-                                                                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0),bottomRight: Radius.circular(10.0))
-                                                                              ),
-                                                                              child: Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                children: [
-
-                                                                                  if(bottom_packagediscount[index].isNotEmpty) new Container(
-                                                                                    child: Text("Save ${bottom_packagediscount[index]}%",style: new TextStyle(color: selectindex==index ? Colors.white:Colors.black.withOpacity(0.6),fontSize: 16,fontWeight: FontWeight.w600),),
-                                                                                  ),
-                                                                                  new Container(
-                                                                                    child: Text("${bottom_packageeach[index]}",style: new TextStyle(color:selectindex==index ? Colors.white.withOpacity(0.8): Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w400),),
-                                                                                  ),
-
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ],
-                                                          )
-                                                      ),
-                                                      new SizedBox(height:30),
-                                                      new Container(
-                                                        child: Text("${bottom_packageLike[selectindex]} Super Like for ${bottom_packageeach[selectindex]}",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 20,fontWeight: FontWeight.w600),),
-                                                      ),
-                                                      new SizedBox(height:30),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                  child:  Container(
-                                                    height:117,
-                                                    width: 117,
-                                                    child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(90.0),
-                                                        child: Container(
-                                                            height:117,
-                                                            width: 117,
-                                                            color:Colors.blue,
-                                                            child: Image.asset("assets/star_image.png")
-                                                        )
-
-
-                                                    ),
-                                                  )
-                                              )
-                                            ],
-                                          )
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-
+                              Toaster.show(context, "Select package");
+                            }
 
                             // showModalBottomSheet(
-                            //     context: context,
-                            //     backgroundColor: Colors.transparent,
-                            //     elevation: 10,
-                            //     shape: RoundedRectangleBorder(
-                            //       borderRadius: BorderRadius.circular(10.0),
-                            //     ),
-                            //     builder: (BuildContext context) {
-                            //       return BottomSheet(
-                            //           backgroundColor: Colors.transparent,
-                            //           shape: RoundedRectangleBorder(
-                            //             borderRadius: BorderRadius.circular(10.0),
-                            //           ),
-                            //           onClosing: () {},
-                            //           builder: (BuildContext context) {
-                            //             return StatefulBuilder(
-                            //               builder: (BuildContext context, StateSetter setState) {
-                            //                 int selectindex = 1;
-                            //
-                            //                 return Container(
-                            //                     height: MediaQuery
-                            //                         .of(context)
-                            //                         .size
-                            //                         .height,
-                            //                     width: MediaQuery
-                            //                         .of(context)
-                            //                         .size
-                            //                         .width,
-                            //                     color: Colors.transparent,
-                            //                     child: Stack(
-                            //                       alignment: Alignment.topCenter,
-                            //                       children: [
-                            //                         Positioned(
-                            //                           top: 60,
-                            //                           bottom: 0,
-                            //                           right: 0,
-                            //                           left: 0,
-                            //                           child: new Container(
-                            //                             decoration: BoxDecoration(
-                            //                               color: Colors.white,
-                            //                               // border: Border.all(width: 1,color: Colors.black),
-                            //                               borderRadius: BorderRadius.only(
-                            //                                   topLeft: Radius.circular(10),
-                            //                                   topRight: Radius.circular(10)),
-                            //                             ),
-                            //                             padding: const EdgeInsets.all(15),
-                            //                             child: Column(
-                            //                               mainAxisAlignment: MainAxisAlignment.center,
-                            //                               children: [
-                            //                                 InkWell(
-                            //                                   onTap: () {
-                            //                                     Navigator.of(context).pop();
-                            //                                   },
-                            //                                   child: new Container(
-                            //                                     alignment: Alignment.centerRight,
-                            //                                     child: SizedBox(
-                            //                                       height: 32,
-                            //                                       width: 32,
-                            //                                       child: Container(
-                            //                                           decoration: BoxDecoration(
-                            //                                               color: CommonColors.blue,
-                            //                                               // border: Border.all(width: 1,color: Colors.black),
-                            //                                               borderRadius: BorderRadius.circular(16)
-                            //                                           ),
-                            //                                           padding: const EdgeInsets.all(10),
-                            //                                           child: Image.asset("assets/home_close.png",
-                            //                                             color: Colors.white,)),),
-                            //                                   ),
-                            //                                 ),
-                            //                                 new SizedBox(height: 30),
-                            //                                 new Container(
-                            //                                     height: 156,
-                            //                                     width: MediaQuery
-                            //                                         .of(context)
-                            //                                         .size
-                            //                                         .width,
-                            //                                     child: new Row(
-                            //                                       mainAxisAlignment: MainAxisAlignment.center,
-                            //                                       crossAxisAlignment: CrossAxisAlignment.center,
-                            //                                       children: [
-                            //                                         ListView.builder(
-                            //                                           physics: const AlwaysScrollableScrollPhysics(),
-                            //                                           shrinkWrap: true,
-                            //                                           itemCount: bottom_packageLike.length,
-                            //                                           scrollDirection: Axis.horizontal,
-                            //                                           itemBuilder: (ctx, index) {
-                            //                                             return InkWell(
-                            //                                               onTap: () {
-                            //                                                 setState(() {
-                            //                                                   selectindex = index;
-                            //                                                   print(index);
-                            //                                                 });
-                            //                                               },
-                            //                                               child: Container(
-                            //                                                 width: MediaQuery
-                            //                                                     .of(context)
-                            //                                                     .size
-                            //                                                     .width / 3 - 40,
-                            //                                                 height: MediaQuery
-                            //                                                     .of(context)
-                            //                                                     .size
-                            //                                                     .width / 3,
-                            //                                                 decoration: BoxDecoration(
-                            //                                                   color: selectindex == index ? Color(
-                            //                                                       0xffC9DEFF) : Colors
-                            //                                                       .transparent,
-                            //                                                   border: Border.all(
-                            //                                                       width: selectindex == index
-                            //                                                           ? 0
-                            //                                                           : 1,
-                            //                                                       color: selectindex == index
-                            //                                                           ? Colors.transparent
-                            //                                                           : CommonColors.blue),
-                            //                                                   borderRadius: BorderRadius.all(
-                            //                                                       Radius.circular(
-                            //                                                           10.0) //                 <--- border radius here
-                            //                                                   ),
-                            //                                                 ),
-                            //                                                 child: Column(
-                            //                                                   // mainAxisAlignment: MainAxisAlignment.center,
-                            //                                                   // crossAxisAlignment: CrossAxisAlignment.center,
-                            //                                                   children: [
-                            //
-                            //
-                            //                                                     new Expanded(
-                            //                                                         flex: 3,
-                            //                                                         child: Container(
-                            //                                                           child: Column(
-                            //                                                             mainAxisAlignment: MainAxisAlignment
-                            //                                                                 .center,
-                            //                                                             crossAxisAlignment: CrossAxisAlignment
-                            //                                                                 .center,
-                            //                                                             children: [
-                            //                                                               new Container(
-                            //                                                                 child: Text(
-                            //                                                                   "${bottom_packageLike[index]}",
-                            //                                                                   style: new TextStyle(
-                            //                                                                       color: Colors
-                            //                                                                           .black
-                            //                                                                           .withOpacity(
-                            //                                                                           0.7),
-                            //                                                                       fontSize: 40,
-                            //                                                                       fontWeight: FontWeight
-                            //                                                                           .w700),),
-                            //                                                               ),
-                            //                                                               new Container(
-                            //                                                                 child: Text(
-                            //                                                                   "Super Like",
-                            //                                                                   style: new TextStyle(
-                            //                                                                       color: Colors
-                            //                                                                           .black
-                            //                                                                           .withOpacity(
-                            //                                                                           0.5),
-                            //                                                                       fontSize: 14,
-                            //                                                                       fontWeight: FontWeight
-                            //                                                                           .w700),),
-                            //                                                               ),
-                            //                                                             ],
-                            //                                                           ),)),
-                            //                                                     if(selectindex !=
-                            //                                                         index) new Container(
-                            //                                                       height: 1,
-                            //                                                       margin: const EdgeInsets
-                            //                                                           .symmetric(horizontal: 10),
-                            //                                                       width: double.infinity,
-                            //                                                       color: CommonColors.blue,
-                            //                                                     ),
-                            //                                                     Expanded(
-                            //                                                       flex: 2,
-                            //                                                       child: new Container(
-                            //                                                         width: double.infinity,
-                            //                                                         decoration: BoxDecoration(
-                            //                                                             color: selectindex ==
-                            //                                                                 index ? CommonColors
-                            //                                                                 .blue : Colors
-                            //                                                                 .transparent,
-                            //                                                             borderRadius: BorderRadius
-                            //                                                                 .only(
-                            //                                                                 bottomLeft: Radius
-                            //                                                                     .circular(10.0),
-                            //                                                                 bottomRight: Radius
-                            //                                                                     .circular(10.0))
-                            //                                                         ),
-                            //                                                         child: Column(
-                            //                                                           mainAxisAlignment: MainAxisAlignment
-                            //                                                               .center,
-                            //                                                           crossAxisAlignment: CrossAxisAlignment
-                            //                                                               .center,
-                            //                                                           children: [
-                            //
-                            //                                                             if(bottom_packagediscount[index]
-                            //                                                                 .isNotEmpty) new Container(
-                            //                                                               child: Text(
-                            //                                                                 "Save ${bottom_packagediscount[index]}%",
-                            //                                                                 style: new TextStyle(
-                            //                                                                     color: Colors
-                            //                                                                         .black
-                            //                                                                         .withOpacity(
-                            //                                                                         0.6),
-                            //                                                                     fontSize: 16,
-                            //                                                                     fontWeight: FontWeight
-                            //                                                                         .w600),),
-                            //                                                             ),
-                            //                                                             new Container(
-                            //                                                               child: Text(
-                            //                                                                 "${bottom_packageeach[index]}",
-                            //                                                                 style: new TextStyle(
-                            //                                                                     color: Colors
-                            //                                                                         .black
-                            //                                                                         .withOpacity(
-                            //                                                                         0.5),
-                            //                                                                     fontSize: 14,
-                            //                                                                     fontWeight: FontWeight
-                            //                                                                         .w400),),
-                            //                                                             ),
-                            //
-                            //                                                           ],
-                            //                                                         ),
-                            //                                                       ),
-                            //                                                     )
-                            //                                                   ],
-                            //                                                 ),
-                            //                                               ),
-                            //                                             );
-                            //                                           },
-                            //                                         ),
-                            //                                       ],
-                            //                                     )
-                            //                                 ),
-                            //                                 new SizedBox(height: 30),
-                            //                                 new Container(
-                            //                                   child: Text(
-                            //                                     "${bottom_packageLike[selectindex]} Super Like for ${bottom_packageeach[selectindex]}",
-                            //                                     style: new TextStyle(
-                            //                                         color: Colors.black.withOpacity(0.5),
-                            //                                         fontSize: 20,
-                            //                                         fontWeight: FontWeight.w600),),
-                            //                                 ),
-                            //                                 new SizedBox(height: 30),
-                            //                               ],
+                            //   context: context,
+                            //   elevation: 10,
+                            //   backgroundColor: Colors.transparent,
+                            //   builder: (BuildContext context) {
+                            //     return BottomSheet(
+                            //       backgroundColor: Colors.transparent,
+                            //       onClosing: () {},
+                            //       builder: (BuildContext context) {
+                            //         int selectindex = 1;
+                            //         return StatefulBuilder(
+                            //           builder: (BuildContext context, setState) => Container(
+                            //               height: MediaQuery.of(context).size.height/1.3,
+                            //               width: MediaQuery.of(context).size.width,
+                            //               color: Colors.transparent,
+                            //               child: Stack(
+                            //                 alignment: Alignment.topCenter,
+                            //                 children: [
+                            //                   Positioned(
+                            //                     top:60,
+                            //                     bottom: 0,
+                            //                     right: 0,
+                            //                     left: 0,
+                            //                     child: new Container(
+                            //                       decoration: BoxDecoration(
+                            //                         color:Colors.white,
+                            //                         // border: Border.all(width: 1,color: Colors.black),
+                            //                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
+                            //                       ),
+                            //                       padding:const EdgeInsets.all(15),
+                            //                       child: Column(
+                            //                         mainAxisAlignment: MainAxisAlignment.center,
+                            //                         children: [
+                            //                           InkWell(
+                            //                             onTap:(){
+                            //                               Navigator.of(context).pop();
+                            //                             },
+                            //                             child: new Container(
+                            //                               alignment: Alignment.centerRight,
+                            //                               child: SizedBox(
+                            //                                 height: 32,
+                            //                                 width: 32,
+                            //                                 child: Container(
+                            //                                     decoration: BoxDecoration(
+                            //                                         color: CommonColors.blue,
+                            //                                         // border: Border.all(width: 1,color: Colors.black),
+                            //                                         borderRadius: BorderRadius.circular(16)
+                            //                                     ),
+                            //                                     padding: const EdgeInsets.all(10),
+                            //                                     child: Image.asset("assets/home_close.png",color: Colors.white,)),),
                             //                             ),
                             //                           ),
-                            //                         ),
-                            //                         Positioned(
+                            //                           new SizedBox(height:30),
+                            //                           new Container(
+                            //                               height:156,
+                            //                               width: MediaQuery.of(context).size.width,
+                            //                               child: new Row(
+                            //                                 mainAxisAlignment: MainAxisAlignment.center,
+                            //                                 crossAxisAlignment: CrossAxisAlignment.center,
+                            //                                 children: [
+                            //                                   ListView.builder(
+                            //                                     physics: const AlwaysScrollableScrollPhysics(),
+                            //                                     shrinkWrap: true,
+                            //                                     itemCount: bottom_packageLike.length,
+                            //                                     scrollDirection: Axis.horizontal,
+                            //                                     itemBuilder: (ctx,index){
+                            //                                       return  InkWell(
+                            //                                         onTap: (){
+                            //                                           setState(() {
+                            //                                             selectindex=index;
+                            //                                           });
+                            //                                         },
+                            //                                         child: Container(
+                            //                                           width:MediaQuery.of(context).size.width/3-30,
+                            //                                           height: MediaQuery.of(context).size.width/3,
+                            //                                           decoration: BoxDecoration(
+                            //                                             color: selectindex==index ? Color(0xffC9DEFF):Colors.transparent,
+                            //                                             border: Border.all(width: selectindex==index ? 0:1,color: selectindex==index ? Colors.transparent:CommonColors.blue),
+                            //                                             borderRadius: BorderRadius.all(
+                            //                                                 Radius.circular(10.0) //                 <--- border radius here
+                            //                                             ),
+                            //                                           ),
+                            //                                           child: Column(
+                            //                                             // mainAxisAlignment: MainAxisAlignment.center,
+                            //                                             // crossAxisAlignment: CrossAxisAlignment.center,
+                            //                                             children: [
+                            //
+                            //
+                            //                                               new Expanded(
+                            //                                                   flex:3,
+                            //                                                   child: Container(child: Column(
+                            //                                                     mainAxisAlignment: MainAxisAlignment.center,
+                            //                                                     crossAxisAlignment: CrossAxisAlignment.center,
+                            //                                                     children: [
+                            //                                                       new Container(
+                            //                                                         child: Text("${bottom_packageLike[index]}",style: new TextStyle(color: Colors.black.withOpacity(0.7),fontSize: 40,fontWeight: FontWeight.w700),),
+                            //                                                       ),
+                            //                                                       new Container(
+                            //                                                         child: Text("Super Like",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w700),),
+                            //                                                       ),
+                            //                                                     ],
+                            //                                                   ),)),
+                            //                                               if(selectindex!=index) new Container(
+                            //                                                 height: 1,
+                            //                                                 margin: const EdgeInsets.symmetric(horizontal: 10),
+                            //                                                 width: double.infinity,
+                            //                                                 color: CommonColors.blue,
+                            //                                               ),
+                            //                                               Expanded(
+                            //                                                 flex:2,
+                            //                                                 child: new Container(
+                            //                                                   width:double.infinity,
+                            //                                                   decoration: BoxDecoration(
+                            //                                                       color: selectindex==index ? CommonColors.blue:Colors.transparent,
+                            //                                                       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0),bottomRight: Radius.circular(10.0))
+                            //                                                   ),
+                            //                                                   child: Column(
+                            //                                                     mainAxisAlignment: MainAxisAlignment.center,
+                            //                                                     crossAxisAlignment: CrossAxisAlignment.center,
+                            //                                                     children: [
+                            //
+                            //                                                       if(bottom_packagediscount[index].isNotEmpty) new Container(
+                            //                                                         child: Text("Save ${bottom_packagediscount[index]}%",style: new TextStyle(color: selectindex==index ? Colors.white:Colors.black.withOpacity(0.6),fontSize: 16,fontWeight: FontWeight.w600),),
+                            //                                                       ),
+                            //                                                       new Container(
+                            //                                                         child: Text("${bottom_packageeach[index]}",style: new TextStyle(color:selectindex==index ? Colors.white.withOpacity(0.8): Colors.black.withOpacity(0.5),fontSize: 14,fontWeight: FontWeight.w400),),
+                            //                                                       ),
+                            //
+                            //                                                     ],
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               )
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       );
+                            //                                     },
+                            //                                   ),
+                            //                                 ],
+                            //                               )
+                            //                           ),
+                            //                           new SizedBox(height:30),
+                            //                           new Container(
+                            //                             child: Text("${bottom_packageLike[selectindex]} Super Like for ${bottom_packageeach[selectindex]}",style: new TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 20,fontWeight: FontWeight.w600),),
+                            //                           ),
+                            //                           new SizedBox(height:30),
+                            //                         ],
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                   Positioned(
+                            //                       child:  Container(
+                            //                         height:117,
+                            //                         width: 117,
+                            //                         child: ClipRRect(
+                            //                             borderRadius: BorderRadius.circular(90.0),
                             //                             child: Container(
-                            //                               height: 117,
-                            //                               width: 117,
-                            //                               child: ClipRRect(
-                            //                                   borderRadius: BorderRadius.circular(90.0),
-                            //                                   child: Container(
-                            //                                       height: 117,
-                            //                                       width: 117,
-                            //                                       color: Colors.blue,
-                            //                                       child: Image.asset("assets/star_image.png")
-                            //                                   )
-                            //
-                            //
-                            //                               ),
+                            //                                 height:117,
+                            //                                 width: 117,
+                            //                                 color:Colors.blue,
+                            //                                 child: Image.asset("assets/star_image.png")
                             //                             )
-                            //                         )
-                            //                       ],
-                            //                     )
-                            //                 );
-                            //               },
-                            //             );
-                            //         }
-                            //       );
-                            //     },
-                            //   );
+                            //
+                            //
+                            //                         ),
+                            //                       )
+                            //                   )
+                            //                 ],
+                            //               )
+                            //           ),
+                            //         );
+                            //       },
+                            //     );
+                            //   },
+                            // );
 
 
-
-                            // Navigator.of(context).pushNamed('MatchPro');
                           },splashColor: Colors.blue.withOpacity(0.2),
                             customBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),

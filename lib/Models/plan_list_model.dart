@@ -33,7 +33,7 @@ class PlanListModel {
 }
 
 class planDatum {
-  Id? id;
+  String? id;
   String? name;
   int? price;
   String? validity;
@@ -64,7 +64,7 @@ class planDatum {
   });
 
   factory planDatum.fromJson(Map<String, dynamic> json) => planDatum(
-    id: idValues.map[json["_id"]]!,
+    id: json["_id"],
     name: json["name"],
     price: json["price"],
     validity: json["validity"],
@@ -80,7 +80,7 @@ class planDatum {
   );
 
   Map<String, dynamic> toJson() => {
-    "_id": idValues.reverse[id],
+    "_id": id,
     "name": name,
     "price": price,
     "validity": validity,
@@ -99,7 +99,7 @@ class planDatum {
 class Feauture {
   String? id;
   String? feature;
-  Id? planId;
+  String? planId;
 
   Feauture({
     this.id,
@@ -110,32 +110,14 @@ class Feauture {
   factory Feauture.fromJson(Map<String, dynamic> json) => Feauture(
     id: json["_id"],
     feature: json["feature"],
-    planId: idValues.map[json["planId"]]!,
+    planId: json["planId"],
   );
 
   Map<String, dynamic> toJson() => {
     "_id": id,
     "feature": feature,
-    "planId": idValues.reverse[planId],
+    "planId": planId,
   };
 }
 
-enum Id { THE_641_AF90_D6_EDD96_E78793_D26_C, THE_641_C5_A0_DFD268_F15411458_ED, THE_64535_C74_ECCFAC6_D23444_E1_C }
 
-final idValues = EnumValues({
-  "641af90d6edd96e78793d26c": Id.THE_641_AF90_D6_EDD96_E78793_D26_C,
-  "641c5a0dfd268f15411458ed": Id.THE_641_C5_A0_DFD268_F15411458_ED,
-  "64535c74eccfac6d23444e1c": Id.THE_64535_C74_ECCFAC6_D23444_E1_C
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
-}

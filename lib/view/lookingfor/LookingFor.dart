@@ -63,7 +63,6 @@ class _MyHomePageState extends State<LookingFor> {
   List<String> maritalStatuses = [
     'Marital status',
     'Single',
-    'unmarried'
     'Married',
     'Divorced',
     'Widowed',
@@ -129,6 +128,13 @@ class _MyHomePageState extends State<LookingFor> {
     setState(() {
       clickLoad = true;
     });
+    if(youarevalue == "Man"){
+      gender = "male";
+    }else if(youarevalue == "Woman"){
+      gender = "female";
+    }else{
+      gender = "male";
+    }
     print("sdfhghdsfhgdf ${lookingFor}");
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.UpdateUser2(
@@ -237,11 +243,7 @@ class _MyHomePageState extends State<LookingFor> {
                                     youarevalue="";
                                   }else {
                                     youarevalue = youarea[index];
-                                    if(youarevalue == "Man"){
-                                      gender = "male";
-                                    }else if(youarevalue == "Woman"){
-                                      gender = "female";
-                                    }
+
                                   }
                                 }
                               });
@@ -324,7 +326,6 @@ class _MyHomePageState extends State<LookingFor> {
                                 print("objectaklsdlkj ${lookingvalue}");
                                 print("objectaklsdlkj ${lookingFor}");
                               });
-
                             },splashColor: Colors.blue.withOpacity(0.2),
                               customBorder: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),

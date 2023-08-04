@@ -1,15 +1,22 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/Models/plan_list_model.dart';
+import 'package:shadiapp/Models/update_setting_model.dart';
+import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/view/subscription/custom/Customcheck.dart';
 
 class PremiumSub extends StatefulWidget {
   String name = "";
+  String userId = "";
+  String planId = "";
+  String packName = "";
+  Color color;
   int price = 0;
   List<Feauture> list = [];
-  PremiumSub(this.name, this.price, this.list);
+  PremiumSub(this.color,this.planId,this.name,this.userId,this.packName, this.price, this.list);
 
   @override
   State<PremiumSub> createState() => _MyHomePageState();
@@ -54,7 +61,7 @@ class _MyHomePageState extends State<PremiumSub> {
           height:MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: CommonColors.blue,
+              color: widget.color,
               // border: Border.all(width: 1,color: Colors.white),
               borderRadius: BorderRadius.circular(10)
           ),
@@ -100,33 +107,34 @@ class _MyHomePageState extends State<PremiumSub> {
                   children: [
                     new SizedBox(height: 20,),
                     new Container(
-                      child: Text(widget.name,style: new TextStyle(color: CommonColors.blue,fontSize: 20,fontWeight: FontWeight.w600),),
+                      child: Text(widget.name,style: new TextStyle(color: widget.color,fontSize: 20,fontWeight: FontWeight.w600),),
                     ),
                     new SizedBox(height: 5,),
                     new Container(
-                      child: Text("Unlock Premium features to be in\ncontrol of your experience",style: new TextStyle(color: CommonColors.blue,fontSize: 12,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                      child: Text("Unlock ${widget.name} features to be in\ncontrol of your experience",style: new TextStyle(color:widget.color,fontSize: 12,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
                     ),
                     new SizedBox(height: 5,),
 
 
                     InkWell(
-                      onTap: (){
-
-                      },
+                      onTap: ()async{
+                        UpdateSettingModel update = await Services.SubscribePlan({"planId":"${widget.planId}","userId":"${widget.userId}"});
+                        Fluttertoast.showToast(msg: update.message ?? "");
+                        },
                       child: new Container(
                         // margin: const EdgeInsets.all(15),
                         width: double.infinity,
                         margin: const EdgeInsets.symmetric(vertical: 15,horizontal: 48),
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
                         decoration: BoxDecoration(
-                            color: CommonColors.blue,
+                            color:widget.color,
                             // border: Border.all(width: 1,color: Colors.white),
                             borderRadius: BorderRadius.circular(54)
                         ),
                         child: Column(
                           children: [
                             new Container(
-                              child: Text("Upgrade form \$ ${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                              child: Text("Upgrade form ₹ ${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
                             ),
                           ],
                         ),

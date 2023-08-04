@@ -8,6 +8,7 @@
 <!--    live mode-->
     <string name="facebook_app_id">846965816761018</string>
     <string name="facebook_client_token">57ad59ec9a3e5084c52ee3a0e94219d4</string>
+    <string name="callbackurl">https://shaadiapp-ac9ac.firebaseapp.com/__/auth/handler</string>
 
 
 </resources>

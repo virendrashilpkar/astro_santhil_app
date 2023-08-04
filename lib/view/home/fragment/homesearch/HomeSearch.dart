@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/CommonMethod/commonString.dart';
 import 'package:shadiapp/Models/like_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Models/user_list_model.dart';
@@ -14,6 +16,7 @@ import 'package:shadiapp/view/home/fragment/homesearch/Content.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayoutview.dart';
 import 'package:shadiapp/view/home/fragment/match/Match.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -68,20 +71,20 @@ class _MyHomePageState extends State<HomeSearch> {
     }
   }
 
-  Future<void> userList() async {
-    isLoad = true;
-    _preferences = await SharedPreferences.getInstance();
-    _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}");
-    if(_userListModel.status == 1){
-      for(var i = 0; i < _userListModel.data!.length; i++){
-        _userList = _userListModel.data ?? <UserDatum> [];
-      }
-    }
-    isLoad = false;
-    setState(() {
-
-    });
-  }
+  // Future<void> userList() async {
+  //   isLoad = true;
+  //   _preferences = await SharedPreferences.getInstance();
+  //   _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}",CommonString.homesearch);
+  //   if(_userListModel.status == 1){
+  //     CommonString.homesearch=="";
+  //     for(var i = 0; i < _userListModel.data!.length; i++){
+  //       _userList = _userListModel.data ?? <UserDatum> [];
+  //     }
+  //   }
+  //   isLoad = false;
+  //   setState(() {
+  //   });
+  // }
 
   Future<void> userDetail() async {
     setState(() {
@@ -118,6 +121,7 @@ class _MyHomePageState extends State<HomeSearch> {
   }
 
   Future<void> like(String id, String type,String image,other_image,fullname) async {
+    print(fullname);
     _preferences = await SharedPreferences.getInstance();
     _likeModel = await Services.LikeMethod(_preferences!.getString(ShadiApp.userId).toString(), id, type);
     if(_likeModel.status == 1){
@@ -138,8 +142,8 @@ class _MyHomePageState extends State<HomeSearch> {
   void initState() {
     userDetail();
     CheckUserConnection();
-    Getdata();
-    userList();
+    Getdata("");
+    // userList();
     super.initState();
   }
 
@@ -147,51 +151,60 @@ class _MyHomePageState extends State<HomeSearch> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   List<SwipeItem> _swipeItems = <SwipeItem>[];
   late MatchEngine _matchEngine = MatchEngine();
-  void Getdata() async{
+
+  bool isshowhome=false;
+  void Getdata(String my_id) async{
     // String jsonStu = jsonEncode(datastring);
     // var data = jsonDecode(jsonStu);
     // content = Content.fromJson(data);
-    _preferences = await SharedPreferences.getInstance();
-    _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}");
-    for (int i = 0; i < _userListModel.data!.length; i++) {
-     _userList = _userListModel.data ?? <UserDatum> [];
-      _swipeItems.add(
-          SwipeItem(
-          content: _userList.length,
-          likeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Liked"),
-              duration: Duration(milliseconds: 500),
-            ));
-            print("objectLike");
-            type = "like";
-          },
-          nopeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Nope"),
-              duration: Duration(milliseconds: 500),
-            ));
-            type = "disLike";
-          },
-          superlikeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Superliked"),
-              duration: Duration(milliseconds: 500),
-            ));
-            type = "superLike";
-          },
-          onSlideUpdate: (SlideRegion? region) async {
-            print("Region $region");
-            print("type $type");
-            // Toaster.show(context, "Region $region");
-          }));
-    }
-
-    _matchEngine = MatchEngine(swipeItems: _swipeItems);
-
     setState(() {
-      print("works");
+      isshowhome=false;
     });
+    _preferences = await SharedPreferences.getInstance();
+    _userListModel = await Services.GetUserMethod("${_preferences?.getString(ShadiApp.userId)}",CommonString.homesearch,my_id);
+    if(_userListModel.status==1) {
+      CommonString.homesearch=="";
+      if (_userListModel.data!.isNotEmpty) {
+        for (int i = 0; i < _userListModel.data!.length; i++) {
+          _userList = _userListModel.data ?? <UserDatum>[];
+          _swipeItems.add(
+              SwipeItem(
+                  content: _userList.length,
+                  likeAction: () {
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //   content: Text("Liked"),
+                    //   duration: Duration(milliseconds: 500),
+                    // ));
+                    // print("objectLike");
+                    type = "like";
+                  },
+                  nopeAction: () {
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //   content: Text("Nope"),
+                    //   duration: Duration(milliseconds: 500),
+                    // ));
+                    type = "disLike";
+                  },
+                  superlikeAction: () {
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //   content: Text("Superliked"),
+                    //   duration: Duration(milliseconds: 500),
+                    // ));
+                    type = "superLike";
+                  },
+                  onSlideUpdate: (SlideRegion? region) async {
+                    // Toaster.show(context, "Region $region");
+                  }));
+        }
+      }
+    }
+    _matchEngine = MatchEngine(swipeItems: _swipeItems);
+    isshowhome=true;
+    if(mounted) {
+      setState(() {
+        print("works");
+      });
+    }
   }
 
 
@@ -231,11 +244,11 @@ class _MyHomePageState extends State<HomeSearch> {
                       children: [
                         Image.asset("assets/no_match_icon.png",),
                         SizedBox(height: 20,),
-                        Text("Match not found", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                        Text("No more profile available", style: TextStyle(fontSize: 16, fontFamily: 'dubai', color: CommonColors.buttonorg, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
                       ],
                     )
                 ),
-                Container(
+                if(isshowhome) Container(
                   height: MediaQuery.of(context).size.height - 60,
                   child: SwipeCards(
                     matchEngine: _matchEngine,
@@ -277,7 +290,6 @@ class _MyHomePageState extends State<HomeSearch> {
                                     children: [
                                       InkWell(
                                         onTap:(){
-                                          Navigator.of(context).pop();
                                         },
                                         child: Container(
                                           height: 50,
@@ -296,6 +308,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                 child: Material(
                                                   type: MaterialType.transparency,
                                                   child: InkWell(onTap: () {
+                                                    Getdata("${_preferences?.getString(ShadiApp.userId)}");
                                                   },splashColor: Colors.blue.withOpacity(0.2),
                                                     customBorder: RoundedRectangleBorder(
                                                       borderRadius: BorderRadius.circular(25),
@@ -398,7 +411,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Row(
                                                           children: [
-                                                           if(_userList[index].firstName!="null")
+                                                           if(_userList[index].firstName.toString()!="null" && _userList[index].firstName.toString()!="")
                                                              Text(
                                                               "${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)}",
                                                               style: TextStyle(
@@ -409,7 +422,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                               ),
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                           if(_userList[index].lastName!="null")
+                                                           if(_userList[index].lastName.toString()!="null" && _userList[index].lastName.toString()!="")
                                                              Text(
                                                               " ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}",
                                                               style: TextStyle(
@@ -420,7 +433,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                               ),
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                           if(_userList[index].age!="null")
+                                                           if(_userList[index].age.toString()!="null" || _userList[index].age.toString()!="")
                                                              Text(
                                                                "  ${_userList[index].age}",
                                                               style: TextStyle(
@@ -445,31 +458,34 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Row(
                                                           children: [
-                                                            if(_userList[index].city!="null") Text(
+                                                            if(_userList[index].city.toString()!="null" && _userList[index].city.toString()!="") Text(
                                                              "${_userList[index].city} | ",
                                                               style: TextStyle(
                                                                 color: CommonColors.lightblue,
                                                                 fontSize: 14,
                                                                 fontWeight: FontWeight.w800,
                                                               ),
+                                                              maxLines: 1,
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].state!="null") Text(
+                                                            if(_userList[index].state.toString()!="null" && _userList[index].state.toString()!="") Text(
                                                               "${_userList[index].state} | ",
                                                               style: TextStyle(
                                                                 color: CommonColors.lightblue,
                                                                 fontSize: 14,
                                                                 fontWeight: FontWeight.w800,
                                                               ),
+                                                              maxLines: 1,
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].country!="null") Text(
+                                                            if(_userList[index].country.toString()!="null" && _userList[index].country.toString()!="") Text(
                                                               "${_userList[index].country}",
                                                               style: TextStyle(
                                                                 color: CommonColors.lightblue,
                                                                 fontSize: 14,
                                                                 fontWeight: FontWeight.w800,
                                                               ),
+                                                              maxLines: 1,
                                                               textAlign: TextAlign.left,
                                                             ),
                                                           ],
@@ -488,7 +504,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                         // margin: const EdgeInsets.symmetric(horizontal: 20),
                                                         child: Row(
                                                           children: [
-                                                           if(_userList[index].height!="null") Text(
+                                                           if(_userList[index].height.toString()!="null" && _userList[index].height.toString()!="") Text(
                                                               "${_userList[index].height?.replaceAll(".", "`") } | ",
                                                                   // "${_userList[index].weight}kg | "
                                                                   // "${_userList[index].religion} |"
@@ -500,7 +516,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                               ),
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].weight!="null") Text(
+                                                            if(_userList[index].weight.toString()!="null" && _userList[index].weight.toString()!="") Text(
                                                               // "${_userList[index].height?.replaceAll(".", "`") } | "
                                                                   "${_userList[index].weight}kg | "
                                                                   // "${_userList[index].religion} |"
@@ -513,7 +529,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                               ),
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].religion!="null") Text(
+                                                            if(_userList[index].religion.toString()!="null" && _userList[index].religion.toString()!="") Text(
                                                               // "${_userList[index].height?.replaceAll(".", "`") } | "
                                                                   // "${_userList[index].weight}kg | "
                                                                   "${_userList[index].religion} |"
@@ -526,7 +542,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                               ),
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].maritalStatus!="null") Text(
+                                                            if(_userList[index].maritalStatus.toString()!="null" && _userList[index].maritalStatus.toString()!="") Text(
                                                               // "${_userList[index].height?.replaceAll(".", "`") } | "
                                                                   // "${_userList[index].weight}kg | "
                                                                   // "${_userList[index].religion} |"
@@ -587,7 +603,7 @@ class _MyHomePageState extends State<HomeSearch> {
                     },
                     itemChanged: (SwipeItem item, int index) {
                       print("item: ${_userList![index].firstName}, index: $index");
-                      like(_userList![index-1].id.toString(), type,image,_userList![index-1].image,"${_userList[index].firstName![0].toUpperCase() + _userList[index].firstName!.substring(1)} ${_userList[index].lastName![0].toUpperCase() + _userList[index].lastName!.substring(1)}");
+                      like(_userList![index-1].id.toString(), type,image,_userList![index-1].image,"${_userList[index-1].firstName![0].toUpperCase() + _userList[index-1].firstName!.substring(1)} ${_userList[index-1].lastName![0].toUpperCase() + _userList[index-1].lastName!.substring(1)}");
                     },
                     leftSwipeAllowed: true,
                     rightSwipeAllowed: true,
@@ -618,13 +634,13 @@ class _MyHomePageState extends State<HomeSearch> {
                       child: Text('Super Like',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.white)),
                     ),
                     onStackFinished: () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Stack Finished"),
-                        duration: Duration(milliseconds: 500),
-                      ));
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //   content: Text("Stack Finished"),
+                      //   duration: Duration(milliseconds: 500),
+                      // ));
                     },
                   ),
-                ),
+                )
                 // Align(
                 //   alignment: Alignment.bottomCenter,
                 //   child: Container(
@@ -918,7 +934,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
   String smokings = "";
   String healths = "";
   String drinkings = "";
-  bool isVerified=false;
+  int isVerified=0;
   String personality_type = "";
 
   Future<void> userDetail() async {
@@ -927,10 +943,11 @@ class _BottomSheetState extends State<ShowBottomSheet> {
     });
     _preferences = await SharedPreferences.getInstance();
     // _userDetailModel = await Services.UserDetailMethod("641997803e3c4036ee2e1f78");
-    _userDetailModel = await Services.UserDetailMethod(widget.id);
+    _userDetailModel = await Services.OtherUserDetailMethod(widget.id);
     if(_userDetailModel.status == 1){
       name = _userDetailModel.data![0].firstName.toString();
       lastName = _userDetailModel.data![0].lastName.toString();
+      profilename= "${name} ${lastName}";
       age = _userDetailModel.data![0].age.toString();
       place = _userDetailModel.data![0].city.toString();
       state = _userDetailModel.data![0].state.toString();
@@ -955,7 +972,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
       personality_type = _userDetailModel.data![0].personalityType.toString();
       plan_user = _userDetailModel.data![0].plan.toString();
       intrest = _userDetailModel.data![0].preference ?? [];
-      isVerified = _userDetailModel.data![0].isVerified ?? false;
+      isVerified = _userDetailModel.data![0].isVerified ?? 0;
     }
 
     setState(() {
@@ -980,6 +997,12 @@ class _BottomSheetState extends State<ShowBottomSheet> {
     userDetail();
     // userViewPreference();
     super.initState();
+  }
+
+  // String profileimage = "";
+  String profilename = "";
+  void shareProfile(String profileName, String profileImageURL,String user_id) {
+    Share.share('Check out $profileName\'s profile: $profileImageURL\n Link: http://52.63.253.231:4000/api/v1/user/${widget.id}');
   }
 
   @override
@@ -1079,7 +1102,7 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                               ),
                             ),
                             SizedBox(width: 15,),
-                           if(isVerified) SizedBox(
+                           if(isVerified==2) SizedBox(
                               height: 25,
                               width: 25,
                               child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
@@ -1224,13 +1247,13 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                         ),
                         SizedBox(height: 40,),
                         Container(height: 1,width: double.infinity,color: Colors.white,),
-                        if(aboutme!="null") SizedBox(height: 40,),
-                       if(aboutme!="null") Container(
+                        if(aboutme!="null" && aboutme!="") SizedBox(height: 40,),
+                        if(aboutme!="null" && aboutme!="") Container(
                           alignment: Alignment.centerLeft,
                           child: Text("ABOUT ME",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                         ),
-                        if(aboutme!="null") SizedBox(height: 10,),
-                        if(aboutme!="null") Container(
+                        if(aboutme!="null" && aboutme!="") SizedBox(height: 10,),
+                        if(aboutme!="null" && aboutme!="") Container(
                           alignment: Alignment.centerLeft,
                           child: Text("$aboutme",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
                         ),
@@ -1325,10 +1348,15 @@ class _BottomSheetState extends State<ShowBottomSheet> {
                   CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: social_media!="null" ?'$social_media':"",),
                   CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: social_media!="null" ?'$sleeping_habits':"",),
                   SizedBox(height: 40,),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    alignment: Alignment.center,
-                    child: Text("SHARE THIS PROFILE ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                  InkWell(
+                    onTap:(){
+                      shareProfile(profilename, "${widget.image}", "${_preferences?.getString(ShadiApp.userId)}");
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      alignment: Alignment.center,
+                      child: Text("SHARE THIS PROFILE ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                    ),
                   ),
                   SizedBox(height: 60,),
                 ],

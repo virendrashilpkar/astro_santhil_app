@@ -15,6 +15,7 @@ import 'package:shadiapp/Models/matchlist.dart';
 import 'package:shadiapp/Models/my_matches_model.dart';
 import 'package:shadiapp/Models/new_matches_model.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
+import 'package:shadiapp/Models/otpsend.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/preference_list_model.dart';
@@ -42,8 +43,11 @@ class Services {
   static String match_list = BaseUrl + "own/matches";
   static String OtpVerify = BaseUrl + "otp-verify";
   static String UserDetail = BaseUrl + "userDetails";
+  static String otherUserDetail = BaseUrl + "view/profile";
   static String UserUpdate = BaseUrl + "update";
   static String username = BaseUrl + "update/username";
+  static String updateemail = BaseUrl + "update/email";
+  static String updatephone = BaseUrl + "update/phone";
   static String UploadImge = BaseUrl + "user/uploadImage/";
   static String ViewImage = BaseUrl + "user/images";
   static String PrefList = BaseUrl + "user/preference";
@@ -69,6 +73,7 @@ class Services {
   static String ImageDelete = BaseUrl + "user/delete/image";
   static String UserDelete = BaseUrl + "delete/account";
   static String ImageUpdate = BaseUrl + "user/updateImage/";
+  static String subscribePlan = BaseUrl + "subscribePlan";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
     final params = {"phone": phone};
@@ -83,6 +88,44 @@ class Services {
     } else {
       print(response.body);
       throw Exception('Failed');
+    }
+  }
+  static Future<OtpSend> UpdateEmail(String userId,email) async {
+    final params = {
+      "id": userId,
+      if(email.isNotEmpty) "is_Email": email,
+    };
+    print("OtpSend " + params.toString());
+    http.Response response = await http.post(Uri.parse(updateemail), body: params);
+    print("OtpSend" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      OtpSend user = OtpSend.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      OtpSend user = OtpSend.fromJson(data);
+      return user;
+    }
+  }
+  static Future<OtpSend> UpdatePhone(String userId,phone) async {
+    final params = {
+      "id": userId,
+      if(phone.isNotEmpty) "phone": phone,
+    };
+    print("OtpSend " + params.toString());
+    http.Response response = await http.post(Uri.parse(updatephone), body: params);
+    print("OtpSend" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      OtpSend user = OtpSend.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      OtpSend user = OtpSend.fromJson(data);
+      return user;
     }
   }
   static Future<OtpVerifyModel> GoogleCrdentials(String token) async {
@@ -177,6 +220,24 @@ class Services {
     var response2 = await http.Response.fromStream(response);
     print("UserDetailMethodParams ${request.fields}");
     print("UserDetailMethodResponse ${response2.body}");
+    if (response2.statusCode==200) {
+      var data = json.decode(response2.body);
+      UserDetailModel user = UserDetailModel.fromJson(data);
+      return user;
+    } else {
+      throw Exception('Failed');
+    }
+  }
+  static Future<UserDetailModel> OtherUserDetailMethod(String uId) async {
+    var request = http.MultipartRequest(
+      'GET',
+      Uri.parse(otherUserDetail),
+    );
+    request.fields["userId"] = uId;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("OtherUserDetailMethod ${request.fields}");
+    print("OtherUserDetailMethod ${response2.body}");
     if (response2.statusCode==200) {
       var data = json.decode(response2.body);
       UserDetailModel user = UserDetailModel.fromJson(data);
@@ -435,13 +496,15 @@ class Services {
     }
   }
 
-  static Future<UserListModel> GetUserMethod(String uId) async {
+  static Future<UserListModel> GetUserMethod(String uId,other_user,my_id) async {
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(UserList),
     );
 
     request.fields["id"] = uId;
+    if(my_id!="") request.fields["my_id"] = my_id;
+   if(other_user!="") request.fields["other_user"] = other_user;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("GetUserMethodParams ${request.fields}");
@@ -478,6 +541,7 @@ class Services {
   static Future<LikeModel> LikeMethod(
       String senderId, String receiverId, String type) async {
     final params = {"sender": senderId, "receiver": receiverId, "type": type};
+    // final params = {"receiver": senderId, "sender": receiverId, "type": type};
 
     print("LikeMethodParams " + params.toString());
     http.Response response = await http.post(Uri.parse(LikeApi), body: params);
@@ -528,15 +592,8 @@ class Services {
     }
   }
 
-  static Future<AgeHeightRangeModel> RangeSet(String id, int minAge, int maxAge, int minHeight, int maxHeight) async {
-    final params = {
-      "id": id,
-      "minAge": minAge,
-      "maxAge": maxAge,
-      "minHeight": minHeight,
-      "maxHeight": maxHeight
-    };
-
+  static Future<AgeHeightRangeModel> RangeSet(final object) async {
+    final params = object;
     print("RangeSetParams " + params.toString());
     http.Response response = await http.post(Uri.parse(SetRange), body: params);
     print("RangeSetResponse" + response.body);
@@ -793,6 +850,24 @@ class Services {
     http.Response response =
     await http.post(Uri.parse(UserUpdate), body: params);
     print("updateSettingResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      UpdateSettingModel user = UpdateSettingModel.fromJson(data);
+      return user;
+    } else {
+      var data = jsonDecode(response.body);
+      UpdateSettingModel user = UpdateSettingModel.fromJson(data);
+      return user;
+
+    }
+  }
+  static Future<UpdateSettingModel> SubscribePlan(final object) async{
+    final params = object;
+    print("SubscribePlan " + params.toString());
+    http.Response response =
+    await http.post(Uri.parse(subscribePlan), body: params);
+    print("SubscribePlan" + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

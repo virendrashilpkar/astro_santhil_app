@@ -68,11 +68,12 @@ class Datum {
   bool? goIncognito;
   bool? showPeopleInRange;
   String? username;
+  String? savecountry;
   bool? isEmail;
   bool? isPush;
   bool? isAge;
   bool? isDiet;
-  bool? isVerified;
+  int? isVerified;
   bool? isPhotoOption;
   bool? isDrink;
   bool? isHeight;
@@ -80,6 +81,8 @@ class Datum {
   bool? isWeight;
   String? image;
   int? age;
+  int? profilePercentage;
+  int? status;
   String? zodiacSign;
   String? covidVaccine;
   String? pets;
@@ -130,6 +133,7 @@ class Datum {
     this.goIncognito,
     this.showPeopleInRange,
     this.username,
+    this.savecountry,
     this.isAge,
     this.isDiet,
     this.isVerified,
@@ -142,6 +146,7 @@ class Datum {
     this.isEmail,
     this.isPush,
     this.age,
+    this.status,
     this.zodiacSign,
     this.covidVaccine,
     this.pets,
@@ -154,6 +159,7 @@ class Datum {
     this.health,
     this.smoking,
     this.drinking,
+    this.profilePercentage,
     this.preference,
   });
 
@@ -161,12 +167,12 @@ class Datum {
     id: json["_id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    birthDate: json["birth_date"] == null ? null : DateTime.parse(json["birth_date"]),
+    birthDate: json["birth_date"] == null || json["birth_date"] == "" ? null : DateTime.parse(json["birth_date"]),
     phone: json["phone"],
     gender: json["gender"],
     city: json["city"],
-    height: json["height"],
-    weight: json["weight"],
+    height: json["height"].toString(),
+    weight: json["weight"].toString(),
     email: json["email"],
     about: json["about"],
     maritalStatus: json["marital_status"],
@@ -193,6 +199,7 @@ class Datum {
     goIncognito: json["go_incognito"],
     showPeopleInRange: json["show_people_in_range"],
     username: json["username"],
+    savecountry: json["save_country"],
     isAge: json["is_age"],
     isDiet: json["is_diet"],
     isVerified: json["is_verified"],
@@ -205,6 +212,8 @@ class Datum {
     isEmail: json["is_email"],
     isPush: json["is_push"],
     age: json["age"],
+    profilePercentage: json["profilePercentage"],
+    status: json["status"],
     zodiacSign: json["zodiac_sign"],
     covidVaccine: json["covid_vaccine"],
     pets: json["pets"],
@@ -256,6 +265,7 @@ class Datum {
     "go_incognito": goIncognito,
     "show_people_in_range": showPeopleInRange,
     "username": username,
+    "save_country": savecountry,
     "is_email": isEmail,
     "is_push": isPush,
     "is_age": isAge,
@@ -268,6 +278,8 @@ class Datum {
     "is_weight": isWeight,
     "image": image,
     "age": age,
+    "profilePercentage": profilePercentage,
+    "status": status,
     "zodiac_sign": zodiacSign,
     "covid_vaccine": covidVaccine,
     "pets": pets,

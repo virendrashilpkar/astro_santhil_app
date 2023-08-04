@@ -84,7 +84,7 @@ class Data {
   String? lookingFor;
   String? plan;
   String? state;
-  bool? isVerified;
+  int? isVerified;
 
   Data({
     this.image,

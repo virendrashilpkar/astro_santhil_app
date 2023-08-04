@@ -147,8 +147,8 @@ class _MyHomePageState extends State<Cast> {
     _updateUserModel = await Services.UpdateUser2(
         {
           "userId": "${_preferences?.getString(ShadiApp.userId)}",
-          "religion": religion,
-          "caste": cast,
+          "religion": religion == "Select religion" ? "":religion,
+          "caste": cast == "Select caste" ? "":cast,
         }
     );
     if(_updateUserModel.status == 1){
@@ -357,7 +357,7 @@ class _MyHomePageState extends State<Cast> {
               alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
               child: Text(
-                'This will appear on Shadi-App, however you can choose to hide or show your religion and caste.',
+                'This will appear on Shaadi-App, however you can choose to hide or show your religion and caste.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 13,
@@ -397,16 +397,15 @@ class _MyHomePageState extends State<Cast> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                        if (religion == "Select religion"){
-                          Toaster.show(context, "Pelase select religion");
-
-                        }else{
-                          if(cast == "Select caste"){
-                            Toaster.show(context, "Pelase select caste");
-                          }else {
+                        // if (religion == "Select religion"){
+                        //   Navigator.of(context).pushNamed('NameDOB');
+                        // }else{
+                        //   if(cast == "Select caste"){
+                        //     Navigator.of(context).pushNamed('NameDOB');
+                        //   }else {
                             updateUser();
-                          }
-                        }
+                          // }
+                        // }
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

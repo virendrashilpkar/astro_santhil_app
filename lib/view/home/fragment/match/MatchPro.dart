@@ -85,14 +85,14 @@ class _MyHomePageState extends State<MatchPro> {
                 child: Row(
                   children: [
                     new Spacer(),
-                    new SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
-                    ),
-                    new SizedBox(
-                      width: 15,
-                    ),
+                    // new SizedBox(
+                    //   width: 24,
+                    //   height: 24,
+                    //   child: Image.asset("assets/shield_pro.png",height:24,width: 20,),
+                    // ),
+                    // new SizedBox(
+                    //   width: 15,
+                    // ),
                     InkWell(
                       onTap: (){
                         Navigator.of(context).pushNamed("Settings");
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MatchPro> {
               new Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 alignment: Alignment.centerLeft,
-                child: Text("New Matches",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
+                child: Text("New Likes",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 20,color:Colors.white),),
               ),
               new Container(
                 height: MediaQuery.of(context).size.width/2,
@@ -225,17 +225,17 @@ class _MyHomePageState extends State<MatchPro> {
                       },
                     )
                         : Container(
-                      child: Text("No Match Found",style: TextStyle(color: Colors.white),),
+                      child: Text("No Likes Found",style: TextStyle(color: Colors.white),),
                     )
                   ],
                 ),
               ),
-              new SizedBox(height: 15,),
+              new SizedBox(height:15,),
               Spacer(),
               new SizedBox(
-                height: 206,
-                width: 157,
-                child: Image.asset("assets/drop_pro2.png",height: 206,width: 157,fit: BoxFit.cover,),
+                height:206,
+                width:157,
+                child:Image.asset("assets/drop_pro2.png",height: 206,width: 157,fit: BoxFit.cover,),
               ),
               new SizedBox(height: 27,),
               Container(

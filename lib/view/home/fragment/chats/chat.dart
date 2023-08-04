@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/commonString.dart';
 import 'package:shadiapp/Models/matchlist.dart';
 import 'package:shadiapp/Models/new_matches_model.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/home/Home.dart';
 import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shadiapp/Services/Services.dart';
@@ -122,7 +124,7 @@ class _ChatState extends State <Chat> {
         Container(
           margin: EdgeInsets.only(top: 70.0),
           child: Text(
-              'New Matches',
+              'My Matches',
               style: new TextStyle(fontSize: 16.0, color: CommonColors.buttonorg),
               textAlign: TextAlign.center,
             ),
@@ -130,11 +132,11 @@ class _ChatState extends State <Chat> {
         Expanded(
           child: Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height-150,
             child: Container(
                   height: double.maxFinite,
                   child: ListView.builder(
-                      itemCount: _list.length,
+                      itemCount: _matchList.length,
                       physics: AlwaysScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, i) {
                         return new ListTile(
@@ -150,7 +152,7 @@ class _ChatState extends State <Chat> {
                             child:
                             ClipRRect(
                                 borderRadius: BorderRadius.circular(15.0),
-                                child: Image.network("${_list[i].image}",
+                                child: Image.network("${_matchList[i].image}",
                                   fit: BoxFit.cover,
                                 )
                             ),
@@ -232,51 +234,58 @@ class _ChatState extends State <Chat> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
                     MatchDatum data = _list[index];
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      padding: const EdgeInsets.all(2),
-                      decoration: index==0 ? BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15.0)),
-                        border: Border.all(color: Colors.yellow,width: 2)
-                      ):null,
+                    return InkWell(
+                      onTap: (){
+                        CommonString.homesearch = "${data.id}";
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                      },
                       child: Container(
-                        width: 80,
-                        height: 97,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15.0)),
-                          color: CommonColors.bottomgrey,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage("${data.image}"),
-                                  fit: BoxFit.cover)
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Spacer(),
-                                    Container(
-                                      color: Colors.white30,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text("${data.firstName}, ${data.age.toString().substring(0,2)}",
-                                                style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),maxLines: 1,),
-                                            ),
-                                          ],
+                        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        padding: const EdgeInsets.all(2),
+                        decoration: index==0 ? BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(15.0)),
+                          border: Border.all(color: Colors.yellow,width: 2)
+                        ):null,
+                        child: Container(
+                          width: 80,
+                          height: 97,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(15.0)),
+                            color: CommonColors.bottomgrey,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: NetworkImage("${data.image}"),
+                                    fit: BoxFit.cover)
+                                ),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Spacer(),
+                                      Container(
+                                        color: Colors.white30,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text("${data.firstName}, ${data.age.toString().substring(0,2)}",
+                                                  style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),maxLines: 1,),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ]
-                              )
+                                    ]
+                                )
+                            ),
                           ),
                         ),
                       ),
@@ -330,10 +339,10 @@ class _ChatState extends State <Chat> {
                                 );
                               },
                               child: Container(
-                                decoration:index==0 ? BoxDecoration(
-                                  color: Color(0xff373737),
-                                  borderRadius: BorderRadius.all(Radius.circular(10))
-                                ):null,
+                                // decoration:index==0 ? BoxDecoration(
+                                //   color: Color(0xff373737),
+                                //   borderRadius: BorderRadius.all(Radius.circular(10))
+                                // ):null,
                                 margin: EdgeInsets.only(top: 2,bottom: 5),
                                 padding: EdgeInsets.only(top: 10,bottom: 10,left: 35),
                                 child: Row(
@@ -365,7 +374,7 @@ class _ChatState extends State <Chat> {
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(left: 13.0),
-                                          child: Text("Hi",
+                                          child: Text("",
                                             style: TextStyle(
                                               color: Colors.white30, fontSize: 16,
                                                 fontFamily: "OpenSans_Regular",

@@ -7,7 +7,7 @@ import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:intl/intl.dart'; // For date parsing
 import '../../Models/user_detail_model.dart';
 
 class HeightWeight extends StatefulWidget {
@@ -158,6 +158,12 @@ class _MyHomePageState extends State<HeightWeight> {
       );
   }
 
+
+  // import 'package:intl/intl.dart'; // Import the intl package for date parsing
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,7 +195,7 @@ class _MyHomePageState extends State<HeightWeight> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'My height is (in cm)',
+                  'Height (in cm)',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -215,7 +221,7 @@ class _MyHomePageState extends State<HeightWeight> {
                         controller: height,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                          hintText: 'Height in cm',
+                          hintText: 'Height',
                           border: InputBorder.none,
                           hintStyle: new TextStyle(color: Colors.grey,fontSize: 16),
                         ),
@@ -240,7 +246,7 @@ class _MyHomePageState extends State<HeightWeight> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'My weight is',
+                  'Weight (in kg)',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -291,7 +297,7 @@ class _MyHomePageState extends State<HeightWeight> {
                 alignment: Alignment.center,
                 margin: const EdgeInsets.only(top: 15,bottom: 15,left: 28,right: 28),
                 child: Text(
-                  'This will appear on Shadi-App, and you will not be able to change it. However you can choose to hide or show your height and weight.',
+                  'This will appear on Shaadi-App, and you will not be able to change it. However you can choose to hide or show your height and weight.',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.6),
                     fontSize: 13,

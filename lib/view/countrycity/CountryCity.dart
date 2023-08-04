@@ -470,7 +470,7 @@ class _MyHomePageState extends State<CountryCity> {
               alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 16,bottom: 30,left: 28,right: 28),
               child: Text(
-                'This will appear on Shadi-App, however you can choose to hide or show your country and city.',
+                'This will appear on Shaadi-App, however you can choose to hide or show your country and city.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 13,

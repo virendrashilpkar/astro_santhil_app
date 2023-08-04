@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/commonString.dart';
 import 'package:shadiapp/Models/top_picks_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/home/Home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TopPicks extends StatefulWidget {
@@ -83,62 +85,69 @@ class _TopPicks extends State<TopPicks> {
             itemCount: _list.length,
             itemBuilder: (context, index){
               Datum data = _list[index];
-              return Container(
+              return InkWell(
+                onTap: (){
+                  CommonString.homesearch = "${data.id}";
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Home()));
+                },
                 child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(15.0)),
-                    color: CommonColors.bottomgrey,
-                  ),
-                  child:
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(data.image.toString()),
-                                fit: BoxFit.cover)
-                        ),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Spacer(),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                width: MediaQuery.of(context).size.width,
-                                // height: 30,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff66DFD7D7),
-                                      Color(0xff00D9D9D9),
-                                    ],
-                                    begin: Alignment.center,
-                                    end: Alignment.bottomRight,)
-                              ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal:10.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        child: Text("${data.name}, ${data.age}",
-                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600,
-                                              fontSize: 14),),
-                                      ),
-                                      Spacer(),
-                                       Container(
-                                        height: 28,
-                                        margin: const EdgeInsets.symmetric(vertical: 6),
-                                        width: 28,
-                                        // child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
-                                      )
-                                    ],
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(15.0)),
+                      color: CommonColors.bottomgrey,
+                    ),
+                    child:
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(data.image.toString()),
+                                  fit: BoxFit.cover)
+                          ),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Spacer(),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  width: MediaQuery.of(context).size.width,
+                                  // height: 30,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xff66DFD7D7),
+                                        Color(0xff00D9D9D9),
+                                      ],
+                                      begin: Alignment.center,
+                                      end: Alignment.bottomRight,)
+                                ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal:10.0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text("${data.name}, ${data.age}",
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600,
+                                                fontSize: 14),),
+                                        ),
+                                        Spacer(),
+                                         Container(
+                                          height: 28,
+                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          width: 28,
+                                          // child: Image.asset("assets/white_bg_star.png",height: 28,width: 28),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ]
-                        )
+                              ]
+                          )
+                      ),
                     ),
                   ),
                 ),

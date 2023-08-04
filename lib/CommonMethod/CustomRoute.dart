@@ -96,7 +96,7 @@ class CustomRoute {
           return FreeSub();
         case "PremiumSub":
         // ignore: prefer_const_constructors
-          return PremiumSub("", 0, []);
+          return PremiumSub(Colors.white,"","","","", 0, []);
         case "GoldSub":
         // ignore: prefer_const_constructors
           return GoldSub("", 0, []);

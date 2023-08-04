@@ -28,9 +28,19 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+//project.ext {
+//    disableLintForAudioplayers = true
+//}
+
 android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+
+
+    lintOptions {
+        disable 'UnusedResources' // Example of disabling the UnusedResources lint check
+        // Add more lint checks to disable if needed
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

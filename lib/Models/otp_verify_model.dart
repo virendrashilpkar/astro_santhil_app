@@ -41,6 +41,7 @@ class OtpVerifyModel {
 class Data {
   String? id;
   String? firstName;
+  int? profilePercentage;
   String? lastName;
   String? email;
   String? birthDate;
@@ -58,6 +59,7 @@ class Data {
   Data({
     this.id,
     this.firstName,
+    this.profilePercentage,
     this.lastName,
     this.email,
     this.birthDate,
@@ -76,6 +78,7 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => new Data(
     id: json["_id"] == null ? null : json["_id"],
     firstName: json["first_name"] == null ? null : json["first_name"],
+    profilePercentage: json["profilePercentage"] == null ? null : json["profilePercentage"],
     lastName: json["last_name"] == null ? null : json["last_name"],
     email: json["email"] == null ? null : json["email"],
     birthDate: json["birth_date"] == null ? null : json["birth_date"],
@@ -94,6 +97,7 @@ class Data {
   Map<String, dynamic> toJson() => {
     "_id": id == null ? null : id,
     "first_name": firstName == null ? null : firstName,
+    "profilePercentage": profilePercentage == null ? null : profilePercentage,
     "last_name": lastName == null ? null : lastName,
     "email": email == null ? null : email,
     "birth_date": birthDate == null ? null : birthDate,

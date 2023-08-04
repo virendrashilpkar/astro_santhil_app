@@ -6,6 +6,7 @@ import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/age_height_range_model.dart';
 import 'package:shadiapp/Models/country_list_model.dart';
+import 'package:shadiapp/Models/otpsend.dart';
 import 'package:shadiapp/Models/update_setting_model.dart';
 import 'package:shadiapp/Models/user_delete_model.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
@@ -14,12 +15,14 @@ import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/commonpackage/SearchChoices.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
+import 'package:shadiapp/view/commonWeb.dart';
+import 'package:shadiapp/view/setting/verifyEmailPhone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:share/share.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -36,6 +39,8 @@ class _MyHomePageState extends State<Settings> {
   late CountryListModel _countryListModel;
   String email = "";
   String phone = "";
+  String profileimage = "";
+  String profilename = "";
   int? minAge;
   int? maxAge;
   int? minHeight;
@@ -80,15 +85,24 @@ class _MyHomePageState extends State<Settings> {
   bool isNotification = false;
   bool isEmail = false;
   bool isPushNotification = false;
-
+  late RangeValues _currentRangeValues;
+  late RangeValues _currentheightValues;
+  bool isloaddetail=true;
+  bool enablePhone=false;
+  bool enableEmail=false;
   Future<void> userDetail() async {
-    isLoad = true;
+    setState(() {
+      isLoad = true;
+      isloaddetail=true;
+    });
     _preferences = await SharedPreferences.getInstance();
     _userDetailModel = await Services.UserDetailMethod(
         "${_preferences?.getString(ShadiApp.userId)}");
-    if (_userDetailModel.status == 1) {
-      email = _userDetailModel.data![0].email.toString();
-      phone = _userDetailModel.data![0].phone.toString();
+     if (_userDetailModel.status == 1) {
+
+      // phone = _userDetailModel.data![0].phone.toString();
+       profileimage = _userDetailModel.data![0].image ?? "";
+       profilename = "${_userDetailModel.data![0].firstName} ${_userDetailModel.data![0].lastName}";
       minAge = _userDetailModel.data![0].minAge;
       maxAge = _userDetailModel.data![0].maxAge;
       minHeight = _userDetailModel.data![0].minHeight;
@@ -99,27 +113,46 @@ class _MyHomePageState extends State<Settings> {
       incognito = _userDetailModel.data![0].goIncognito ?? false;
       isonline = _userDetailModel.data![0].isOnline ?? false;
       isEmail = _userDetailModel.data![0].isEmail ?? false;
+      country = _userDetailModel.data![0].savecountry ?? "Select";
       isNotification = _userDetailModel.data![0].isPush ?? false;
       _controllerusername.text = _userDetailModel.data![0].username ?? "";
       _currentRangeValues =
           RangeValues(minAge?.toDouble() ?? 18, maxAge?.toDouble() ?? 30);
       _currentheightValues =
           RangeValues(minHeight?.toDouble() ?? 0, maxHeight?.toDouble() ?? 10);
+
+      if(_userDetailModel.data![0].email!=" " && _userDetailModel.data![0].email!="" && _userDetailModel.data![0].email!="null"){
+        _controlleremail.text = _userDetailModel.data![0].email.toString();
+        enableEmail=false;
+      }else{
+        enableEmail=true;
+      }
+      if(_userDetailModel.data![0].phone!=" " &&_userDetailModel.data![0].phone!="" && _userDetailModel.data![0].phone!="null"){
+        enablePhone=false;
+        _controllerphone.text = _userDetailModel.data![0].phone.toString();
+      }else{
+        enablePhone=true;
+      }
     }
     isLoad = false;
 
-    setState(() {});
+    setState(() {
+      isloaddetail=false;
+    });
   }
 
   Future<void> rangeSet() async {
     clickLoad = true;
     _preferences = await SharedPreferences.getInstance();
     _rangeModel = await Services.RangeSet(
-        _preferences.getString(ShadiApp.userId).toString(),
-        int.parse(_currentRangeValues.start.toString()),
-        int.parse(_currentRangeValues.end.toString()),
-        int.parse(_currentheightValues.start.toString()),
-        int.parse(_currentheightValues.end.toString()));
+
+        {
+          "id": _preferences.getString(ShadiApp.userId).toString(),
+          "minAge": _currentRangeValues.start.round().toString(),
+          "maxAge": _currentRangeValues.end.round().toString(),
+          "minHeight": _currentheightValues.start.round().toString(),
+          "maxHeight": _currentheightValues.end.round().toString()
+        });
     if (_rangeModel.status == 1) {
       Toaster.show(context, _rangeModel.message.toString());
     } else {
@@ -195,12 +228,11 @@ class _MyHomePageState extends State<Settings> {
   bool ischeck = false;
   // double value1 = minAge as double;
   TextEditingController _controllerusername = TextEditingController();
-  late RangeValues _currentRangeValues;
-  late RangeValues _currentheightValues;
+  TextEditingController _controlleremail = TextEditingController();
+  TextEditingController _controllerphone = TextEditingController();
 
   void navigateUser(BuildContext context) async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
-
     _preferences.clear();
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (context) => ChooseReg()), (route) => false);
@@ -213,18 +245,65 @@ class _MyHomePageState extends State<Settings> {
     _updateSettingModel = await Services.updateSetting({
       "userId": "${_preferences?.getString(ShadiApp.userId)}",
       "is_online": isonline.toString(),
-      "goGlidobel": GoGlobal.toString(),
+      "email": _controlleremail.text,
+      "phone": _controllerphone.text,
+      "goGlobel": GoGlobal.toString(),
       "go_incognito": incognito.toString(),
       "show_people_in_range": inrange.toString(),
       "is_showOnCard": showme.toString(),
       "is_push": isNotification.toString(),
-      "is_email": isEmail.toString()
+      "is_email": isEmail.toString(),
+      "username":_controllerusername.text,
+      "save_country":country
     });
     if (_updateSettingModel.status == 1) {
       userDetail();
     }
   }
 
+  bool click=false;
+  void updateEmail()async{
+    setState((){
+      click=true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    OtpSend otpSend = await Services.UpdateEmail("${_preferences?.getString(ShadiApp.userId)}",_controlleremail.text);
+    if(otpSend.status == 1){
+      Toaster.show(context, "${otpSend.message}");
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => VerifyEmailPhone(otpSend.data.toString(),_controlleremail.text,"email")
+          )
+      );
+    }else{
+      Toaster.show(context, "${otpSend.message}");
+    }
+    setState((){
+      click=false;
+    });
+  }
+  void updatePhone()async{
+    setState((){
+      click=true;
+    });
+    _preferences = await SharedPreferences.getInstance();
+    OtpSend otpSend = await Services.UpdatePhone("${_preferences?.getString(ShadiApp.userId)}",_controllerphone.text);
+    if(otpSend.status == 1){
+      Toaster.show(context, "${otpSend.message}");
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => VerifyEmailPhone(otpSend.data.toString(),_controllerphone.text,"phone")
+          )
+      );
+    }else{
+      Toaster.show(context, "${otpSend.message}");
+    }
+    setState((){
+      click=false;
+    });
+  }
+
+  int usernamecheck=0;
   void Checkuser(String username) async {
     _preferences = await SharedPreferences.getInstance();
     _updateUserModel = await Services.CheckUpdateUser2({
@@ -232,11 +311,14 @@ class _MyHomePageState extends State<Settings> {
       "username": username,
     });
     if (_updateUserModel.status == 1) {
-      userDetail();
+      // userDetail();
       Toaster.show(context, _updateUserModel.message.toString());
+      usernamecheck=1;
     } else {
+      usernamecheck=0;
       Toaster.show(context, _updateUserModel.message.toString());
     }
+    setState(() {});
   }
 
   void deleteUser() async {
@@ -257,6 +339,49 @@ class _MyHomePageState extends State<Settings> {
     });
   }
 
+  // void _launchURL(String url) async {
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
+
+  // final Uri cookie_policy = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
+  // final Uri pricacy_policy = Uri(scheme: 'https', host: 'http://52.63.253.231:4000/privacy', path: 'headers/');
+  // final Uri pricacy_preferences = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
+  // final Uri term_services = Uri(scheme: 'https', host: 'http://52.63.253.231:4000/term_and_condition', path: 'headers/');
+
+  final String cookie_policy = 'http://52.63.253.231:4000/cookie';
+  final String pricacy_policy = 'http://52.63.253.231:4000/privacy';
+  final String pricacy_preferences = 'http://52.63.253.231:4000/privacy_preference';
+  final String term_services = 'http://52.63.253.231:4000/term_and_condition';
+  // Future<void> _launchInBrowser(Uri url) async {
+  //   if (!await launchUrl(
+  //     url,
+  //     // mode: LaunchMode.externalApplication,
+  //   )) {
+  //     throw Exception('Could not launch $url');
+  //   }
+  // }
+
+  void _launchInBrowser(String nonSecureUrl) async {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CommonWeb(url: nonSecureUrl),
+      ),
+    );
+
+    // if (await canLaunch(nonSecureUrl)) {
+    //   await launch(nonSecureUrl, forceSafariVC: false);
+    // } else {
+    //   throw 'Could not launch $nonSecureUrl';
+    // }
+  }
+
+
   void deleteDailog() {
     showDialog(
       barrierDismissible: false,
@@ -267,17 +392,75 @@ class _MyHomePageState extends State<Settings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+            SizedBox(height: 20,),
               Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  alignment: Alignment.topRight,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  // alignment: Alignment.center,
                   width: 70,
-                  height: 30,
+                  height: 70,
+                  // decoration: BoxDecoration(
+                  //     color: Colors.black26
+                  // ),
+                  child: Icon(CupertinoIcons.delete,color: CommonColors.buttonorg,size: 70,)
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text("Are you sure want to\ndelete this profile ?",style: TextStyle(color:CommonColors.buttonorg,fontSize: 18,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+                ),
+              ),
+              SizedBox(height: 20,),
+              InkWell(
+                onTap: (){
+                  deleteUser();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 50,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Colors.black26
+                    color: CommonColors.buttonorg,
+                    borderRadius:
+                    const BorderRadius.all(Radius.circular(25)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "YES",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900),
+                    ),
                   ),
                 ),
-              )
+              ),
+              SizedBox(height: 10,),
+              InkWell(
+                onTap: (){
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 50,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: CommonColors.buttonorg,
+                    borderRadius:
+                    const BorderRadius.all(Radius.circular(25)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "NO",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -294,20 +477,82 @@ class _MyHomePageState extends State<Settings> {
       // Retrieve the latitude and longitude from the 'position' object.
       double latitude = position.latitude;
       double longitude = position.longitude;
-
       // Use geocoding to get the place name from the coordinates.
       List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
       Placemark placemark = placemarks.first;
-
       // Retrieve the place name from the 'placemark' object.
       placeName = placemark.country.toString();
-      print("ashfkjdgsdhf $placeName");
+      // print("ashfkjdgsdhf $placeName");
     }).catchError((e) {
-      print("objectjhgfdgsfxfcvgb $e");
+      // print("objectjhgfdgsfxfcvgb $e");
       // Handle any errors that occur during location fetching or geocoding.
     });
-
   }
+
+
+
+  void openEmailMessage() async {
+    final Uri _emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'shaadiapp23@gmail.com', // Replace with the recipient's email address
+      queryParameters: {
+        'subject': 'Subject', // Replace with the desired email subject
+        'body': '', // Replace with the email body
+      },
+    );
+    if (!await launchUrl(
+      _emailLaunchUri,
+      mode: LaunchMode.externalApplication,
+    )){
+      throw Exception('Could not launch $_emailLaunchUri');
+    }
+  }
+
+  // Future<void> _launchInBrowser(Uri url) async {
+  //   if (!await launchUrl(
+  //     url,
+  //     // mode: LaunchMode.externalApplication,
+  //   )) {
+  //     throw Exception('Could not launch $url');
+  //   }
+  // }
+
+
+
+  void shareApp() {
+
+    String androidAppLink = "https://play.google.com/store/apps/details?id=com.shaadi.app"; // Replace with your Android app link.
+    String iosAppLink = "https://apps.apple.com/us/app/your-app-name/id1234567890"; // Replace with your iOS app link.
+
+    String message = "Check out our app:\n";
+
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      message += androidAppLink;
+    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+      message += iosAppLink;
+    } else {
+      // For other platforms, just include a generic message.
+      message += "Download on your app store!";
+    }
+
+    Share.share(message);
+  }
+
+
+  Future<void> _launchSocialMediaAppIfInstalled({
+    required String url,
+  }) async {
+    try {
+      bool launched = await launch(url, forceSafariVC: false); // Launch the app if installed!
+
+      if (!launched) {
+        launch(url); // Launch web view if app is not installed!
+      }
+    } catch (e) {
+      launch(url); // Launch web view if app is not installed!
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -369,261 +614,261 @@ class _MyHomePageState extends State<Settings> {
                     new SizedBox(
                       height: 40,
                     ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: CommonColors.settingblue,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      padding: const EdgeInsets.only(top: 10, bottom: 15),
-                      child: Column(
-                        children: [
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              new Container(
-                                child: new Text(
-                                  "Shadi-App",
-                                  style: new TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white),
-                                ),
-                              ),
-                              new SizedBox(
-                                width: 13,
-                              ),
-                              Container(
-                                  decoration: BoxDecoration(
-                                    color: CommonColors.themeblack,
-                                    borderRadius: BorderRadius.circular(65),
-                                  ),
-                                  // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
-                                  alignment: Alignment.center,
-                                  width: 69,
-                                  height: 26,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "Free",
-                                        style: new TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                          new SizedBox(
-                            height: 12,
-                          ),
-                          new Container(
-                            child: new Text(
-                              "Priority Likes, see who likes you and more",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: CommonColors.bluepro,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      padding: const EdgeInsets.only(top: 10, bottom: 15),
-                      child: Column(
-                        children: [
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              new Container(
-                                child: new Text(
-                                  "Shadi-App",
-                                  style: new TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white),
-                                ),
-                              ),
-                              new SizedBox(
-                                width: 13,
-                              ),
-                              Container(
-                                  decoration: BoxDecoration(
-                                    color: CommonColors.white,
-                                    borderRadius: BorderRadius.circular(65),
-                                  ),
-                                  // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
-                                  alignment: Alignment.center,
-                                  width: 69,
-                                  height: 26,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "Premium",
-                                        style: new TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: CommonColors.bluepro),
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                          new SizedBox(
-                            height: 12,
-                          ),
-                          new Container(
-                            child: new Text(
-                              "Priority Likes, see who likes you and more",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white.withOpacity(0.6)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: CommonColors.yellow,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      padding: const EdgeInsets.only(top: 10, bottom: 15),
-                      child: Column(
-                        children: [
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              new Container(
-                                child: new Text(
-                                  "Shadi-App",
-                                  style: new TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black),
-                                ),
-                              ),
-                              new SizedBox(
-                                width: 13,
-                              ),
-                              Container(
-                                  decoration: BoxDecoration(
-                                    color: CommonColors.white,
-                                    borderRadius: BorderRadius.circular(65),
-                                  ),
-                                  // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
-                                  alignment: Alignment.center,
-                                  width: 69,
-                                  height: 26,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "Gold",
-                                        style: new TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                          new SizedBox(
-                            height: 12,
-                          ),
-                          new Container(
-                            child: new Text(
-                              "Priority Likes, see who likes you and more",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black.withOpacity(0.6)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: CommonColors.buttonorg,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      padding: const EdgeInsets.only(top: 10, bottom: 15),
-                      child: Column(
-                        children: [
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              new Container(
-                                child: new Text(
-                                  "Shadi-App",
-                                  style: new TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white),
-                                ),
-                              ),
-                              new SizedBox(
-                                width: 13,
-                              ),
-                              Container(
-                                  decoration: BoxDecoration(
-                                    color: CommonColors.white,
-                                    borderRadius: BorderRadius.circular(65),
-                                  ),
-                                  // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 0),
-                                  alignment: Alignment.center,
-                                  width: 69,
-                                  height: 26,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "VIP",
-                                        style: new TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                          new SizedBox(
-                            height: 12,
-                          ),
-                          new Container(
-                            child: new Text(
-                              "Priority Likes, see who likes you and more",
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white.withOpacity(0.6)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    new SizedBox(
-                      height: 100,
-                    ),
+                    // Container(
+                    //   alignment: Alignment.centerLeft,
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.settingblue,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5))),
+                    //   padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    //   child: Column(
+                    //     children: [
+                    //       new Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         crossAxisAlignment: CrossAxisAlignment.center,
+                    //         children: [
+                    //           new Container(
+                    //             child: new Text(
+                    //               "Shaadi-App",
+                    //               style: new TextStyle(
+                    //                   fontSize: 16,
+                    //                   fontWeight: FontWeight.w600,
+                    //                   color: Colors.white),
+                    //             ),
+                    //           ),
+                    //           new SizedBox(
+                    //             width: 13,
+                    //           ),
+                    //           Container(
+                    //               decoration: BoxDecoration(
+                    //                 color: CommonColors.themeblack,
+                    //                 borderRadius: BorderRadius.circular(65),
+                    //               ),
+                    //               // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                    //               alignment: Alignment.center,
+                    //               width: 69,
+                    //               height: 26,
+                    //               child: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   Text(
+                    //                     "Free",
+                    //                     style: new TextStyle(
+                    //                         fontSize: 11,
+                    //                         fontWeight: FontWeight.w600,
+                    //                         color: Colors.white),
+                    //                   ),
+                    //                 ],
+                    //               )),
+                    //         ],
+                    //       ),
+                    //       new SizedBox(
+                    //         height: 12,
+                    //       ),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Priority Likes, see who likes you and more",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.white),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   alignment: Alignment.centerLeft,
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.bluepro,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5))),
+                    //   padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    //   child: Column(
+                    //     children: [
+                    //       new Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         crossAxisAlignment: CrossAxisAlignment.center,
+                    //         children: [
+                    //           new Container(
+                    //             child: new Text(
+                    //               "Shaadi-App",
+                    //               style: new TextStyle(
+                    //                   fontSize: 16,
+                    //                   fontWeight: FontWeight.w600,
+                    //                   color: Colors.white),
+                    //             ),
+                    //           ),
+                    //           new SizedBox(
+                    //             width: 13,
+                    //           ),
+                    //           Container(
+                    //               decoration: BoxDecoration(
+                    //                 color: CommonColors.white,
+                    //                 borderRadius: BorderRadius.circular(65),
+                    //               ),
+                    //               // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                    //               alignment: Alignment.center,
+                    //               width: 69,
+                    //               height: 26,
+                    //               child: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   Text(
+                    //                     "Premium",
+                    //                     style: new TextStyle(
+                    //                         fontSize: 11,
+                    //                         fontWeight: FontWeight.w600,
+                    //                         color: CommonColors.bluepro),
+                    //                   ),
+                    //                 ],
+                    //               )),
+                    //         ],
+                    //       ),
+                    //       new SizedBox(
+                    //         height: 12,
+                    //       ),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Priority Likes, see who likes you and more",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.white.withOpacity(0.6)),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   alignment: Alignment.centerLeft,
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.yellow,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5))),
+                    //   padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    //   child: Column(
+                    //     children: [
+                    //       new Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         crossAxisAlignment: CrossAxisAlignment.center,
+                    //         children: [
+                    //           new Container(
+                    //             child: new Text(
+                    //               "Shaadi-App",
+                    //               style: new TextStyle(
+                    //                   fontSize: 16,
+                    //                   fontWeight: FontWeight.w600,
+                    //                   color: Colors.black),
+                    //             ),
+                    //           ),
+                    //           new SizedBox(
+                    //             width: 13,
+                    //           ),
+                    //           Container(
+                    //               decoration: BoxDecoration(
+                    //                 color: CommonColors.white,
+                    //                 borderRadius: BorderRadius.circular(65),
+                    //               ),
+                    //               // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 4),
+                    //               alignment: Alignment.center,
+                    //               width: 69,
+                    //               height: 26,
+                    //               child: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   Text(
+                    //                     "Gold",
+                    //                     style: new TextStyle(
+                    //                         fontSize: 11,
+                    //                         fontWeight: FontWeight.w600,
+                    //                         color: Colors.black),
+                    //                   ),
+                    //                 ],
+                    //               )),
+                    //         ],
+                    //       ),
+                    //       new SizedBox(
+                    //         height: 12,
+                    //       ),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Priority Likes, see who likes you and more",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.black.withOpacity(0.6)),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   alignment: Alignment.centerLeft,
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.buttonorg,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5))),
+                    //   padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    //   child: Column(
+                    //     children: [
+                    //       new Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         crossAxisAlignment: CrossAxisAlignment.center,
+                    //         children: [
+                    //           new Container(
+                    //             child: new Text(
+                    //               "Shaadi-App",
+                    //               style: new TextStyle(
+                    //                   fontSize: 16,
+                    //                   fontWeight: FontWeight.w600,
+                    //                   color: Colors.white),
+                    //             ),
+                    //           ),
+                    //           new SizedBox(
+                    //             width: 13,
+                    //           ),
+                    //           Container(
+                    //               decoration: BoxDecoration(
+                    //                 color: CommonColors.white,
+                    //                 borderRadius: BorderRadius.circular(65),
+                    //               ),
+                    //               // padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 0),
+                    //               alignment: Alignment.center,
+                    //               width: 69,
+                    //               height: 26,
+                    //               child: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   Text(
+                    //                     "VIP",
+                    //                     style: new TextStyle(
+                    //                         fontSize: 11,
+                    //                         fontWeight: FontWeight.w600,
+                    //                         color: Colors.black),
+                    //                   ),
+                    //                 ],
+                    //               )),
+                    //         ],
+                    //       ),
+                    //       new SizedBox(
+                    //         height: 12,
+                    //       ),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Priority Likes, see who likes you and more",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.white.withOpacity(0.6)),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // new SizedBox(
+                    //   height: 100,
+                    // ),
                     new Container(
                       margin: const EdgeInsets.only(left: 20, right: 20),
                       alignment: Alignment.centerLeft,
@@ -638,13 +883,13 @@ class _MyHomePageState extends State<Settings> {
                     new SizedBox(
                       height: 25,
                     ),
-                    new Container(
+                    new Container(height:50,
                       margin: const EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           color: CommonColors.editblack,
                           borderRadius: BorderRadius.circular(37)),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 20),
+                          vertical: 5, horizontal: 20),
                       child: Row(
                         children: [
                           // new SizedBox(width: 20,),
@@ -657,17 +902,45 @@ class _MyHomePageState extends State<Settings> {
                                   color: CommonColors.edittextblack),
                             ),
                           ),
-                          Spacer(),
-                          new Container(
-                            child: new Text(
-                              phone,
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonColors.edittextblack),
+                          // Spacer(),
+                          new SizedBox(width: 20,),
+                          new Expanded(
+                            child: Container(
+                              // margin: const EdgeInsets.only(top: 10),
+                              // height: 30,
+                              // width:600,
+                              alignment:Alignment.bottomCenter,
+                              child: TextFormField(
+                                enabled: enablePhone,
+                                textAlign: TextAlign.end,
+                                // textAlignVertical: TextAlignVertical.bottom,
+                                keyboardType: TextInputType.name,
+                                textInputAction: TextInputAction.done,
+                                controller: _controllerphone,
+                                decoration: InputDecoration(
+                                  hintText: 'Phone',
+                                  border: InputBorder.none,
+                                  hintStyle: new TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                onChanged: (text){
+                                  setState(() {
+                                  });
+                                },
+                                style: new TextStyle(color: Colors.white, fontSize: 14),
+                              ),
                             ),
                           ),
-                          // new SizedBox(width: 20,),
+                         if(_controllerphone.text.isEmpty || enablePhone==true) InkWell(
+                            onTap: (){
+                              if(!click) {
+                                updatePhone();
+                              }
+                            },
+                              child: Icon(Icons.done)
+                          )
                         ],
                       ),
                     ),
@@ -675,13 +948,17 @@ class _MyHomePageState extends State<Settings> {
                       height: 20,
                     ),
                     new Container(
+                      height:50,
+                      width: MediaQuery.of(context).size.width,
                       margin: const EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           color: CommonColors.editblack,
                           borderRadius: BorderRadius.circular(37)),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 20),
+                          vertical: 5, horizontal: 20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // new SizedBox(width: 20,),
                           new Container(
@@ -693,20 +970,117 @@ class _MyHomePageState extends State<Settings> {
                                   color: CommonColors.edittextblack),
                             ),
                           ),
-                          Spacer(),
-                          new Container(
-                            child: new Text(
-                              email,
-                              style: new TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonColors.edittextblack),
+                          // Spacer(),
+                          SizedBox(width:20),
+                          new Expanded(
+                            child: Container(
+                              // margin: const EdgeInsets.only(top: 10),
+                              // height: 30,
+                              // width:600,
+                              alignment:Alignment.bottomCenter,
+                              child: TextFormField(
+                                enabled: enableEmail,
+                                textAlign: TextAlign.end,
+                                // textAlignVertical: TextAlignVertical.bottom,
+                                keyboardType: TextInputType.name,
+                                textInputAction: TextInputAction.done,
+                                controller: _controlleremail,
+                                decoration: InputDecoration(
+                                  hintText: 'Email',
+                                  border: InputBorder.none,
+                                  hintStyle: new TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                style: new TextStyle(color: Colors.white, fontSize: 14),
+                                onChanged: (text){
+                                  setState((){});
+                                },
+                              ),
                             ),
                           ),
+
+                          if(_controlleremail.text.isEmpty || enableEmail==true)
+                            InkWell(
+                              onTap: (){
+                                if(!click) {
+                                  updateEmail();
+                                }
+                              },
+                              child: Icon(Icons.done)
+                            )
                           // new SizedBox(width: 20,),
                         ],
                       ),
                     ),
+                    // new SizedBox(
+                    //   height: 20,
+                    // ),
+                    // new Container(
+                    //   height:50,
+                    //   width: MediaQuery.of(context).size.width,
+                    //   margin: const EdgeInsets.only(left: 20, right: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: CommonColors.editblack,
+                    //       borderRadius: BorderRadius.circular(37)),
+                    //   padding: const EdgeInsets.symmetric(
+                    //       vertical: 5, horizontal: 20),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       // new SizedBox(width: 20,),
+                    //       new Container(
+                    //         child: new Text(
+                    //           "Email",
+                    //           style: new TextStyle(
+                    //               fontSize: 14,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: CommonColors.edittextblack),
+                    //         ),
+                    //       ),
+                    //       Spacer(),
+                    //       // SizedBox(width:20),
+                    //       new Expanded(
+                    //         child: Container(
+                    //           margin: const EdgeInsets.only(top: 10),
+                    //           height: 30,
+                    //           // width:600,
+                    //           alignment:Alignment.bottomCenter,
+                    //           child: TextFormField(
+                    //             enabled: enableEmail,
+                    //             textAlign: TextAlign.end,
+                    //             textAlignVertical: TextAlignVertical.bottom,
+                    //             keyboardType: TextInputType.name,
+                    //             textInputAction: TextInputAction.done,
+                    //             controller: _controlleremail,
+                    //             decoration: InputDecoration(
+                    //               hintText: 'Email',
+                    //               border: InputBorder.none,
+                    //               hintStyle: new TextStyle(
+                    //                   color: Colors.white.withOpacity(0.6),
+                    //                   fontSize: 14,
+                    //                   fontWeight: FontWeight.w400),
+                    //             ),
+                    //             style: new TextStyle(color: Colors.white, fontSize: 14),
+                    //             onChanged: (text){
+                    //               setState((){});
+                    //             },
+                    //           ),
+                    //         ),
+                    //       ),
+                    //
+                    //       if(_controlleremail.text.isEmpty || enableEmail==true)  InkWell(
+                    //           onTap: (){
+                    //             updateEmail();
+                    //           },
+                    //           child: Icon(Icons.done)
+                    //       )
+                    //       // new SizedBox(width: 20,),
+                    //     ],
+                    //   ),
+                    // ),
                     new Container(
                       margin:
                           const EdgeInsets.only(left: 30, right: 30, top: 10),
@@ -832,7 +1206,7 @@ class _MyHomePageState extends State<Settings> {
                         items: countryitems,
                         value: country,
                         hint: "Select",
-                        disabledHint: "Disabled",
+                        // disabledHint: "Disabled",
                         searchHint: "Select country",
                         style: TextStyle(color: Colors.white),
                         underline: Container(),
@@ -911,9 +1285,9 @@ class _MyHomePageState extends State<Settings> {
                               onChanged: (value) {
                                 GoGlobal = value;
                                 setState(() {});
-                                Updateuser();
+
                               },
-                              thumbColor: CupertinoColors.black,
+                              thumbColor: GoGlobal ? CommonColors.buttonorg:CupertinoColors.black,
                               activeColor: CupertinoColors.white,
                               trackColor: CupertinoColors.white,
                             ),
@@ -961,7 +1335,7 @@ class _MyHomePageState extends State<Settings> {
                               Spacer(),
                               new Container(
                                 child: new Text(
-                                  "${_currentRangeValues.start.round().toString()} - ${_currentRangeValues.end.round().toString()}",
+                                  isloaddetail ? "0 - 0":"${_currentRangeValues.start.round().toString()} - ${_currentRangeValues.end.round().toString()}",
                                   style: new TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
@@ -971,7 +1345,7 @@ class _MyHomePageState extends State<Settings> {
                               // new SizedBox(width: 20,),
                             ],
                           ),
-                          Row(
+                          if(isloaddetail==false)  Row(
                             children: [
                               Expanded(
                                 child: RangeSlider(
@@ -1030,9 +1404,8 @@ class _MyHomePageState extends State<Settings> {
                               onChanged: (value) {
                                 inrange = value;
                                 setState(() {});
-                                Updateuser();
                               },
-                              thumbColor: CupertinoColors.black,
+                              thumbColor:  inrange ? CommonColors.buttonorg:CupertinoColors.black,
                               activeColor: CupertinoColors.white,
                               trackColor: CupertinoColors.white,
                             ),
@@ -1068,7 +1441,7 @@ class _MyHomePageState extends State<Settings> {
                               Spacer(),
                               new Container(
                                 child: new Text(
-                                  "${_currentheightValues.start.toString().replaceAll(".", "'")} - ${_currentheightValues.end.toString().replaceAll(".", "'")}",
+                               isloaddetail ? "0-0" :"${_currentheightValues.start.toString().replaceAll(".", "'")} - ${_currentheightValues.end.toString().replaceAll(".", "'")}",
                                   style: new TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
@@ -1078,7 +1451,7 @@ class _MyHomePageState extends State<Settings> {
                               // new SizedBox(width: 20,),
                             ],
                           ),
-                          Row(
+                          if(isloaddetail==false) Row(
                             children: [
                               Expanded(
                                 child: RangeSlider(
@@ -1137,7 +1510,7 @@ class _MyHomePageState extends State<Settings> {
                           // new SizedBox(width: 20,),
                           new Container(
                             child: new Text(
-                              "Show me on Shadi-App",
+                              "Show me on Shaadi-App",
                               style: new TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -1151,7 +1524,6 @@ class _MyHomePageState extends State<Settings> {
                                     setState(() {
                                       showme = false;
                                     });
-                                    Updateuser();
                                   },
                                   child: new Container(
                                     height: 20,
@@ -1171,7 +1543,6 @@ class _MyHomePageState extends State<Settings> {
                                     setState(() {
                                       showme = true;
                                     });
-                                    Updateuser();
                                   },
                                   child: new Container(
                                     height: 20,
@@ -1228,7 +1599,7 @@ class _MyHomePageState extends State<Settings> {
                           incognito
                               ? InkWell(
                                   onTap: () {
-                                    Updateuser();
+
                                     setState(() {
                                       incognito = false;
                                     });
@@ -1248,7 +1619,6 @@ class _MyHomePageState extends State<Settings> {
                                 )
                               : InkWell(
                                   onTap: () {
-                                    Updateuser();
                                     setState(() {
                                       incognito = true;
                                     });
@@ -1301,7 +1671,7 @@ class _MyHomePageState extends State<Settings> {
                           // new SizedBox(width: 20,),
                           new Container(
                             child: new Text(
-                              "Don’t show me on Shadi-App",
+                              "Don’t show me on Shaadi-App",
                               style: new TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -1315,7 +1685,6 @@ class _MyHomePageState extends State<Settings> {
                                     setState(() {
                                       showme = true;
                                     });
-                                    Updateuser();
                                   },
                                   child: new Container(
                                     height: 20,
@@ -1335,7 +1704,6 @@ class _MyHomePageState extends State<Settings> {
                                     setState(() {
                                       showme = false;
                                     });
-                                    Updateuser();
                                   },
                                   child: new Container(
                                     height: 20,
@@ -1393,10 +1761,9 @@ class _MyHomePageState extends State<Settings> {
                               onChanged: (value) {
                                 isonline = value;
 
-                                Updateuser();
                                 setState(() {});
                               },
-                              thumbColor: CupertinoColors.black,
+                              thumbColor: isonline ? CommonColors.buttonorg:CupertinoColors.black,
                               activeColor: CupertinoColors.white,
                               trackColor: CupertinoColors.white,
                             ),
@@ -1457,7 +1824,8 @@ class _MyHomePageState extends State<Settings> {
                         textInputAction: TextInputAction.done,
                         controller: _controllerusername,
                         decoration: InputDecoration(
-                          hintText: '',
+                          suffixIcon: usernamecheck==1 ? Icon(Icons.check_circle,color: Colors.blue,):null,
+                          hintText: 'username',
                           border: InputBorder.none,
                           hintStyle: new TextStyle(
                               color: Colors.black.withOpacity(0.6),
@@ -1467,7 +1835,7 @@ class _MyHomePageState extends State<Settings> {
                         style: new TextStyle(color: Colors.black, fontSize: 14),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Please enter your Tag';
+                            return 'Please enter your name';
                           }
                           return null;
                         },
@@ -1573,10 +1941,9 @@ class _MyHomePageState extends State<Settings> {
                               onChanged: (value) {
                                 isNotification = value;
 
-                                Updateuser();
                                 setState(() {});
                               },
-                              thumbColor: CupertinoColors.black,
+                              thumbColor: isNotification ? CommonColors.buttonorg:CupertinoColors.black,
                               activeColor: CupertinoColors.white,
                               trackColor: CupertinoColors.white,
                             ),
@@ -1615,10 +1982,9 @@ class _MyHomePageState extends State<Settings> {
                               onChanged: (value) {
                                 isEmail = value;
 
-                                Updateuser();
                                 setState(() {});
                               },
-                              thumbColor: CupertinoColors.black,
+                              thumbColor: isEmail ? CommonColors.buttonorg:CupertinoColors.black,
                               activeColor: CupertinoColors.white,
                               trackColor: CupertinoColors.white,
                             ),
@@ -1678,7 +2044,7 @@ class _MyHomePageState extends State<Settings> {
                               Expanded(
                                   child: Center(
                                 child: Text(
-                                  "Share Shadi-App",
+                                  "Share Shaadi-App",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -1692,8 +2058,7 @@ class _MyHomePageState extends State<Settings> {
                               type: MaterialType.transparency,
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed("EnableLocation");
+                                  shareApp();
                                 },
                                 splashColor: Colors.blue.withOpacity(0.2),
                                 customBorder: RoundedRectangleBorder(
@@ -1722,100 +2087,116 @@ class _MyHomePageState extends State<Settings> {
                     new SizedBox(
                       height: 30,
                     ),
-                    new Container(
-                      margin: const EdgeInsets.only(left: 20, right: 30),
-                      // decoration: BoxDecoration(
-                      //     color: CommonColors.editblack,
-                      //     borderRadius: BorderRadius.circular(37)
-                      // ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          // new SizedBox(width: 20,),
-                          new Container(
-                            child: new Text(
-                              "Cookie Policy",
-                              style: new TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: CommonColors.edittextblack),
+                    InkWell(
+                      onTap: (){
+                        // _launchURL("https://www.google.com/");
+                        _launchInBrowser(cookie_policy);
+                      },
+                      child: new Container(
+                        margin: const EdgeInsets.only(left: 20, right: 30),
+                        // decoration: BoxDecoration(
+                        //     color: CommonColors.editblack,
+                        //     borderRadius: BorderRadius.circular(37)
+                        // ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            // new SizedBox(width: 20,),
+                            new Container(
+                              child: new Text(
+                                "Cookie Policy",
+                                style: new TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: CommonColors.edittextblack),
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          new Container(
-                              child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: CommonColors.edittextblack,
-                            size: 20,
-                          )),
-                          // new SizedBox(width: 20,),
-                        ],
+                            Spacer(),
+                            new Container(
+                                child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: CommonColors.edittextblack,
+                              size: 20,
+                            )),
+                            // new SizedBox(width: 20,),
+                          ],
+                        ),
                       ),
                     ),
                     new SizedBox(
                       height: 15,
                     ),
-                    new Container(
-                      margin: const EdgeInsets.only(left: 20, right: 30),
-                      // decoration: BoxDecoration(
-                      //     color: CommonColors.editblack,
-                      //     borderRadius: BorderRadius.circular(37)
-                      // ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          // new SizedBox(width: 20,),
-                          new Container(
-                            child: new Text(
-                              "Privacy Policy",
-                              style: new TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: CommonColors.edittextblack),
+                    InkWell(
+                      onTap: (){
+                        _launchInBrowser(pricacy_policy);
+                      },
+                      child: new Container(
+                        margin: const EdgeInsets.only(left: 20, right: 30),
+                        // decoration: BoxDecoration(
+                        //     color: CommonColors.editblack,
+                        //     borderRadius: BorderRadius.circular(37)
+                        // ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            // new SizedBox(width: 20,),
+                            new Container(
+                              child: new Text(
+                                "Privacy Policy",
+                                style: new TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: CommonColors.edittextblack),
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          new Container(
-                              child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: CommonColors.edittextblack,
-                            size: 20,
-                          )),
-                          // new SizedBox(width: 20,),
-                        ],
+                            Spacer(),
+                            new Container(
+                                child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: CommonColors.edittextblack,
+                              size: 20,
+                            )),
+                            // new SizedBox(width: 20,),
+                          ],
+                        ),
                       ),
                     ),
                     new SizedBox(
                       height: 15,
                     ),
-                    new Container(
-                      margin: const EdgeInsets.only(left: 20, right: 30),
-                      // decoration: BoxDecoration(
-                      //     color: CommonColors.editblack,
-                      //     borderRadius: BorderRadius.circular(37)
-                      // ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          // new SizedBox(width: 20,),
-                          new Container(
-                            child: new Text(
-                              "Privacy preferences",
-                              style: new TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: CommonColors.edittextblack),
+                    InkWell(
+                      onTap: (){
+                        _launchInBrowser(pricacy_preferences);
+                      },
+                      child: new Container(
+                        margin: const EdgeInsets.only(left: 20, right: 30),
+                        // decoration: BoxDecoration(
+                        //     color: CommonColors.editblack,
+                        //     borderRadius: BorderRadius.circular(37)
+                        // ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            // new SizedBox(width: 20,),
+                            new Container(
+                              child: new Text(
+                                "Privacy preferences",
+                                style: new TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: CommonColors.edittextblack),
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          new Container(
-                              child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: CommonColors.edittextblack,
-                            size: 20,
-                          )),
-                          // new SizedBox(width: 20,),
-                        ],
+                            Spacer(),
+                            new Container(
+                                child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: CommonColors.edittextblack,
+                              size: 20,
+                            )),
+                            // new SizedBox(width: 20,),
+                          ],
+                        ),
                       ),
                     ),
                     new SizedBox(
@@ -1835,26 +2216,31 @@ class _MyHomePageState extends State<Settings> {
                     new SizedBox(
                       height: 25,
                     ),
-                    Container(
-                        height: 50,
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: CommonColors.editblack,
-                          // border: Border.all(color: Colors.white),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(25)),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Terms of Services",
-                          style: new TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: CommonColors.editblackgrey),
-                          textAlign: TextAlign.left,
-                        )),
+                    InkWell(
+                      onTap: (){
+                        _launchInBrowser(term_services);
+                      },
+                      child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: CommonColors.editblack,
+                            // border: Border.all(color: Colors.white),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Terms of Services",
+                            style: new TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: CommonColors.editblackgrey),
+                            textAlign: TextAlign.left,
+                          )),
+                    ),
                     new SizedBox(
                       height: 30,
                     ),
@@ -1872,26 +2258,31 @@ class _MyHomePageState extends State<Settings> {
                     new SizedBox(
                       height: 25,
                     ),
-                    Container(
-                        height: 50,
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: CommonColors.editblack,
-                          // border: Border.all(color: Colors.white),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(25)),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Support",
-                          style: new TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: CommonColors.editblackgrey),
-                          textAlign: TextAlign.left,
-                        )),
+                    InkWell(
+                      onTap: (){
+                        openEmailMessage();
+                      },
+                      child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: CommonColors.editblack,
+                            // border: Border.all(color: Colors.white),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Support",
+                            style: new TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: CommonColors.editblackgrey),
+                            textAlign: TextAlign.left,
+                          )),
+                    ),
                     new SizedBox(
                       height: 140,
                     ),
@@ -1932,6 +2323,7 @@ class _MyHomePageState extends State<Settings> {
                               type: MaterialType.transparency,
                               child: InkWell(
                                 onTap: () {
+                                  Updateuser();
                                   rangeSet();
                                 },
                                 splashColor: Colors.blue.withOpacity(0.2),
@@ -2095,7 +2487,11 @@ class _MyHomePageState extends State<Settings> {
                             height: 40,
                             width: 40,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                _launchSocialMediaAppIfInstalled(
+                                  url: 'https://www.facebook.com/', // Facebook
+                                );
+                              },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20.0),
                                 child: Image.asset("assets/facebook.png"),
@@ -2112,7 +2508,11 @@ class _MyHomePageState extends State<Settings> {
                             height: 40,
                             width: 40,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                _launchSocialMediaAppIfInstalled(
+                                  url: 'https://twitter.com/', // Twitter
+                                );
+                              },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20.0),
                                 child: Image.asset("assets/twitter.png"),
@@ -2129,7 +2529,11 @@ class _MyHomePageState extends State<Settings> {
                             height: 40,
                             width: 40,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                _launchSocialMediaAppIfInstalled(
+                                  url: 'https://www.instagram.com/', //Instagram
+                                );
+                              },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20.0),
                                 child: Image.asset("assets/instagram.png"),

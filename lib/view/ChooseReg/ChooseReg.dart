@@ -103,6 +103,7 @@ class _MyHomePageState extends State<ChooseReg> {
       isload=false;
     });
     try {
+      await _googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if(googleUser != null) {
         // Successful sign-in
@@ -147,11 +148,12 @@ class _MyHomePageState extends State<ChooseReg> {
       _preferences?.setString(ShadiApp.userId,otpVerifyModel.data?.id ?? "");
       _preferences?.setBool(ShadiApp.status, true);
       // Toaster.show(context, otpVerifyModel.massege.toString());
-      // if(otpVerifyModel.data?.firstName!="" || otpVerifyModel.data?.lastName!="" || otpVerifyModel.data?.birthDate!=""){
-      //   Navigator.of(context).pushNamed('Home');
-      // }else{
+      print("${otpVerifyModel.data!.profilePercentage}????");
+      if(otpVerifyModel.data!.profilePercentage! >= 70){
+        Navigator.of(context).pushNamed('Home');
+      }else{
         Navigator.of(context).pushNamed('CountryCity');
-      // }
+      }
     }else{
       Toaster.show(context, otpVerifyModel.massege.toString());
     }
@@ -161,15 +163,17 @@ class _MyHomePageState extends State<ChooseReg> {
   }
 
 
-  final Uri toLaunch = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
+
+
+  // final Uri toLaunch = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
+  // Future<void> _launchInBrowser(Uri url) async {
+  //   if (!await launchUrl(
+  //     url,
+  //     mode: LaunchMode.externalApplication,
+  //   )) {
+  //     throw Exception('Could not launch $url');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +211,7 @@ class _MyHomePageState extends State<ChooseReg> {
                 InkWell(
                   onTap: (){
                     // _launchInBrowser(toLaunch);
-                    Navigator.of(context).pushNamed('AccountRecover');
+                    // Navigator.of(context).pushNamed('AccountRecover');
                   },
                   splashColor: CommonColors.themeblack,
                   highlightColor: CommonColors.themeblack,
@@ -400,25 +404,26 @@ class _MyHomePageState extends State<ChooseReg> {
                 ],
               ),
             ),
-        InkWell(
-          onTap: (){
-            Navigator.of(context).pushNamed('ProblemAuth');
-          },
-          splashColor: CommonColors.themeblack,
-          highlightColor: CommonColors.themeblack,
-           child: Container(
+        // InkWell(
+        //   onTap: (){
+        //     Navigator.of(context).pushNamed('ProblemAuth');
+        //   },
+        //   splashColor: CommonColors.themeblack,
+        //   highlightColor: CommonColors.themeblack,
+        //    child:
+               Container(
               margin: const EdgeInsets.only(top: 20,bottom: 25),
-              child: Text(
-                'Authorization problems?',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              // child: Text(
+              //   'Authorization problems?',
+              //   style: TextStyle(
+              //     color: Colors.white,
+              //     fontSize: 15,
+              //     fontWeight: FontWeight.w600,
+              //   ),
+              //   textAlign: TextAlign.center,
+              // ),
             ),
-        )
+        // )
           ],
         ),
       ),

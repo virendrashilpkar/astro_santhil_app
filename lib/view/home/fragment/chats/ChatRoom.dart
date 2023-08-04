@@ -1,12 +1,23 @@
+import 'dart:ffi';
 import 'dart:io';
 
+// import 'package:audioplayers/audioplayers.dart';
+import 'package:another_audio_recorder/another_audio_recorder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/home/fragment/chats/audiocontroller/audiocontroller.dart';
+import 'package:shadiapp/view/home/fragment/chats/audiocontroller/chatcontroller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,11 +43,33 @@ class _ChatRoom extends State<ChatRoom> {
   var messageList = ["Hi","How are you",];
   var reciveList = ["Hello", "Fine"];
 
-
+  late ChatProvider chatProvider;
+  List<QueryDocumentSnapshot> listMessage = [];
+  int _limit = 20;
+  int _limitIncrement = 20;
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     userDetail();
+    checkPermission();
     _message.text=widget.msg;
+    chatProvider = Get.put(ChatProvider(
+        firebaseFirestore: FirebaseFirestore.instance,
+        firebaseStorage: FirebaseStorage.instance));
+    _scrollController.addListener(_scrollListener);
+  }
+
+
+
+  _scrollListener() {
+    if (_scrollController.offset >=
+        _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange &&
+        _limit <= listMessage.length) {
+      setState(() {
+        _limit += _limitIncrement;
+      });
+    }
   }
 
   String firstName = "";
@@ -55,8 +88,8 @@ class _ChatRoom extends State<ChatRoom> {
       setState((){});
     }
   }
-
-
+  // FirebaseAuth auth = FirebaseAuth.getInstance();
+  // FirebaseUser user = auth.getCurrentUser();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future uploadImage(String user_name,File imageFile) async {
     String fileName = const Uuid().v1();
@@ -109,14 +142,66 @@ class _ChatRoom extends State<ChatRoom> {
 
     }
   }
+  // Future uploadAudio(String user_name,File imageFile) async {
+  //   String fileName = const Uuid().v1();
+  //   int status = 1;
+  //
+  //   await _firestore
+  //       .collection('chatroom')
+  //       .doc(widget.room_id)//roomid
+  //       .collection('chats')
+  //       .doc(fileName)
+  //       .set({
+  //     "uid": luser_id,
+  //     "sendby": user_name,
+  //     "message": "",
+  //     "type": "img",
+  //     "time": FieldValue.serverTimestamp(),
+  //   });
+  //
+  //   var ref =
+  //   FirebaseStorage.instance.ref().child('images').child("$fileName.jpg");
+  //
+  //   var uploadTask = await ref.putFile(imageFile!).catchError((error) async {
+  //     await _firestore
+  //         .collection('chatroom')
+  //         .doc(widget.room_id)//roomid
+  //         .collection('chats')
+  //         .doc(fileName)
+  //         .delete();
+  //
+  //     status = 0;
+  //     // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+  //     //     duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+  //
+  //   });
+  //
+  //   if (status == 1) {
+  //     String imageUrl = await uploadTask.ref.getDownloadURL();
+  //
+  //     await _firestore
+  //         .collection('chatroom')
+  //         .doc(widget.room_id)//roomid
+  //         .collection('chats')
+  //         .doc(fileName)
+  //         .update({"message": imageUrl});
+  //
+  //     print(imageUrl);
+  //
+  //     // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+  //     //     duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+  //
+  //   }
+  // }
 
-  void onSendMessage(String user_id,user_name) async {
-    if (_message.text.isNotEmpty) {
+
+  void onSendMessage(String user_id,user_name,type,content) async {
+    if (content.isNotEmpty) {
       Map<String, dynamic> messages = {
         "uid": luser_id,
         "sendby": user_name,
-        "message": _message.text,
-        "type": "text",
+        "message": content,
+        "type": type,
         "time": FieldValue.serverTimestamp(),
       };
 
@@ -145,6 +230,152 @@ class _ChatRoom extends State<ChatRoom> {
     }
   }
 
+
+  @override
+  void dispose() {
+    audioController.onClose();
+    audioPlayer.stop();
+  }
+
+  AudioController audioController = Get.put(AudioController());
+  AudioPlayer audioPlayer = AudioPlayer();
+  String audioURL = "";
+  Future<bool> checkpermission2()async{
+    print("request");
+    if(!await Permission.microphone.isGranted){
+      print("request1");
+      PermissionStatus status = await Permission.microphone.request();
+      if(status != PermissionStatus.granted){
+        print("request3");
+        return false;
+      }
+      print("request4");
+    }
+    return true;
+  }
+
+  Future checkPermission() async {
+    await Permission.microphone.request();
+  }
+
+  late String recordFilePath;
+  // FlutterSoundRecorder recorder = FlutterSoundRecorder();
+  late AnotherAudioRecorder recorder;
+  // final recordFilePath = 'path/to/your/record/file.mp3';
+  void startRecord() async {
+    bool hasPermission = await checkpermission2();
+    if (hasPermission) {
+      recordFilePath = await getFilePath();
+
+      recorder = AnotherAudioRecorder(recordFilePath,audioFormat: AudioFormat.AAC); // .wav .aac .m4a
+      await recorder.initialized;
+
+      await recorder.start();
+      var recording = await recorder.current(channel: 0);
+      // var result = await recorder.stop();
+      // try {
+      //   await recorder?.openAudioSession();
+      //   await recorder.startRecorder(toFile: recordFilePath, codec: t_CODEC.CODEC_MP3);
+      //   // You can add setState here to update UI elements while recording
+      // } catch (err) {
+      //   print('Error starting recording: $err');
+      // }
+      // RecordMp3.instance.start(recordFilePath, (type) {
+        setState(() {});
+      // });
+    } else {
+      openAppSettings();
+      Fluttertoast.showToast(
+          msg: 'Permission is not granted', backgroundColor: Colors.grey);
+    }
+    setState(() {});
+  }
+
+  void stopRecord() async {
+    bool stop = false;
+    // bool stop = RecordMp3.instance.stop();
+    var result = await recorder.stop();
+    // setState(() {
+    //   recordFilePath= result?.path ?? "";
+    // });
+    // File file = widget.localFileSystem.file(result.path);
+    // audioController.end.value = DateTime.now();
+    // audioController.calcDuration();
+    // var ap = AudioPlayer();
+    // await audioPlayer.setAsset('assets/Notification.mp3');
+    // await audioPlayer.play();
+    // await ap.play(AssetSource("Notification.mp3"));
+    // ap.onPlayerComplete.listen((a) {});
+    print("stop");
+    if (result!=null) {
+      setState(() {
+        recordFilePath= result.path ?? "";
+      });
+      audioController.isRecording.value = false;
+      audioController.isSending.value = true;
+      await uploadAudio();
+    }
+  }
+
+  int i = 0;
+
+  Future<String> getFilePath() async {
+    Directory storageDirectory = await getApplicationDocumentsDirectory();
+    String sdPath =
+        "${storageDirectory.path}/record${DateTime.now().microsecondsSinceEpoch}.acc";
+    var d = Directory(sdPath);
+    if (!d.existsSync()) {
+      d.createSync(recursive: true);
+    }
+    return "$sdPath/test_${i++}.mp3";
+  }
+
+
+
+
+  void onSendMessage2(String content, int type, {String? duration = ""}) {
+    if (content.trim().isNotEmpty) {
+      // messageController.clear();
+      onSendMessage(widget.user_id,"${firstName} ${lastName}","audio",content);
+      // chatProvider.sendMessage(
+      //     content, type, groupChatId, currentUserId, widget.data.id.toString(),
+      //     duration: duration!);
+      _scrollController.animateTo(0,
+          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Nothing to send', backgroundColor: Colors.grey);
+    }
+  }
+
+  uploadAudio() async {
+    print("upload");
+
+    var ref =
+    FirebaseStorage.instance.ref().child('audio').child("audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
+
+
+
+    // Reference reference = firebaseStorage.ref().child(fileName);
+    UploadTask uploadTask = ref.putFile(File(recordFilePath));
+    // UploadTask uploadTask = chatProvider.uploadAudio(File(recordFilePath),
+    //     "audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
+    try {
+      TaskSnapshot snapshot = await uploadTask;
+      audioURL = await snapshot.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      setState(() {
+        audioController.isSending.value = false;
+        onSendMessage2(strVal, TypeMessage.audio,
+            duration: audioController.total);
+      });
+    } on FirebaseException catch (e) {
+      setState(() {
+        audioController.isSending.value = false;
+      });
+      Fluttertoast.showToast(msg: e.message ?? e.toString());
+    }
+  }
 
 
   /* Delete chat on block of user */
@@ -229,7 +460,7 @@ class _ChatRoom extends State<ChatRoom> {
                   child: Container(
                     child: Stack(
                       children: [
-                        Positioned(
+                       if(_firestore != null) Positioned(
                           top: 10,
                           bottom: 100,
                           left: 0,
@@ -238,9 +469,7 @@ class _ChatRoom extends State<ChatRoom> {
                             color: Color(0xffE3E3E3),
                             alignment: Alignment.bottomCenter,
                             margin: const EdgeInsets.only(),
-                            child:
-
-                            StreamBuilder<QuerySnapshot>(
+                            child: StreamBuilder<QuerySnapshot>(
                               stream: _firestore
                                   .collection('chatroom')
                                   .doc("${widget.room_id}")
@@ -249,9 +478,11 @@ class _ChatRoom extends State<ChatRoom> {
                                   .snapshots(),
                               builder: (BuildContext context,
                                   AsyncSnapshot<QuerySnapshot> snapshot) {
+                                listMessage = snapshot.data?.docs ?? [];
                                 if (snapshot.data != null && luser_id!="") {
                                   return ListView.builder(
                                     // controller: _scrollController,
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                     itemCount: snapshot.data!.docs.length,
                                     itemBuilder: (context, index) {
                                       Map<String, dynamic> map = snapshot.data!.docs[index]
@@ -264,7 +495,7 @@ class _ChatRoom extends State<ChatRoom> {
                                               mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
                                                 Spacer(),
-                                                Expanded(
+                                                if (map['type'] == "text") Expanded(
                                                   child: Container(
                                                     alignment: Alignment.centerRight,
                                                     margin: const EdgeInsets.only(
@@ -288,7 +519,11 @@ class _ChatRoom extends State<ChatRoom> {
                                                     ),
                                                   ),
                                                 ),
-
+                                                if (map['type'] == "audio")
+                                                  _audio(
+                                                      message: map['message'],
+                                                      isCurrentUser: map['uid'] == widget.user_id,
+                                                      index: index)
                                               ],
                                             ):
                                             Row(
@@ -303,7 +538,7 @@ class _ChatRoom extends State<ChatRoom> {
                                                     backgroundColor: CommonColors.bottomgrey,
                                                   ),
                                                 ),
-                                                Expanded(
+                                                if (map['type'] == "text")  Expanded(
                                                   child: Container(
                                                     margin: const EdgeInsets.only( right: 10, top: 10),
                                                     padding: const EdgeInsets.only(left: 10, top: 5, right: 20, bottom: 5),
@@ -320,6 +555,12 @@ class _ChatRoom extends State<ChatRoom> {
                                                     ),
                                                   ),
                                                 ),
+                                                if (map['type'] == "audio")
+                                                  _audio(
+                                                      message: map['message'],
+                                                      isCurrentUser: map['uid'] == widget.user_id,
+                                                      index: index
+                                                  ),
                                                 Spacer(),
                                                 // Container(
                                                 //   margin: EdgeInsets.only(right: 20.0),
@@ -340,7 +581,6 @@ class _ChatRoom extends State<ChatRoom> {
                                 }
                               },
                             ),
-
                             // ListView.builder(
                             //     shrinkWrap: false,
                             //     scrollDirection: Axis.vertical,
@@ -460,7 +700,7 @@ class _ChatRoom extends State<ChatRoom> {
                                         ),
                                         InkWell(
                                           onTap:(){
-                                            onSendMessage(widget.user_id,"${firstName} ${lastName}");
+                                            onSendMessage(widget.user_id,"${firstName} ${lastName}","text",_message.text);
                                           },
                                           child: Container(
                                             margin: EdgeInsets.only(right: 10.0),
@@ -476,13 +716,35 @@ class _ChatRoom extends State<ChatRoom> {
                                       ],
                                     )),
                               ),
-                              Container(
-
-                                margin: EdgeInsets.only(right: 0.0, left: 20.0),
-                                child: SizedBox(
-                                    height: 28,
-                                    width: 20,
-                                    child: Image.asset("assets/chat_mic.png"))
+                              GestureDetector(
+                                child: Container(
+                                    margin: EdgeInsets.only(right: 0.0, left: 20.0),
+                                    child: SizedBox(
+                                        height: 28,
+                                        width: 20,
+                                        child: Image.asset("assets/chat_mic.png"))
+                                ),
+                                onLongPress: () async {
+                                  // var audioPlayer = AudioPlayer();
+                                  // await audioPlayer.setAsset('assets/Notification.mp3');
+                                  // await audioPlayer.play();
+                                  // await audioPlayer.play(AssetSource("Notification.mp3"));
+                                  // audioPlayer.playerStateStream.listen((playerState) {
+                                  //   if (playerState.processingState == ProcessingState.completed) {
+                                  //     audioController.start.value = DateTime.now();
+                                      startRecord();
+                                  //     audioController.isRecording.value = true;
+                                  //   }
+                                  // });
+                                  // audioPlayer.onPlayerComplete.listen((a) {
+                                  //   audioController.start.value = DateTime.now();
+                                  //   startRecord();
+                                  //   audioController.isRecording.value = true;
+                                  // });
+                                },
+                                onLongPressEnd: (details) {
+                                  stopRecord();
+                                },
                               ),
                             ],
                           ),
@@ -498,7 +760,78 @@ class _ChatRoom extends State<ChatRoom> {
   }
 
 
-  Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
+  Widget _audio({
+    required String message,
+    required bool isCurrentUser,
+    required int index,
+  }) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.5,
+      height:40,
+      margin: const EdgeInsets.only(top: 10),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isCurrentUser ? Colors.white : Color(0xffc4c4d0),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              audioController.onPressedPlayButton(index, message);
+              // changeProg(duration: duration);
+            },
+            onSecondaryTap: () {
+              audioPlayer.stop();
+              //   audioController.completedPercentage.value = 0.0;
+            },
+            child: Obx(
+                  () => (audioController.isRecordPlaying &&
+                  audioController.currentId == index)
+                  ? Icon(
+                Icons.cancel,
+                color: isCurrentUser ? Colors.black : Colors.black,
+              )
+                  : Icon(
+                Icons.play_arrow,
+                color: isCurrentUser ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          Obx(
+                () => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    // Text(audioController.completedPercentage.value.toString(),style: TextStyle(color: Colors.white),),
+                    LinearProgressIndicator(
+                      minHeight: 5,
+                      backgroundColor: Colors.grey,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isCurrentUser ? Colors.black : Colors.black,
+                      ),
+                      value: (audioController.isRecordPlaying && audioController.currentId == index)
+                          ? 0
+                          : audioController.totalDuration.value.toDouble(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget messages(final size, Map<String, dynamic> map, BuildContext context) {
     return map['type'] == "text"
         ? Container(
       width: size.width,
@@ -597,7 +930,7 @@ class ShowImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Container(
@@ -608,4 +941,9 @@ class ShowImage extends StatelessWidget {
       ),
     );
   }
+}
+class TypeMessage {
+  static const text = 0;
+  static const image = 1;
+  static const audio = 3;
 }

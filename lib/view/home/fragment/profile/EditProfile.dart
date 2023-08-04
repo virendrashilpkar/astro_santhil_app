@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
@@ -25,12 +27,11 @@ import 'package:shadiapp/commonpackage/SearchChoices.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayoutview.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-
-
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -38,6 +39,61 @@ class EditProfile extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<EditProfile> with SingleTickerProviderStateMixin{
+
+
+
+
+
+
+  Future<Map<String, dynamic>> _getInstagramProfile(String accessToken) async {
+    final response = await http.get(
+      Uri.parse('https://graph.instagram.com/me?fields=id,username,media&access_token=$accessToken'),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch profile details');
+    }
+  }
+
+
+  String clientsecret="13466899a8e57223e788f577958926de";
+  String clientId="846965816761018";
+  // String redirectUri="http://localhost";
+  String redirectUri="https://shaadiapp-ac9ac.firebaseapp.com/__/auth/handler";
+  Future<void> _handleInstagramLogin() async {
+
+    final result = await FlutterWebAuth.authenticate(
+      url: 'https://api.instagram.com/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&response_type=code&scope=user_profile,user_media',
+      callbackUrlScheme: redirectUri,
+    );
+    // Extract the authorization code from the result
+    final authorizationCode = Uri.parse(result).queryParameters['code'];
+
+
+    // Use the authorization code to exchange it for an access token
+    final response = await http.post(
+      Uri.parse('https://api.instagram.com/oauth/access_token'),
+      body: {
+        'client_id': clientId,
+        'client_secret': "${clientsecret}",
+        'grant_type': 'authorization_code',
+        'redirect_uri': redirectUri,
+        'code': authorizationCode,
+      },
+    );
+    if (response.statusCode == 200) {
+      final accessToken = json.decode(response.body)['access_token'];
+      final userData = await _getInstagramProfile(accessToken);
+      // userData contains the user's profile details and media
+      // Update your app's state or navigate to another screen to display the data
+    } else {
+      throw Exception('Failed to authenticate with Instagram');
+    }
+  }
+
+
+
 
   bool ActiveConnection = false;
   bool isLoad = false;
@@ -55,6 +111,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   late DeleteImageModel _deleteImageModel;
   String firstName = "demo";
   String lastName = "user";
+  String age = "0";
   String dateOfBirth = "";
   String gender = "";
   String height = "";
@@ -95,6 +152,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       for(var i = 0; i < _viewImageModel.data!.length; i++){
         _list = _viewImageModel.data ?? <ImageDatum> [];
       }
+    }else{
+      _list=[];
+
     }
     isLoad = false;
     setState(() {
@@ -164,7 +224,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   String personality_typed = "";
   String user_plan = "";
   double rating = 3.5;
-  bool isVerified = false;
+  int status = 0;
+  int isVerified = 0;
   bool isPhotoOption = false;
 
   Future<void> userDetail() async {
@@ -173,10 +234,14 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     if(_userDetailModel.status == 1){
       firstName = _userDetailModel.data![0].firstName.toString();
       lastName = _userDetailModel.data![0].lastName.toString();
+
+      profileimage = _userDetailModel.data![0].image.toString();
+      profilename = "${firstName} ${lastName}";
       dateOfBirth = _userDetailModel.data![0].birthDate.toString();
       gender = _userDetailModel.data![0].gender.toString();
       country = _userDetailModel.data![0].country.toString();
       state = _userDetailModel.data![0].state.toString();
+      age = _userDetailModel.data![0].age.toString();
       if(country!=""){
         Liststate(country,state);
       }
@@ -216,8 +281,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       is_smoke = _userDetailModel.data![0].isSmoke ?? false;
       is_drink = _userDetailModel.data![0].isDrink ?? false;
       is_diet = _userDetailModel.data![0].isDiet ?? false;
-      isVerified = _userDetailModel.data![0].isVerified ?? false;
+      isVerified = _userDetailModel.data![0].isVerified ?? 0;
       isPhotoOption = _userDetailModel.data![0].isPhotoOption ?? false;
+      status = _userDetailModel.data![0].status ?? 0;
       setState(() {
 
       });
@@ -323,7 +389,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       VerifiedModel verified = await Services.VerifyMethod("${_preferences?.getString(ShadiApp.userId).toString()}",File(pickedFile.path));
       if(verified.status == 1){
         Toaster.show(context, verified.message.toString());
-        isVerified=verified.data?.isVerified ?? false;
+        userDetail();
+        // isVerified=verified.data?.isVerified ?? 0;
+        // status = 0;
       }
       setState((){
       //   imagelist[index] = File(pickedFile.path);
@@ -621,7 +689,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   bool smoke=true;
   bool weightb=true;
   bool heightb=true;
-  bool age=true;
+  // bool age=true;
   bool mothertongue=true;
   bool casteb=true;
   bool Religion=true;
@@ -729,7 +797,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     }
   }
 
-
+  String profileimage = "";
+  String profilename = "";
+  void shareProfile(String profileName, String profileImageURL,String user_id) {
+    Share.share('Check out $profileName\'s profile: $profileImageURL\n Link: http://52.63.253.231:4000/api/v1/user/$user_id');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -874,7 +946,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   alignment: Alignment.center,
                                   children: <Widget>[
 
-                                    ClipRRect(
+                                    _viewImageModel!=null ? ClipRRect(
                                         borderRadius: BorderRadius.circular(5.0),
                                         child: _viewImageModel.status == 1 ?
                                         Container(
@@ -888,7 +960,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                             // height: itemHeight,
                                           ),
                                         )     // width: itemWidth,
-                                            :imagelist[index] == null ? Image.asset(
+                                         :imagelist[index] == null ? Image.asset(
                                           "assets/add_photos.png",
                                           fit: BoxFit.cover,
                                           // height: itemHeight,
@@ -896,7 +968,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                         ):Image.file(imagelist[index]!,fit: BoxFit.cover,
                                           height: itemHeight,
                                           width: itemWidth,)
-                                    ),
+                                    ):Container(),
 
                                     // ClipRRect(
                                     //     borderRadius: BorderRadius.circular(imagelist[index] == null ? 0.0:5.0 ),
@@ -959,7 +1031,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       child: Material(
                                         type: MaterialType.transparency,
                                         child: InkWell(onTap: () {
-                                          _pickedImage(index);
+                                          if(index >= 0  && index < _list.length){
+
+                                          }else{
+                                            _pickedImage(index);
+                                          }
                                         },splashColor: Colors.blue.withOpacity(0.2),
                                           customBorder: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(5),
@@ -968,7 +1044,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       ),
                                     ),
                                     // if(_list[index] != null)
-                                      index >= 0  && index < _list.length ? new Positioned(
+                                      index >= 0  && index < _list.length && _list.isNotEmpty ? new Positioned(
                                       right:0,
                                       top:0,
                                       child: SizedBox(
@@ -978,6 +1054,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           type: MaterialType.transparency,
                                           child: InkWell(onTap: () {
                                             setState((){
+                                              imagelist[index] = null;
                                               deleteImage(_list[index].id.toString());
                                             });
                                           },splashColor: Colors.blue.withOpacity(0.2),
@@ -1136,7 +1213,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               child: Text("Get verified",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 16,color:Colors.white),),
                             ),
                             new SizedBox(width: 10,),
-                            if(isVerified) SizedBox(
+                            if(isVerified==2) SizedBox(
                               height: 20,
                               width: 20,
                               child: Image.asset("assets/blue_tick.png",height: 20,width: 20,fit: BoxFit.cover,),
@@ -1146,11 +1223,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         new SizedBox(height: 15,),
                         InkWell(
                           onTap:(){
-                            // if(isVerified){
-                            //   Toaster.show(context, "Already Verified");
-                            // }else {
+                            if(isVerified==0){
                               Verifyuser();
-                            // }
+                            }else if(isVerified==3){
+                              Verifyuser();
+                            }else{
+                              Toaster.show(context, "Already Verified");
+                            }
                           },
                           child: Container(
                             height:50,
@@ -1164,7 +1243,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               children: [
                                 // new SizedBox(width: 20,),
                                 new Container(
-                                  child: new Text(isVerified ? "Request sented":"Take a selfie",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
+                                  child: new Text(isVerified==0 ? "Take a selfie": isVerified==1 ? "Verification request has been sent": isVerified==2 ? "Verified" : "rejected please try again",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
                                 ),
                                 new Spacer(),
                                 new Container(
@@ -2805,31 +2884,36 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: new Text("Instagram Photos",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
                         new SizedBox(height: 10,),
-                        Container(
-                          height:50,
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                              color: CommonColors.editblack,
-                              borderRadius: BorderRadius.circular(37)
-                          ),
-                          child: Row(
-                            children: [
-                              // new SizedBox(width: 20,),
-                              new SizedBox(width: 20,
-                              height:20,
-                                child:Image.asset("assets/instagram.png")
-                              ),
-                              new SizedBox(width: 15,),
-                              new Container(
-                                child: new Text("Connect Instagram",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
-                              ),
-                              Spacer(),
-                              new Container(
-                                child: new Text("Connect",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
-                              ),
-                              // new SizedBox(width: 20,),
-                            ],
+                        InkWell(
+                          onTap:(){
+                            _handleInstagramLogin();
+                            },
+                          child: Container(
+                            height:50,
+                            margin: const EdgeInsets.symmetric(horizontal: 30),
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                                color: CommonColors.editblack,
+                                borderRadius: BorderRadius.circular(37)
+                            ),
+                            child: Row(
+                              children: [
+                                // new SizedBox(width: 20,),
+                                new SizedBox(width: 20,
+                                height:20,
+                                  child:Image.asset("assets/instagram.png")
+                                ),
+                                new SizedBox(width: 15,),
+                                new Container(
+                                  child: new Text("Connect Instagram",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                                ),
+                                Spacer(),
+                                new Container(
+                                  child: new Text("Connect",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
+                                ),
+                                // new SizedBox(width: 20,),
+                              ],
+                            ),
                           ),
                         ),
                         new SizedBox(height: 12,),
@@ -2994,18 +3078,40 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     Container(
                                       alignment: Alignment.topLeft,
                                       // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                      child: Text(
-                                        "${firstName[0].toUpperCase()+firstName.substring(1)} ${lastName[0].toUpperCase()+lastName.substring(1)} ${age}",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        textAlign: TextAlign.left,
+                                      child: Row(
+                                        children: [
+                                          if(firstName!="null") Text(
+                                            "${firstName[0].toUpperCase()+firstName.substring(1)}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(lastName!="null") Text(
+                                            " ${lastName[0].toUpperCase()+lastName.substring(1)}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(age!="null") Text(
+                                            " ${age}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     new SizedBox(width: 15,),
-                                    if(isVerified) SizedBox(
+                                    if(isVerified==2) SizedBox(
                                       height: 25,
                                       width: 25,
                                       child: Image.asset("assets/blue_tick.png",height: 25,width: 25,),
@@ -3016,18 +3122,84 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 Container(
                                   alignment: Alignment.topLeft,
                                   // margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "${city},${state},${country} \n"
-                                        " ${height.replaceAll(".", "`")},"
-                                        " ${weight}kg,"
-                                        " ${religion},"
-                                        " ${maritalStatus}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    textAlign: TextAlign.left,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if(city!="null") Text(
+                                            "${city},",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(state!="null") Text(
+                                            "${state},",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(country!="null") Text(
+                                            "${country} ",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if(height!="null") Text(
+                                            " ${height.replaceAll(".", "`")},",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(weight!="null") Text(
+                                            " ${weight}kg,",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(religion!="null") Text(
+                                            " ${religion},",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          if(maritalStatus!="null") Text(
+                                            " ${maritalStatus}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
 
@@ -3062,35 +3234,31 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ),
                                 new SizedBox(height: 11,),
 
-                                Row(
-                                  children: [
-                                    Container(
-                                      height:23,
-                                      // width: 120,
-                                      decoration: BoxDecoration(
-                                        color:CommonColors.buttonorg,
-                                        border: Border.all(
-                                            width: 1.0
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(32.0) //                 <--- border radius here
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                                if(marriage_plan!="null") Container(
+                                  height:23,
+                                  // width: 120,
+                                  decoration: BoxDecoration(
+                                    color:CommonColors.buttonorg,
+                                    border: Border.all(
+                                        width: 1.0
                                     ),
-                                  ],
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(32.0) //                 <--- border radius here
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                                 ),
                                 new SizedBox(height: 40,),
                                 new Container(height: 1,width: double.infinity,color: Colors.white,),
-                                if(about.text!="null") new SizedBox(height: 40,),
-                                if(about.text!="null") Container(
+                                if(about.text!="null" && about.text.trim().isNotEmpty) new SizedBox(height: 40,),
+                                if(about.text!="null" && about.text.trim().isNotEmpty) Container(
                                   alignment: Alignment.centerLeft,
                                   child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                                 ),
-                                if(about.text!="null") new SizedBox(height: 10,),
-                                if(about.text!="null") Container(
+                                if(about.text!="null" && about.text.trim().isNotEmpty) new SizedBox(height: 10,),
+                                if(about.text!="null" && about.text.trim().isNotEmpty) Container(
                                   alignment: Alignment.centerLeft,
                                   child: Text("${about.text}",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
                                 ),
@@ -3164,35 +3332,38 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             ),
                           ),
 
-                          CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: '$zodiac_sign',),
-                          CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: '$education_level',),
-                          CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: '$covid_vaccine',),
-                          CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: '$healths',),
-                          CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: "$personality_type",),
 
-                          new SizedBox(height: 40,),
+                          CustomlayoutView(icon: 'assets/zodiac_icon.png',tittle: 'Zodiac',status: zodiac_sign!="null" ?'$zodiac_sign':"",),
+                          CustomlayoutView(icon: 'assets/education_bottom.png',tittle: 'Education',status: education_level!="null" ?'$education_level':"",),
+                          CustomlayoutView(icon: 'assets/covid_bottom.png',tittle: 'COVID vaccine',status: covid_vaccine!="null" ?'$covid_vaccine':"",),
+                          CustomlayoutView(icon: 'assets/health_bottom.png',tittle: 'Health',status: healths!="null" ?'$healths':"",),
+                          CustomlayoutView(icon: 'assets/persional_bottom.png',tittle: 'Personality type',status: personality_type!="null" ?"$personality_type":"",),
+
+                          SizedBox(height: 40,),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             alignment: Alignment.centerLeft,
-                            child: Text("Lifestyle",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                            child: Text("Lifestyle",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                           ),
+                          SizedBox(height: 20,),
+                          CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: petss!="null" ?'$petss':"",),
+                          CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: drinkings!="null" ?"$drinkings":"",),
+                          CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: smokings!="null" ?'$smokings':"",),
+                          CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: workouts!="null" ?'$workouts':"",),
+                          CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: dietary_preference!="null" ?'$dietary_preference':"",),
+                          CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: social_media!="null" ?'$social_media':"",),
+                          CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: social_media!="null" ?'$sleeping_habits':"",),
+
+
                           new SizedBox(height: 20,),
-                          CustomlayoutView(icon: 'assets/pet_icon.png',tittle: 'Pets',status: '$petss',),
-                          CustomlayoutView(icon: 'assets/drink_bottom.png',tittle: 'Drinking',status: "$drinkings",),
-                          CustomlayoutView(icon: 'assets/smoke_bottom.png',tittle: 'Smoking',status: '$smokings',),
-                          CustomlayoutView(icon: 'assets/workout_bottom.png',tittle: 'Workout',status: '$workouts',),
-                          CustomlayoutView(icon: 'assets/dientary_bottom.png',tittle: 'Dietary preference',status: '$dietary_preference',),
-                          CustomlayoutView(icon: 'assets/social_bottom.png',tittle: 'Social media',status: '$social_media',),
-                          CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: '$sleeping_habits',),
-                          new SizedBox(height: 20,),
-                          customwidget("Marriage plan","${marriage_plan}"),
-                          customwidget("Job title","${jobTitle.text}"),
-                          customwidget("Company","${company.text}"),
-                          customwidget("Education","${education.text}"),
+                         if(marriage_plan!="null" && marriage_plan!="") customwidget("Marriage plan","${marriage_plan}"),
+                          if(jobTitle.text!="null" && jobTitle.text!="")  customwidget("Job title","${jobTitle.text}"),
+                          if(company.text!="null" && company.text!="")  customwidget("Company","${company.text}"),
+                          if(education.text!="null" && education.text!="")  customwidget("Education","${education.text}"),
                           customwidget("Living in","${country}\n${state}\n${city}"),
-                          customwidget("Religion","${religion}"),
-                          customwidget("Caste","${caste}"),
-                          customwidget("Mother tongue","${mother_tongue}"),
+                          if(religion!="null" && religion!="")  customwidget("Religion","${religion}"),
+                          if(caste!="null" && caste!="") customwidget("Caste","${caste}"),
+                          if(mother_tongue!="null" && mother_tongue!="") customwidget("Mother tongue","${mother_tongue}"),
                           Container(
                               padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
                               child: Column(
@@ -3243,10 +3414,15 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               )
                           ),
                           new SizedBox(height: 40,),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            alignment: Alignment.center,
-                            child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                          InkWell(
+                            onTap:(){
+                              shareProfile(profilename, profileimage, "${_preferences?.getString(ShadiApp.userId)}");
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 30),
+                              alignment: Alignment.center,
+                              child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                            ),
                           ),
                           new SizedBox(height: 60,),
                         ],

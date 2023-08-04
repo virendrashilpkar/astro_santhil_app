@@ -79,6 +79,8 @@ class _MyHomePageState extends State<AddPhotos> {
       for(var i = 0; i < _viewImageModel.data!.length; i++){
         _list = _viewImageModel.data ?? <ImageDatum> [];
       }
+    }else{
+      _list=[];
     }
     isLoad = false;
     setState(() {
@@ -348,7 +350,7 @@ class _MyHomePageState extends State<AddPhotos> {
                                     child: InkWell(onTap: () {
                                       setState((){
                                         deleteImage(_list[index].id.toString());
-                                        // _list[index].image=null;
+                                        imagelist[index]=null;
                                       });
                                     },splashColor: Colors.blue.withOpacity(0.2),
                                       customBorder: RoundedRectangleBorder(

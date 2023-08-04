@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/ConnectivityProvider.dart';
 import 'package:shadiapp/CommonMethod/CustomRoute.dart';
+import 'package:shadiapp/Models/user_detail_model.dart';
+import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/ChooseReg/ChooseReg.dart';
 import 'package:shadiapp/view/home/Home.dart';
@@ -18,6 +20,7 @@ Future<void> main() async {
   );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -82,11 +85,18 @@ void navigateUser(BuildContext context) async{
   SharedPreferences _preferences = await SharedPreferences.getInstance();
   bool? status = _preferences.getBool(ShadiApp.status);
   if (status == true) {
-
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      'Home',
-          (Route<dynamic> route) => false,
-    );
+    UserDetailModel _userDetailModel = await Services.UserDetailMethod("${_preferences?.getString(ShadiApp.userId).toString()}");
+    int percent=0;
+    percent = _userDetailModel.data?[0].profilePercentage ?? 0;
+    print(percent);
+    if(percent >= 70){
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        'Home',
+            (Route<dynamic> route) => false,
+      );
+    }else{
+      Navigator.of(context).pushNamed('CountryCity');
+    }
     // Navigator.of(context).pushAndRemoveUntil(
     //     MaterialPageRoute(builder: (context) => Home()), (route) => false);
   }else{

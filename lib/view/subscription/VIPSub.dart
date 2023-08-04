@@ -124,7 +124,7 @@ class _MyHomePageState extends State<VIPSub> {
                         child: Column(
                           children: [
                             new Container(
-                              child: Text("Upgrade form \$${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                              child: Text("Upgrade form ₹ ${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
                             ),
                           ],
                         ),

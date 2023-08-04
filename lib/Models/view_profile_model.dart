@@ -39,7 +39,7 @@ class Datum {
   String? city;
   String? country;
   String? state;
-  bool? isVerified;
+  int? isVerified;
   String? image;
   String? imageId;
 

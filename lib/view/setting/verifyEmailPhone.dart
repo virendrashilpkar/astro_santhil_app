@@ -4,19 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/otp_verify_model.dart';
+import 'package:shadiapp/Models/otpsend.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class OTPVerify extends StatefulWidget {
-  String number = "";
-  OTPVerify(this.number);
+class VerifyEmailPhone extends StatefulWidget {
+  String user_id = "";
+  String value = "";
+  String from = "";
+  VerifyEmailPhone(this.user_id,this.value,this.from);
   @override
-  State<OTPVerify> createState() => _MyHomePageState();
+  State<VerifyEmailPhone> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<OTPVerify> {
+class _MyHomePageState extends State<VerifyEmailPhone> {
 
   bool ActiveConnection = false;
   late OtpVerifyModel otpVerifyModel;
@@ -66,15 +69,8 @@ class _MyHomePageState extends State<OTPVerify> {
       otpVerifyModel = await Services.Otp(
           _preferences!.getString(ShadiApp.userId).toString(), otp.toString());
       if (otpVerifyModel.status == 1) {
-        if(otpVerifyModel.data!.profilePercentage! >= 70){
-          // Navigator.of(context).pushNamed('Home');
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            'Home',
-                (Route<dynamic> route) => false,
-          );
-        }else{
-          Navigator.of(context).pushNamed('CountryCity');
-        }
+
+        Navigator.of(context).pop();
 
         Toaster.show(context, otpVerifyModel.massege.toString());
         _preferences?.setBool(ShadiApp.status, true);
@@ -86,12 +82,17 @@ class _MyHomePageState extends State<OTPVerify> {
       });
     }
   }
-
+  late OtpSend otpSend;
   Future<void>  LoginMethod() async {
+    _preferences = await SharedPreferences.getInstance();
     setState(() {
       clickLoad = true;
     });
-    loginModel = await Services.LoginCrdentials(widget.number);
+    if(widget.from=="email") {
+      otpSend = await Services.UpdateEmail("${_preferences?.getString(ShadiApp.userId)}",widget.value);
+    }else if(widget.from=="phone"){
+      otpSend = await Services.UpdatePhone("${_preferences?.getString(ShadiApp.userId)}",widget.value);
+    }
     if(loginModel.status == 1){
       Toaster.show(context, "Otp Send Successfully");
     }else{
@@ -389,7 +390,7 @@ class _MyHomePageState extends State<OTPVerify> {
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(onTap: () {
-                          OtpVerify();
+                        OtpVerify();
                       },splashColor: Colors.blue.withOpacity(0.2),
                         customBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
@@ -414,7 +415,7 @@ class _MyHomePageState extends State<OTPVerify> {
                     LoginMethod();
                   },
                   child: Text(
-                    'Resend code again',
+                    'Send a new code again',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,

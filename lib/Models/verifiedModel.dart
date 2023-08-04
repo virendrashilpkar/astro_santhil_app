@@ -97,7 +97,7 @@ class Data {
   String? socialMedia;
   String? workout;
   String? zodiacSign;
-  bool? isVerified;
+  int? isVerified;
 
   Data({
     this.id,
