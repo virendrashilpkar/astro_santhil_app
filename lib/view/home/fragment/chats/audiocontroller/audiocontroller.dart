@@ -1,4 +1,6 @@
 // import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -103,6 +105,19 @@ class AudioController extends GetxController {
       await _audioPlayerService.play(content);
     }
   }
+  void onPressedPlayButton2(int id, var content) async {
+    _currentId.value = id;
+    if (isRecordPlaying) {
+      await _pauseRecord();
+    } else {
+      _isRecordPlaying.value = true;
+      await _audioPlayerService.playFile(content);
+    }
+  }
+  void PauseAudio() async {
+    _isRecordPlaying.value = false;
+    await _audioPlayerService.pause();
+  }
 
   calcDuration() {
     var a = end.value.difference(start.value).inSeconds;
@@ -119,6 +134,7 @@ class AudioController extends GetxController {
 abstract class AudioPlayerService {
   void dispose();
   Future<void> play(String url);
+  Future<void> playFile(String url);
   Future<void> resume();
   Future<void> pause();
   Future<void> release();
@@ -149,6 +165,13 @@ class AudioPlayerAdapter implements AudioPlayerService {
   @override
   Future<void> play(String url) async {
     await _audioPlayer.setUrl(url); // Set the audio source from the URL
+    await _audioPlayer.play(); // Play the audio
+    print("playing ${url}");
+  }
+
+  @override
+  Future<void> playFile(String url) async {
+    await _audioPlayer.setFilePath(url); // Set the audio source from the URL
     await _audioPlayer.play(); // Play the audio
     // await _audioPlayer.play(UrlSource(url));
   }

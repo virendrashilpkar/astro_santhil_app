@@ -142,57 +142,6 @@ class _ChatRoom extends State<ChatRoom> {
 
     }
   }
-  // Future uploadAudio(String user_name,File imageFile) async {
-  //   String fileName = const Uuid().v1();
-  //   int status = 1;
-  //
-  //   await _firestore
-  //       .collection('chatroom')
-  //       .doc(widget.room_id)//roomid
-  //       .collection('chats')
-  //       .doc(fileName)
-  //       .set({
-  //     "uid": luser_id,
-  //     "sendby": user_name,
-  //     "message": "",
-  //     "type": "img",
-  //     "time": FieldValue.serverTimestamp(),
-  //   });
-  //
-  //   var ref =
-  //   FirebaseStorage.instance.ref().child('images').child("$fileName.jpg");
-  //
-  //   var uploadTask = await ref.putFile(imageFile!).catchError((error) async {
-  //     await _firestore
-  //         .collection('chatroom')
-  //         .doc(widget.room_id)//roomid
-  //         .collection('chats')
-  //         .doc(fileName)
-  //         .delete();
-  //
-  //     status = 0;
-  //     // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-  //     //     duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-  //
-  //   });
-  //
-  //   if (status == 1) {
-  //     String imageUrl = await uploadTask.ref.getDownloadURL();
-  //
-  //     await _firestore
-  //         .collection('chatroom')
-  //         .doc(widget.room_id)//roomid
-  //         .collection('chats')
-  //         .doc(fileName)
-  //         .update({"message": imageUrl});
-  //
-  //     print(imageUrl);
-  //
-  //     // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-  //     //     duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-  //
-  //   }
-  // }
 
 
   void onSendMessage(String user_id,user_name,type,content) async {
@@ -351,15 +300,10 @@ class _ChatRoom extends State<ChatRoom> {
   uploadAudio() async {
     print("upload");
 
-    var ref =
-    FirebaseStorage.instance.ref().child('audio').child("audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
-
-
-
-    // Reference reference = firebaseStorage.ref().child(fileName);
+    var ref = FirebaseStorage.instance.ref()
+        .child('audio')
+        .child("audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
     UploadTask uploadTask = ref.putFile(File(recordFilePath));
-    // UploadTask uploadTask = chatProvider.uploadAudio(File(recordFilePath),
-    //     "audio/${DateTime.now().millisecondsSinceEpoch.toString()}");
     try {
       TaskSnapshot snapshot = await uploadTask;
       audioURL = await snapshot.ref.getDownloadURL();

@@ -13,14 +13,14 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>com.googleusercontent.apps.346244303067-bp12dmqulm8objjs9kr43faq24mgq783</string>
-                <string>fb846965816761018</string>
+                <string>fb650490860384715</string>
             </array>
         </dict>
     </array>
     <key>FacebookAppID</key>
-    <string>846965816761018</string>
+    <string>650490860384715</string>
     <key>FacebookClientToken</key>
-    <string>57ad59ec9a3e5084c52ee3a0e94219d4</string>
+    <string>99350a605644801eb13165e579370f84</string>
     <key>FacebookDisplayName</key>
     <string>shaadiapp</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>

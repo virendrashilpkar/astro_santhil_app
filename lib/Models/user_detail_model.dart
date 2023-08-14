@@ -95,6 +95,9 @@ class Datum {
   String? health;
   String? smoking;
   String? drinking;
+  String? voice_record;
+  String? spotify_id;
+  String? spotify_username;
   List<String>? preference;
 
   Datum({
@@ -160,6 +163,9 @@ class Datum {
     this.smoking,
     this.drinking,
     this.profilePercentage,
+    this.voice_record,
+    this.spotify_id,
+    this.spotify_username,
     this.preference,
   });
 
@@ -226,6 +232,9 @@ class Datum {
     health: json["health"],
     smoking: json["smoking"],
     drinking: json["drinking"],
+    voice_record: json["voice_record"],
+    spotify_id: json["spotify_id"],
+    spotify_username: json["spotify_username"],
     preference: json["preference"] == null ? [] : List<String>.from(json["preference"]!.map((x) => x)),
   );
 
@@ -292,6 +301,9 @@ class Datum {
     "health": health,
     "smoking": smoking,
     "drinking": drinking,
+    "voice_record": voice_record,
+    "spotify_id": spotify_id,
+    "spotify_username": spotify_username,
     "preference": preference == null ? [] : List<dynamic>.from(preference!.map((x) => x)),
   };
 }

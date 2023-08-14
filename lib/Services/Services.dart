@@ -355,6 +355,30 @@ class Services {
 
     }
   }
+  static Future<UpdateUserModel> Updatevoice(String user_id,File voice) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(UserUpdate),
+    );
+    var file = await http.MultipartFile.fromPath("voice_record", voice.path);
+    request.files.add(file);
+    request.fields["userId"] = user_id;
+    var response = await request.send();
+    var response2 = await http.Response.fromStream(response);
+    print("UpdatevoiceMethodParams ${request.fields}");
+    print("UpdatevoiceMethodParams ${request.files}");
+    print("UpdatevoiceMethodResponse ${response2.body}");
+    if (response2.statusCode==200) {
+      var data = json.decode(response2.body);
+      UpdateUserModel user = UpdateUserModel.fromJson(data);
+      return user;
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+
+
   static Future<UpdateUserModel> CheckUpdateUser2(final object) async {
     final params = object;
     print("CheckUpdateUser2Params " + params.toString());

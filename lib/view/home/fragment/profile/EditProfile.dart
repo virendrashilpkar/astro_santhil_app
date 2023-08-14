@@ -1,8 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:another_audio_recorder/another_audio_recorder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
@@ -24,12 +30,14 @@ import 'package:shadiapp/Models/view_image_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/commonpackage/SearchChoices.dart';
+import 'package:shadiapp/view/Instaconnect/InstagramConnectScreen.dart';
+import 'package:shadiapp/view/home/fragment/chats/audiocontroller/audiocontroller.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayout.dart';
 import 'package:shadiapp/view/home/fragment/homesearch/customlayout/Customlayoutview.dart';
 import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
+import 'package:shadiapp/view/spotifyconnect/AuthorizationPage.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,6 +49,83 @@ class EditProfile extends StatefulWidget {
 class _MyHomePageState extends State<EditProfile> with SingleTickerProviderStateMixin{
 
 
+  final String clientId = '335e8e892d4f455d845720fd06d90846';
+  final String redirectUri = 'https://shaadiapp-ac9ac.firebaseapp.com/__/auth/handler';
+  final String clientSecret = '7e0d105f5caf4f578f6431fc6836f545';
+  final String scopes = 'user-read-private user-read-email playlist-read-private';
+  String authorizationCode = ''; // This will hold the authorization code
+
+  String accessToken = '';
+  String username = '';
+  List<String> playlists = [];
+  int checkint=0;
+  void startSpotifyAuthorization() async {
+    String authUrl = 'https://accounts.spotify.com/authorize'
+        '?client_id=$clientId'
+        '&redirect_uri=$redirectUri'
+        '&scope=$scopes'
+        '&response_type=code';
+
+    if (!await launchUrl(Uri.parse(authUrl))) {
+      throw Exception('Could not launch $authUrl');
+    }
+    setState(() {
+      checkint=1;
+    });
+    // else {
+    //   throw 'Could not launch Spotify authorization URL';
+    // }
+  }
+
+
+  Future<void> exchangeAuthorizationCodeForToken(String authorizationCode) async {
+    final tokenUrl = 'https://accounts.spotify.com/api/token';
+
+    final response = await http.post(
+      Uri.parse(tokenUrl),
+      headers: {
+        'Authorization': 'Basic ${base64.encode(utf8.encode('$clientId:$clientSecret'))}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'grant_type': 'authorization_code',
+        'code': authorizationCode,
+        'redirect_uri': redirectUri,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      accessToken = responseData['access_token'];
+      checkint=2;
+      setState(() {
+
+      });
+    } else {
+      throw Exception('Failed to exchange authorization code for access token');
+    }
+  }
+
+
+
+  Future<void> fetchUserProfile() async {
+    final userUrl = 'https://api.spotify.com/v1/me';
+
+    final response = await http.get(
+      Uri.parse(userUrl),
+      headers: {'Authorization': 'Bearer $accessToken'},
+    );
+
+    if (response.statusCode == 200) {
+      final userData = json.decode(response.body);
+      username = userData['display_name'] ?? userData['id'];
+      checkint=3;
+      setState(() {
+      });
+    } else {
+      throw Exception('Failed to retrieve user profile from Spotify.');
+    }
+  }
 
 
 
@@ -55,45 +140,6 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       throw Exception('Failed to fetch profile details');
     }
   }
-
-
-  String clientsecret="13466899a8e57223e788f577958926de";
-  String clientId="846965816761018";
-  // String redirectUri="http://localhost";
-  String redirectUri="https://shaadiapp-ac9ac.firebaseapp.com/__/auth/handler";
-  Future<void> _handleInstagramLogin() async {
-
-    final result = await FlutterWebAuth.authenticate(
-      url: 'https://api.instagram.com/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&response_type=code&scope=user_profile,user_media',
-      callbackUrlScheme: redirectUri,
-    );
-    // Extract the authorization code from the result
-    final authorizationCode = Uri.parse(result).queryParameters['code'];
-
-
-    // Use the authorization code to exchange it for an access token
-    final response = await http.post(
-      Uri.parse('https://api.instagram.com/oauth/access_token'),
-      body: {
-        'client_id': clientId,
-        'client_secret': "${clientsecret}",
-        'grant_type': 'authorization_code',
-        'redirect_uri': redirectUri,
-        'code': authorizationCode,
-      },
-    );
-    if (response.statusCode == 200) {
-      final accessToken = json.decode(response.body)['access_token'];
-      final userData = await _getInstagramProfile(accessToken);
-      // userData contains the user's profile details and media
-      // Update your app's state or navigate to another screen to display the data
-    } else {
-      throw Exception('Failed to authenticate with Instagram');
-    }
-  }
-
-
-
 
   bool ActiveConnection = false;
   bool isLoad = false;
@@ -223,6 +269,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   String drinkingsd = "";
   String personality_typed = "";
   String user_plan = "";
+  String voice_record = "";
+  String spotify_username = "";
+  String spotify_id = "";
   double rating = 3.5;
   int status = 0;
   int isVerified = 0;
@@ -284,6 +333,15 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       isVerified = _userDetailModel.data![0].isVerified ?? 0;
       isPhotoOption = _userDetailModel.data![0].isPhotoOption ?? false;
       status = _userDetailModel.data![0].status ?? 0;
+      voice_record = _userDetailModel.data![0].voice_record ?? "";
+      spotify_id = _userDetailModel.data![0].spotify_id ?? "";
+      spotify_username = _userDetailModel.data![0].spotify_username ?? "";
+      if(voice_record!=""){
+        // recordFilePath = voice_record;
+        _playAudio = "play";
+      }
+      print(">>>>>>${spotify_id}\n${spotify_username}");
+
       setState(() {
 
       });
@@ -532,6 +590,40 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   }
 
 
+  void UploadVoice() async {
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.Updatevoice("${_preferences?.getString(ShadiApp.userId).toString()}",File(recordFilePath));
+    if(_updateUserModel.status==1){
+      userDetail();
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
+  }
+  Future<void> updateSpotify(String spotify_id,spotify_username,List<String> playList,List<String> artistNames) async {
+    setState(() {
+      clickLoad = true;
+    });
+
+    _preferences = await SharedPreferences.getInstance();
+    _updateUserModel = await Services.UpdateUser2(
+        {
+          "userId": "${_preferences?.getString(ShadiApp.userId)}",
+          "spotify_id": spotify_id,
+          "spotify_username": spotify_username,
+          "spotify_playlist": playList.toString(),
+          "spotify_artistlist": artistNames.toString(),
+        }
+    );
+    if(_updateUserModel.status == 1){
+      Toaster.show(context, _updateUserModel.message.toString());
+    }else{
+      Toaster.show(context, _updateUserModel.message.toString());
+    }
+    setState(() {
+      clickLoad = false;
+    });
+  }
+
+
 
   String religions = 'Select religion';
   // String cast = 'Select cast';
@@ -621,6 +713,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   @override
   void dispose() {
     super.dispose();
+    audioController.onClose();
     _tabController.dispose();
   }
 
@@ -722,9 +815,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
     _preferences = await SharedPreferences.getInstance();
     _addPreferenceModel = await Services.AddPrefsMethod(
         "${_preferences?.getString(ShadiApp.userId)}", preferenceId);
-    // if (_addPreferenceModel.status == 1) {
-    //   Toaster.show(context, _addPreferenceModel.message.toString());
-    // } else {
+    if (_addPreferenceModel.status != 1) {
+      Toaster.show(context, _addPreferenceModel.message.toString());
+    }
+    // else {
     //   Toaster.show(context, _addPreferenceModel.message.toString());
     // }
     setState(() {
@@ -759,42 +853,73 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   // String pets="Add",drinking="Add",smoking="Add",working="Add",workout="Add",dietary="Add",socialmedia="Add",sleeping="Add";
 
 
-  FlutterSoundRecorder _soundRecorder = FlutterSoundRecorder();
-  FlutterSoundPlayer _soundPlayer = FlutterSoundPlayer();
-  bool _playAudio = false;
+  String recordFilePath="";
+  // FlutterSoundRecorder recorder = FlutterSoundRecorder();
+  late AnotherAudioRecorder recorder;
+  // final recordFilePath = 'path/to/your/record/file.mp3';
+  AudioController audioController = Get.put(AudioController());
 
-  void startRecording() async {
-    try {
-      await _soundRecorder.startRecorder(toFile: 'path_to_save_file', codec: Codec.aacMP4);
-    } catch (e) {
-      // Handle any errors
+  String _playAudio="";
+  bool isliveAudio=false;
+
+  String audioURL = "";
+  Future<bool> checkpermission2()async{
+    if(!await Permission.microphone.isGranted){
+      PermissionStatus status = await Permission.microphone.request();
+      if(status != PermissionStatus.granted){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void startRecord() async {
+    bool hasPermission = await checkpermission2();
+    if (hasPermission) {
+      recordFilePath = await getFilePath();
+      recorder = AnotherAudioRecorder(recordFilePath,audioFormat: AudioFormat.AAC); // .wav .aac .m4a
+      await recorder.initialized;
+      await recorder.start();
+      await recorder.current(channel: 0);
+      Toaster.show(context, "Start Recording");
+      setState(() {});
+      // });
+    } else {
+      openAppSettings();
+      Fluttertoast.showToast(
+          msg: 'Permission is not granted', backgroundColor: Colors.grey);
+    }
+    setState(() {});
+  }
+
+  void stopRecord() async {
+    var result = await recorder.stop();
+
+    try{
+    if (result!=null) {
+      setState(() {
+        recordFilePath= result.path ?? "";
+        _playAudio="upload";
+      });
+      audioController.isRecording.value = false;
+      audioController.isSending.value = true;
+      Toaster.show(context, "Stop Recording");
+    }}catch(e){
+      print(">>>>>>${e}");
     }
   }
 
-  void stopRecording() async {
-    try {
-      String? path = await _soundRecorder.stopRecorder();
-      playAudio(path!);
-      // Upload the recorded file to the API
-    } catch (e) {
-      // Handle any errors
-    }
-  }
+  int i = 0;
 
-  void playAudio(String filePath) async {
-    try {
-      await _soundPlayer.startPlayer(fromURI: filePath);
-    } catch (e) {
-      // Handle any errors
+  Future<String> getFilePath() async {
+    Directory storageDirectory = await getApplicationDocumentsDirectory();
+    String sdPath =
+        "${storageDirectory.path}/record${DateTime.now().microsecondsSinceEpoch}.acc";
+    var d = Directory(sdPath);
+    if (!d.existsSync()) {
+      d.createSync(recursive: true);
     }
-  }
-
-  void stopAudio() async {
-    try {
-      await _soundPlayer.stopPlayer();
-    } catch (e) {
-      // Handle any errors
-    }
+    return "$sdPath/test_${i++}.mp3";
   }
 
   String profileimage = "";
@@ -819,7 +944,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            new SizedBox(height: MediaQuery.of(context).padding.top+20,),
+            SizedBox(height: MediaQuery.of(context).padding.top+20,),
             Row(
               children: [
                 Container(
@@ -837,9 +962,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                     ),
                   ),
                 ),
-                new Spacer(),
-                new Text("Edit info",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
-                new Spacer(),
+                Spacer(),
+                Text("Edit info",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white),),
+                Spacer(),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                   alignment: Alignment.centerLeft,
@@ -849,7 +974,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                 ),
               ],
             ),
-            new SizedBox(height: 40,),
+            SizedBox(height: 40,),
             Container(
               height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -885,7 +1010,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                 ],
               ),
             ),
-            new SizedBox(height: 30,),
+            SizedBox(height: 30,),
 
             Expanded(
               child: TabBarView(
@@ -910,8 +1035,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 10,),
-                        new Container(
+                        SizedBox(height: 10,),
+                        Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           child: isLoad ? Center(
 
@@ -919,12 +1044,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               color: Colors.white,
                               strokeWidth: 3.0,
                             ),
-                          ):new GridView.count(
+                          ):GridView.count(
                             crossAxisCount: 3,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
                             childAspectRatio: (itemWidth / itemHeight),
-                            controller: new ScrollController(keepScrollOffset: false),
+                            controller: ScrollController(keepScrollOffset: false),
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             children: List.generate(imagelist.length, (index) {
@@ -1002,7 +1127,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                         ),
                                       ),
                                     ),
-                                    if(imagelist[index] != null) new Positioned(
+                                    if(imagelist[index] != null) Positioned(
                                       right:0,
                                       top:0,
                                       child: SizedBox(
@@ -1044,7 +1169,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       ),
                                     ),
                                     // if(_list[index] != null)
-                                      index >= 0  && index < _list.length && _list.isNotEmpty ? new Positioned(
+                                      index >= 0  && index < _list.length && _list.isNotEmpty ? Positioned(
                                       right:0,
                                       top:0,
                                       child: SizedBox(
@@ -1122,7 +1247,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             strokeWidth: 3.0,
                           ),
                         ): Container(),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -1136,7 +1261,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        new SizedBox(height: 20,),
+                        SizedBox(height: 20,),
                         Container(
                           margin: const EdgeInsets.only(left: 20,right: 20),
                           // decoration: BoxDecoration(
@@ -1147,11 +1272,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Photo Options",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Photo Options",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:isPhotoOption,
@@ -1170,7 +1295,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        if(isPhotoOption) new SizedBox(height: 10,),
+                        if(isPhotoOption) SizedBox(height: 10,),
                         if(isPhotoOption) Container(
                           height:50,
                           margin: const EdgeInsets.only(left: 30,right: 30),
@@ -1182,14 +1307,14 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Smart Photos",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
+                              Container(
+                                child: Text("Smart Photos",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
                               ),
                               // new SizedBox(width: 20,),
                             ],
                           ),
                         ),
-                        if(isPhotoOption) new SizedBox(height: 10,),
+                        if(isPhotoOption) SizedBox(height: 10,),
                         if(isPhotoOption) Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -1203,16 +1328,16 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             textAlign: TextAlign.start,
                           ),
                         ),
-                        new SizedBox(height: 25,),
+                        SizedBox(height: 25,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            new SizedBox(width: 30,),
-                            new Container(
-                              child: Text("Get verified",style: new TextStyle(fontWeight: FontWeight.w600,fontSize: 16,color:Colors.white),),
+                            SizedBox(width: 30,),
+                            Container(
+                              child: Text("Get verified",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16,color:Colors.white),),
                             ),
-                            new SizedBox(width: 10,),
+                            SizedBox(width: 10,),
                             if(isVerified==2) SizedBox(
                               height: 20,
                               width: 20,
@@ -1220,7 +1345,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             )
                           ],
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         InkWell(
                           onTap:(){
                             if(isVerified==0){
@@ -1242,11 +1367,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             child: Row(
                               children: [
                                 // new SizedBox(width: 20,),
-                                new Container(
-                                  child: new Text(isVerified==0 ? "Take a selfie": isVerified==1 ? "Verification request has been sent": isVerified==2 ? "Verified" : "rejected please try again",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
+                                Container(
+                                  child: Text(isVerified==0 ? "Take a selfie": isVerified==1 ? "Verification request has been sent": isVerified==2 ? "Verified" : "rejected please try again",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.editblackgrey),),
                                 ),
-                                new Spacer(),
-                                new Container(
+                                Spacer(),
+                                Container(
                                     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
                                 ),
                                 // new SizedBox(width: 20,),
@@ -1255,14 +1380,14 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 15,),
-                        new Container(
+                        SizedBox(height: 15,),
+                        Container(
                           margin: const EdgeInsets.only(left: 30,right: 30),
                           alignment: Alignment.centerLeft,
-                          child: new Text("About me",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),),
+                          child: Text("About me",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.editblackgrey),),
                         ),
 
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
 
                         Container(
                           height: 260,
@@ -1281,9 +1406,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             decoration: InputDecoration(
                               hintText: '',
                               border: InputBorder.none,
-                              hintStyle: new TextStyle(color: Colors.black.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                              hintStyle: TextStyle(color: Colors.black.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
                             ),
-                            style: new TextStyle(color: Colors.black,fontSize: 14),
+                            style: TextStyle(color: Colors.black,fontSize: 14),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your Tag';
@@ -1292,7 +1417,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             },
                           ),
                         ),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         Container(
                           margin: const EdgeInsets.only(left: 20,right: 20),
                           // decoration: BoxDecoration(
@@ -1303,11 +1428,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Interests",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Interests",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:Interests,
@@ -1328,9 +1453,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
 
                         // intrests
-                        if(Interests) new Column(
+                        if(Interests) Column(
                           children: [
-                            new SizedBox(height: 10,),
+                            SizedBox(height: 10,),
                             // Container(
                             //   height: 50,
                             //   margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -1410,7 +1535,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       decoration: InputDecoration(
                                         hintText: 'Add New Tag...',
                                         border: InputBorder.none,
-                                        hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                        hintStyle: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
                                         // prefixIcon: SizedBox(
                                         //   height:5,width:5,
                                         //   child: Image.asset("assets/tag_interest.png",color: Colors.white.withOpacity(0.6),height:5,width:5,),),
@@ -1439,7 +1564,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           });
                                         }
                                       },
-                                      style: new TextStyle(color: Colors.white,fontSize: 14),
+                                      style: TextStyle(color: Colors.white,fontSize: 14),
                                       textAlign: TextAlign.left,
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -1451,7 +1576,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   ),
                                   SizedBox(
                                     width: 5,),
-                                  ischeck2 ? new InkWell(
+                                  ischeck2 ? InkWell(
                                     onTap: (){
                                       addCustomPrefs(tagsearch.text!);
                                       // if(selectedIndex.length!=4){
@@ -1468,7 +1593,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ],
                               ),
                             ),
-                            new SizedBox(height: 10,),
+                            SizedBox(height: 10,),
                             isLoad ? Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,
@@ -1517,10 +1642,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              new SizedBox(width: 5,),
-                                              Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
-                                              new SizedBox(width: 5,),
-                                              prefList[index].is_select ?? false ? new SizedBox(
+                                              SizedBox(width: 5,),
+                                              Text("${prefList[index].title}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Color(0xffDDDDDD)),),
+                                              SizedBox(width: 5,),
+                                              prefList[index].is_select ?? false ? SizedBox(
                                                 child: InkWell(onTap: (){
                                                   setState(() {
                                                     addPrefs(prefList![index].id.toString());
@@ -1547,7 +1672,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ],
                               ),
                             ),
-                            new SizedBox(height: 20,),
+                            SizedBox(height: 20,),
                           ],
                         ),
 
@@ -1564,11 +1689,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Profile managed by ",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Profile managed by ",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:managedby,
@@ -1611,7 +1736,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1628,7 +1753,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="Self";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1636,9 +1761,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                                 borderRadius: BorderRadius.circular(3)
                                             ),
                                           ),),
-                                        new SizedBox(width: 5,),
-                                        new Container(
-                                          child: new Text("Self",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          child: Text("Self",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
                                       ],
                                    ),
@@ -1655,7 +1780,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1672,7 +1797,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="Sibling";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1680,9 +1805,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                                 borderRadius: BorderRadius.circular(3)
                                             ),
                                           ),),
-                                        new SizedBox(width: 5,),
-                                        new Container(
-                                          child: new Text("Sibling",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          child: Text("Sibling",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
                                       ],
                                     ),
@@ -1698,7 +1823,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1715,7 +1840,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               managedBy="Parents";
                                             });
                                           },
-                                          child: new Container(
+                                          child: Container(
                                             height: 20,
                                             width: 20,
                                             decoration: BoxDecoration(
@@ -1723,24 +1848,24 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                                 borderRadius: BorderRadius.circular(3)
                                             ),
                                           ),),
-                                        new SizedBox(width: 5,),
-                                        new Container(
-                                          child: new Text("Parents",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          child: Text("Parents",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                         ),
                                       ],
                                     ),
                                 ],
                               ),
                             ),
-                           new SizedBox(height: 15,)
+                           SizedBox(height: 15,)
                          ],
                        ),
-                        new Container(
+                        Container(
                           margin: const EdgeInsets.only(left: 30,right: 30),
                           alignment: Alignment.centerLeft,
-                          child: new Text("Marriage plan",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Marriage plan",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
 
                         Container(
                           height: 50,
@@ -1843,7 +1968,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         //     ],
                         //   ),
                         // ),
-                        new SizedBox(height: 50,),
+                        SizedBox(height: 50,),
 
 
                         Container(
@@ -1856,11 +1981,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Basic info",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Basic info",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:basicinfo,
@@ -1891,7 +2016,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
                        if(basicinfo) Column(
                           children: [
-                            new SizedBox(height: 20,),
+                            SizedBox(height: 20,),
                             Customlayout(icon: 'assets/zodiac_icon.png',title: 'Zodiac',selectedItem:"$zodiac_sign",dropdownItems: "645a24f6c46146c70ceef85e",
                               onDropdownChanged: (selectedItem) {
                                 // Handle the selected item
@@ -1952,7 +2077,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   personality_typed=selectedItem;
                                 });
                               },),
-                            new SizedBox(height: 40,),
+                            SizedBox(height: 40,),
                           ],
                         ),
 
@@ -1967,11 +2092,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Lifestyle",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Lifestyle",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:Lifestyle,
@@ -2101,17 +2226,17 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   sleeping_habitsd=selectedItem;
                                 });
                               },),
-                            new SizedBox(height: 20,),
+                            SizedBox(height: 20,),
                           ],
                         ),
 
 
-                        new Container(
+                        Container(
                           alignment:Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Job Title",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Job Title",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.only(left: 30,right: 30),
@@ -2127,9 +2252,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             decoration: InputDecoration(
                                 hintText: 'Digital Marketing',
                                 border: InputBorder.none,
-                                hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
                             ),
-                            style: new TextStyle(color: Colors.white,fontSize: 14),
+                            style: TextStyle(color: Colors.white,fontSize: 14),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your Tag';
@@ -2138,13 +2263,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             },
                           ),
                         ),
-                        new SizedBox(height: 20,),
-                        new Container(
+                        SizedBox(height: 20,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Company",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Company",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.only(left: 30,right: 30),
@@ -2160,9 +2285,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             decoration: InputDecoration(
                                 hintText: 'Add Company',
                                 border: InputBorder.none,
-                                hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
                             ),
-                            style: new TextStyle(color: Colors.white,fontSize: 14),
+                            style: TextStyle(color: Colors.white,fontSize: 14),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your Tag';
@@ -2171,13 +2296,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             },
                           ),
                         ),
-                        new SizedBox(height: 20,),
-                        new Container(
+                        SizedBox(height: 20,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Education",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Education",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.only(left: 30,right: 30),
@@ -2193,9 +2318,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             decoration: InputDecoration(
                                 hintText: 'Add University',
                                 border: InputBorder.none,
-                                hintStyle: new TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
+                                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 14,fontWeight: FontWeight.w400),
                             ),
-                            style: new TextStyle(color: Colors.white,fontSize: 14),
+                            style: TextStyle(color: Colors.white,fontSize: 14),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your Tag';
@@ -2205,17 +2330,17 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 15,),
+                        SizedBox(height: 15,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Living In",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Living In",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:Living,
@@ -2237,7 +2362,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
                         if(Living) Column(
                           children: [
-                            new SizedBox(height: 15,),
+                            SizedBox(height: 15,),
                             Container(
                               height: 50,
                               margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2304,7 +2429,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               //   }).toList(),
                               // ),
                             ),
-                             new SizedBox(height: 15,),
+                             SizedBox(height: 15,),
                             Container(
                               height: 50,
                               margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2334,7 +2459,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               ),
                             ),
 
-                            new SizedBox(height: 15,),
+                            SizedBox(height: 15,),
                             Container(
                               height: 50,
                               margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2362,17 +2487,17 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             ),
                           ],
                         ),
-                        new SizedBox(height: 25,),
+                        SizedBox(height: 25,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Religion",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Religion",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:Religion,
@@ -2391,7 +2516,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        if(Religion) new SizedBox(height: 10,),
+                        if(Religion) SizedBox(height: 10,),
                         if(Religion) Container(
                           margin: const EdgeInsets.symmetric(horizontal: 27),
                           alignment: Alignment.centerLeft,
@@ -2435,7 +2560,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            ischeckregion==index ? new Container(
+                                            ischeckregion==index ? Container(
                                               height: 20,
                                               width: 20,
                                               decoration: BoxDecoration(
@@ -2444,7 +2569,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               ),
                                               child: Icon(Icons.check,size: 20,color: Colors.white,),
                                             ):
-                                            new Container(
+                                            Container(
                                               height: 20,
                                               width: 20,
                                               decoration: BoxDecoration(
@@ -2452,9 +2577,9 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                                   borderRadius: BorderRadius.circular(3)
                                               ),
                                             ),
-                                            new SizedBox(width: 5,),
-                                            new Container(
-                                              child: new Text("${religionList[index]}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
+                                            SizedBox(width: 5,),
+                                            Container(
+                                              child: Text("${religionList[index]}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.edittextblack),),
                                             ),
                                           ],
                                         )
@@ -2466,17 +2591,17 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                         new SizedBox(height: 25,),
+                         SizedBox(height: 25,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Caste",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Caste",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:casteb,
@@ -2539,22 +2664,22 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             }).toList(),
                           ),
                         ),
-                        if(casteb) new Container(
+                        if(casteb) Container(
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("If you do not select caste, you will be shown all matches within your search requirements",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w400,color: CommonColors.white.withOpacity(0.6)),),
+                          child: Text("If you do not select caste, you will be shown all matches within your search requirements",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,color: CommonColors.white.withOpacity(0.6)),),
                         ),
 
-                        new SizedBox(height: 30,),
+                        SizedBox(height: 30,),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Mother tongue",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              Container(
+                                child: Text("Mother tongue",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:mothertongue,
@@ -2617,13 +2742,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             }).toList(),
                           ),
                         ),
-                        new SizedBox(height: 20,),
-                        new Container(
+                        SizedBox(height: 20,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Characteristics",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Characteristics",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 17,),
+                        SizedBox(height: 17,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2635,11 +2760,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Age",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Age",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_age,
@@ -2659,7 +2784,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2671,11 +2796,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Height",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Height",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_height,
@@ -2695,7 +2820,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2707,11 +2832,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Weight",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Weight",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_weight,
@@ -2731,7 +2856,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2743,11 +2868,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Smoke",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Smoke",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_smoke,
@@ -2768,7 +2893,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
 
 
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2780,11 +2905,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Drink",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Drink",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_drink,
@@ -2804,7 +2929,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                         ),
 
 
-                        new SizedBox(height: 14,),
+                        SizedBox(height: 14,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2816,11 +2941,11 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new Container(
-                                child: new Text("Diet",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              Container(
+                                child: Text("Diet",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Transform.scale(
+                              Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
                                   value:is_diet,
@@ -2839,13 +2964,13 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           ),
                         ),
 
-                        new SizedBox(height: 30,),
-                        new Container(
+                        SizedBox(height: 30,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Record voice message",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Record voice message (Long press to record)",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2854,39 +2979,113 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               color: CommonColors.editblack,
                               borderRadius: BorderRadius.circular(37)
                           ),
-                          child: InkWell(
-                            onTap: (){
-                              setState(() {
-                                _playAudio = !_playAudio;
-                              });
-                              if (_playAudio) startRecording();
-                              if (!_playAudio) stopRecording();
-                            },
-                            child: Row(
-                              children: [
-                                // new SizedBox(width: 20,),
-                                new Container(
-                                  child: new Text("Add a voice message to your profile",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                          child: Row(
+                            children: [
+                              // new SizedBox(width: 20,),
+                              if(recordFilePath!="" || voice_record!="") GestureDetector(
+                                onTap: () {
+                                  if(recordFilePath!=""){
+                                    audioController.onPressedPlayButton2(
+                                        0, recordFilePath);
+                                  }else {
+                                    audioController.onPressedPlayButton(
+                                        0, voice_record);
+                                    // changeProg(duration: duration);
+                                  }
+                                },
+                                onSecondaryTap: () {
+                                  audioController.PauseAudio();
+                                  //   audioController.completedPercentage.value = 0.0;
+                                },
+                                child: Obx(
+                                      () => (audioController.isRecordPlaying)
+                                      ? Icon(
+                                    Icons.cancel,
+                                    color: Colors.white,
+                                  )
+                                      : Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                Spacer(),
-                                new Container(
-                                    child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
+                              ),
+                              if(recordFilePath!="" || voice_record!="") Obx(
+                                    () => Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      alignment: Alignment.center,
+                                      children: [
+                                        // Text(audioController.completedPercentage.value.toString(),style: TextStyle(color: Colors.white),),
+                                        LinearProgressIndicator(
+                                          minHeight: 5,
+                                          backgroundColor: Colors.grey,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                             Colors.black,
+                                          ),
+                                          value: (audioController.isRecordPlaying)
+                                              ? 0
+                                              : audioController.totalDuration.value.toDouble(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                // new SizedBox(width: 20,),
-                              ],
-                            ),
+                              ),
+                              if(recordFilePath=="" && voice_record=="") Container(
+                                child: Text("Add a voice message to your profile",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              ),
+                              Spacer(),
+                              if(recordFilePath!="" || voice_record!="")
+                                InkWell(
+                                  onTap:(){
+                                    setState(() {
+                                      _playAudio="";
+                                      voice_record="";
+                                      recordFilePath="";
+                                    });
+                                    },
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Icon(Icons.close,color: CommonColors.edittextblack,size: 20,))
+                                ),
+                              SizedBox(width:10),
+                              _playAudio=="upload" ? InkWell(
+                                onTap:(){
+                                  UploadVoice();
+                                },
+                                child: Text("${_playAudio}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              ):GestureDetector(
+                                onLongPress: () async {
+                                  startRecord();
+                                },
+                                onLongPressEnd: (details) {
+                                  stopRecord();
+                                },
+                                child:Icon(
+                                  Icons.mic,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              // new SizedBox(width: 20,),
+                            ],
                           ),
                         ),
-                        new SizedBox(height: 12,),
-                        new Container(
+                        SizedBox(height: 12,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Instagram Photos",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Instagram Photos",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         InkWell(
                           onTap:(){
-                            _handleInstagramLogin();
+                            Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => InstagramConnectScreen()
+                                )
+                            );
                             },
                           child: Container(
                             height:50,
@@ -2899,30 +3098,36 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             child: Row(
                               children: [
                                 // new SizedBox(width: 20,),
-                                new SizedBox(width: 20,
+                                SizedBox(width: 20,
                                 height:20,
                                   child:Image.asset("assets/instagram.png")
                                 ),
-                                new SizedBox(width: 15,),
-                                new Container(
-                                  child: new Text("Connect Instagram",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                                SizedBox(width: 15,),
+                                Container(
+                                  child: Text("Connect Instagram",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                                 ),
                                 Spacer(),
-                                new Container(
-                                  child: new Text("Connect",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
+                                Container(
+                                  child: Text("Connect",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
                                 ),
                                 // new SizedBox(width: 20,),
                               ],
                             ),
                           ),
                         ),
-                        new SizedBox(height: 12,),
-                        new Container(
+                        SizedBox(height: 12,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Spotify Anthem",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Row(
+                            children: [
+                              Text("Spotify Anthem",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              // Spacer(),
+                              // Text("(${spotify_username})",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                              ],
+                          ),
                         ),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2934,29 +3139,52 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new SizedBox(width: 20,
+                              SizedBox(width: 20,
                               height:20,
                                 child:Image.asset("assets/spotify.png")
                               ),
-                              new SizedBox(width: 15,),
-                              new Container(
-                                child: new Text("Choose anthem",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              SizedBox(width: 15,),
+                              Container(
+                                child: Text(spotify_username!=""?"${spotify_username}":"Choose anthem",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
-                                child: new Text("Connect",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
+                              InkWell(
+                                onTap:()async {
+                                  if(spotify_id=="") {
+                                    final dynamic result = await Navigator.of(
+                                        context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AuthorizationPage()
+                                        )
+                                    );
+                                    // Check if the result is a JSON value
+                                    if (result != null &&
+                                        result is Map<String, dynamic>) {
+                                      // Access JSON values
+                                       spotify_id = result['user_id'];
+                                       spotify_username = result['username'];
+                                      List<String> playlists = result['playlist'];
+                                      List<String> artistNames = result['artistNames'];
+
+                                      updateSpotify(
+                                          spotify_id, spotify_username, playlists,artistNames);
+                                    }
+                                  }
+                              },
+                                child: Text(spotify_id!="" ? "Connected" :"Connect",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
                               ),
                               // new SizedBox(width: 20,),
                             ],
                           ),
                         ),
-                        new SizedBox(height: 12,),
-                        new Container(
+                        SizedBox(height: 12,),
+                        Container(
                           alignment:Alignment.centerLeft,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
-                          child: new Text("Top Spotify Artists",style: new TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
+                          child: Text("Top Spotify Artists",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: CommonColors.white),),
                         ),
-                        new SizedBox(height: 10,),
+                        SizedBox(height: 10,),
                         Container(
                           height:50,
                           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -2968,23 +3196,46 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           child: Row(
                             children: [
                               // new SizedBox(width: 20,),
-                              new SizedBox(width: 20,
+                              SizedBox(width: 20,
                               height:20,
                                 child:Image.asset("assets/spotify.png")
                               ),
-                              new SizedBox(width: 15,),
-                              new Container(
-                                child: new Text("Connect Spotify",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                              SizedBox(width: 15,),
+                              Container(
+                                child: Text(spotify_username!=""?"${spotify_username}":"Connect Spotify",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ),
                               Spacer(),
-                              new Container(
-                                child: new Text("Connect",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
+                              InkWell(
+                                onTap:()async{
+                                  if(spotify_id=="") {
+                                    final dynamic result = await Navigator.of(
+                                        context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AuthorizationPage()
+                                        )
+                                    );
+                                    // Check if the result is a JSON value
+                                    if (result != null &&
+                                        result is Map<String, dynamic>) {
+                                      // Access JSON values
+                                      spotify_id = result['user_id'];
+                                      spotify_username = result['username'];
+                                      List<String> playlists = result['playlist'];
+                                      List<String> artistNames = result['artistNames'];
+
+                                      updateSpotify(
+                                          spotify_id, spotify_username, playlists,artistNames);
+                                    }
+                                  }
+                                },
+                                child: Text(spotify_id!="" ? "Connected" :"Connect",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
                               ),
                               // new SizedBox(width: 20,),
                             ],
                           ),
                         ),
-                        new SizedBox(height: 40,),
+                        SizedBox(height: 40,),
                         Container(
                           height: 50,
                           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -3027,7 +3278,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             ],
                           ),
                         ),
-                        new SizedBox(height: 40,),
+                        SizedBox(height: 40,),
                       ],
                     ),
                   ),
@@ -3070,7 +3321,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     // )
                                   ],
                                 ),
-                                new SizedBox(height: 15,),
+                                SizedBox(height: 15,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -3110,7 +3361,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                         ],
                                       ),
                                     ),
-                                    new SizedBox(width: 15,),
+                                    SizedBox(width: 15,),
                                     if(isVerified==2) SizedBox(
                                       height: 25,
                                       width: 25,
@@ -3118,7 +3369,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     )
                                   ],
                                 ),
-                                new SizedBox(height: 11,),
+                                SizedBox(height: 11,),
                                 Container(
                                   alignment: Alignment.topLeft,
                                   // margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -3203,7 +3454,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   ),
                                 ),
 
-                                new SizedBox(height: 14,),
+                                SizedBox(height: 14,),
                                 Row(
                                   children: [
                                     Container(
@@ -3219,7 +3470,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                       ),
                                       padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                                       alignment: Alignment.center,
-                                      child: Text("$user_plan",style: new TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                                      child: Text("$user_plan",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                                     ),
                                     Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
@@ -3232,7 +3483,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     )
                                   ],
                                 ),
-                                new SizedBox(height: 11,),
+                                SizedBox(height: 11,),
 
                                 if(marriage_plan!="null") Container(
                                   height:23,
@@ -3248,19 +3499,19 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                   ),
                                   padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
                                   alignment: Alignment.centerLeft,
-                                  child: Text("$marriage_plan",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
+                                  child: Text("$marriage_plan",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 12),textAlign: TextAlign.center,),
                                 ),
-                                new SizedBox(height: 40,),
-                                new Container(height: 1,width: double.infinity,color: Colors.white,),
-                                if(about.text!="null" && about.text.trim().isNotEmpty) new SizedBox(height: 40,),
+                                SizedBox(height: 40,),
+                                Container(height: 1,width: double.infinity,color: Colors.white,),
+                                if(about.text!="null" && about.text.trim().isNotEmpty) SizedBox(height: 40,),
                                 if(about.text!="null" && about.text.trim().isNotEmpty) Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text("ABOUT ME",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                  child: Text("ABOUT ME",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                                 ),
-                                if(about.text!="null" && about.text.trim().isNotEmpty) new SizedBox(height: 10,),
+                                if(about.text!="null" && about.text.trim().isNotEmpty) SizedBox(height: 10,),
                                 if(about.text!="null" && about.text.trim().isNotEmpty) Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text("${about.text}",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
+                                  child: Text("${about.text}",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 16),textAlign: TextAlign.start,),
                                 ),
                                 // new SizedBox(height: 10,),
                                 // Container(
@@ -3289,10 +3540,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 //     ],
                                 //   ),
                                 // ),
-                                if(prefList.isNotEmpty)  new SizedBox(height: 40,),
+                                if(prefList.isNotEmpty)  SizedBox(height: 40,),
                                 if(prefList.isNotEmpty)  Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text("My Interests",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                  child: Text("My Interests",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                                 ),
                                 if(prefList.isNotEmpty) SizedBox(height: 20,),
                                 Container(
@@ -3313,7 +3564,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text("${prefList[index].title}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
+                                                  Text("${prefList[index].title}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.white),),
                                                 ],
                                               )
                                           ),
@@ -3322,12 +3573,12 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                     ],
                                   ),
                                 ),
-                                new SizedBox(height: 40,),
+                                SizedBox(height: 40,),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text("General Info",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                                  child: Text("General Info",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                                 ),
-                                new SizedBox(height: 20,),
+                                SizedBox(height: 20,),
                               ],
                             ),
                           ),
@@ -3355,7 +3606,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           CustomlayoutView(icon: 'assets/sleep_bottom.png',tittle: 'Sleeping habits',status: social_media!="null" ?'$sleeping_habits':"",),
 
 
-                          new SizedBox(height: 20,),
+                          SizedBox(height: 20,),
                          if(marriage_plan!="null" && marriage_plan!="") customwidget("Marriage plan","${marriage_plan}"),
                           if(jobTitle.text!="null" && jobTitle.text!="")  customwidget("Job title","${jobTitle.text}"),
                           if(company.text!="null" && company.text!="")  customwidget("Company","${company.text}"),
@@ -3398,14 +3649,63 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           // new SizedBox(width: 20,),
-                                          new Container(
-                                            child: new Text("Voice not added",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+
+                                          if(recordFilePath!="" || voice_record!="") GestureDetector(
+                                            onTap: () {
+                                              if(recordFilePath!=""){
+                                                audioController.onPressedPlayButton2(
+                                                    0, recordFilePath);
+                                              }else {
+                                                audioController.onPressedPlayButton(
+                                                    0, voice_record);
+                                                // changeProg(duration: duration);
+                                              }
+                                            },
+                                            onSecondaryTap: () {
+                                              audioController.PauseAudio();
+                                              //   audioController.completedPercentage.value = 0.0;
+                                            },
+                                            child: Obx(
+                                                  () => (audioController.isRecordPlaying)
+                                                  ? Icon(
+                                                Icons.cancel,
+                                                color: Colors.white,
+                                              )
+                                                  : Icon(
+                                                Icons.play_arrow,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                          // Spacer(),
-                                          // new Container(
-                                          //     child: Icon(Icons.arrow_forward_ios,color: CommonColors.edittextblack,size: 20,)
-                                          // ),
-                                          // new SizedBox(width: 20,),
+                                          if(recordFilePath!="" || voice_record!="") Obx(
+                                                () => Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 0),
+                                                child: Stack(
+                                                  clipBehavior: Clip.none,
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    // Text(audioController.completedPercentage.value.toString(),style: TextStyle(color: Colors.white),),
+                                                    LinearProgressIndicator(
+                                                      minHeight: 5,
+                                                      backgroundColor: Colors.grey,
+                                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                                        Colors.black,
+                                                      ),
+                                                      value: (audioController.isRecordPlaying)
+                                                          ? 0
+                                                          : audioController.totalDuration.value.toDouble(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          if(recordFilePath=="" && voice_record=="") Container(
+                                            child: Text("Voice not added",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
+                                          ),
+
                                         ],
                                       ),
                                     // ),
@@ -3413,7 +3713,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ],
                               )
                           ),
-                          new SizedBox(height: 40,),
+                          SizedBox(height: 40,),
                           InkWell(
                             onTap:(){
                               shareProfile(profilename, profileimage, "${_preferences?.getString(ShadiApp.userId)}");
@@ -3421,10 +3721,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 30),
                               alignment: Alignment.center,
-                              child: Text("SHARE THIS PROFILE ",style: new TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
+                              child: Text("SHARE THIS PROFILE ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),textAlign: TextAlign.center,),
                             ),
                           ),
-                          new SizedBox(height: 60,),
+                          SizedBox(height: 60,),
                         ],
                       ),
                     ),

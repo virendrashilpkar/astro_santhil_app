@@ -125,9 +125,26 @@ class _MyHomePageState extends State<OTPVerify> {
       backgroundColor: CommonColors.themeblack,
       body: Center(
         child:  Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            new SizedBox(height: MediaQuery.of(context).padding.top+20,),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Image.asset(
+                    'assets/back_icon.png',
+                  ),
+                ),
+              ),
+            ),
+            new SizedBox(height: 140,),
 
             Container(
               alignment: Alignment.centerLeft,
