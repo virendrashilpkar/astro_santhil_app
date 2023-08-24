@@ -123,7 +123,7 @@ class _MyHomePageState extends State<OTPVerify> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
-      body: Center(
+      body: SingleChildScrollView(
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.start,

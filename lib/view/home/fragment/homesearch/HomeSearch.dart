@@ -465,6 +465,7 @@ class _MyHomePageState extends State<HomeSearch> {
                                                                 fontSize: 14,
                                                                 fontWeight: FontWeight.w800,
                                                               ),
+                                                              overflow: TextOverflow.ellipsis,
                                                               maxLines: 1,
                                                               textAlign: TextAlign.left,
                                                             ),
@@ -476,17 +477,21 @@ class _MyHomePageState extends State<HomeSearch> {
                                                                 fontWeight: FontWeight.w800,
                                                               ),
                                                               maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
                                                               textAlign: TextAlign.left,
                                                             ),
-                                                            if(_userList[index].country.toString()!="null" && _userList[index].country.toString()!="") Text(
-                                                              "${_userList[index].country}",
-                                                              style: TextStyle(
-                                                                color: CommonColors.lightblue,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w800,
+                                                            if(_userList[index].country.toString()!="null" && _userList[index].country.toString()!="") Flexible(
+                                                              child: Text(
+                                                                "${_userList[index].country}",
+                                                                style: TextStyle(
+                                                                  color: CommonColors.lightblue,
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w800,
+                                                                ),
+                                                                maxLines: 1,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                textAlign: TextAlign.left,
                                                               ),
-                                                              maxLines: 1,
-                                                              textAlign: TextAlign.left,
                                                             ),
                                                           ],
                                                         ),

@@ -97,8 +97,12 @@ class Datum {
   String? drinking;
   String? voice_record;
   String? spotify_id;
+
   String? spotify_username;
   List<String>? preference;
+
+  List<String>? spotifyPlaylist;
+  List<String>? spotifyArtistlist;
 
   Datum({
     this.id,
@@ -167,6 +171,8 @@ class Datum {
     this.spotify_id,
     this.spotify_username,
     this.preference,
+    this.spotifyPlaylist,
+    this.spotifyArtistlist,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -236,6 +242,9 @@ class Datum {
     spotify_id: json["spotify_id"],
     spotify_username: json["spotify_username"],
     preference: json["preference"] == null ? [] : List<String>.from(json["preference"]!.map((x) => x)),
+    spotifyPlaylist: json["spotify_playlist"] == null ? [] : List<String>.from(json["spotify_playlist"]!.map((x) => x)),
+    spotifyArtistlist: json["spotify_artistlist"] == null ? [] : List<String>.from(json["spotify_artistlist"]!.map((x) => x)),
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -305,6 +314,8 @@ class Datum {
     "spotify_id": spotify_id,
     "spotify_username": spotify_username,
     "preference": preference == null ? [] : List<dynamic>.from(preference!.map((x) => x)),
+    "spotify_playlist": spotifyPlaylist == null ? [] : List<dynamic>.from(spotifyPlaylist!.map((x) => x)),
+    "spotify_artistlist": spotifyArtistlist == null ? [] : List<dynamic>.from(spotifyArtistlist!.map((x) => x)),
   };
 }
 

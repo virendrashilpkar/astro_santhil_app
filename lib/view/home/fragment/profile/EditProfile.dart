@@ -170,9 +170,10 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   TextEditingController jobTitle = TextEditingController();
   TextEditingController company = TextEditingController();
   TextEditingController education = TextEditingController();
-
+  bool hasPermission=false;
   Future CheckUserConnection() async {
     try {
+      hasPermission=  await checkpermission2();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         setState(() {
@@ -272,6 +273,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   String voice_record = "";
   String spotify_username = "";
   String spotify_id = "";
+  List<String> spotify_song=[];
+  List<String> spotify_artist=[];
   double rating = 3.5;
   int status = 0;
   int isVerified = 0;
@@ -336,6 +339,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
       voice_record = _userDetailModel.data![0].voice_record ?? "";
       spotify_id = _userDetailModel.data![0].spotify_id ?? "";
       spotify_username = _userDetailModel.data![0].spotify_username ?? "";
+      spotify_song = _userDetailModel.data![0].spotifyPlaylist ?? [];
+      spotify_artist = _userDetailModel.data![0].spotifyArtistlist ?? [];
       if(voice_record!=""){
         // recordFilePath = voice_record;
         _playAudio = "play";
@@ -874,16 +879,17 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   }
 
   void startRecord() async {
-    bool hasPermission = await checkpermission2();
+    if(audioController.isRecordPlaying) {
+      audioController.PauseAudio();
+    }
+
     if (hasPermission) {
       recordFilePath = await getFilePath();
       recorder = AnotherAudioRecorder(recordFilePath,audioFormat: AudioFormat.AAC); // .wav .aac .m4a
       await recorder.initialized;
       await recorder.start();
       await recorder.current(channel: 0);
-      Toaster.show(context, "Start Recording");
-      setState(() {});
-      // });
+      Toaster.show(context, "Start Recording");// });
     } else {
       openAppSettings();
       Fluttertoast.showToast(
@@ -893,9 +899,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
   }
 
   void stopRecord() async {
-    var result = await recorder.stop();
-
     try{
+      var result = await recorder.stop();
     if (result!=null) {
       setState(() {
         recordFilePath= result.path ?? "";
@@ -2984,17 +2989,25 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               // new SizedBox(width: 20,),
                               if(recordFilePath!="" || voice_record!="") GestureDetector(
                                 onTap: () {
-                                  if(recordFilePath!=""){
-                                    audioController.onPressedPlayButton2(
-                                        0, recordFilePath);
+
+                                  if(user_plan=="Free"){
+                                    Fluttertoast.showToast(msg: "This is a premium feature, please purchase a package to use this feature.");
                                   }else {
-                                    audioController.onPressedPlayButton(
-                                        0, voice_record);
-                                    // changeProg(duration: duration);
+                                    if(recordFilePath!=""){
+                                      audioController.onPressedPlayButton2(
+                                          0, recordFilePath);
+                                    }else {
+                                      audioController.onPressedPlayButton(
+                                          0, voice_record);
+                                      // changeProg(duration: duration);
+                                    }
                                   }
+
                                 },
                                 onSecondaryTap: () {
-                                  audioController.PauseAudio();
+                                  if(user_plan!="Free"){
+                                    audioController.PauseAudio();
+                                  }
                                   //   audioController.completedPercentage.value = 0.0;
                                 },
                                 child: Obx(
@@ -3040,11 +3053,16 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               if(recordFilePath!="" || voice_record!="")
                                 InkWell(
                                   onTap:(){
-                                    setState(() {
-                                      _playAudio="";
-                                      voice_record="";
-                                      recordFilePath="";
-                                    });
+                                    if(user_plan=="Free"){
+                                      Fluttertoast.showToast(msg: "This is a premium feature, please purchase a package to use this feature.");
+                                    }else {
+                                      setState(() {
+                                        _playAudio="";
+                                        voice_record="";
+                                        recordFilePath="";
+                                      });
+                                    }
+
                                     },
                                     child: Padding(
                                         padding: const EdgeInsets.all(5),
@@ -3053,15 +3071,25 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               SizedBox(width:10),
                               _playAudio=="upload" ? InkWell(
                                 onTap:(){
-                                  UploadVoice();
+                                  if(user_plan=="Free"){
+                                    Fluttertoast.showToast(msg: "This is a premium feature, please purchase a package to use this feature.");
+                                  }else {
+                                    UploadVoice();
+                                  }
                                 },
                                 child: Text("${_playAudio}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: CommonColors.white),),
                               ):GestureDetector(
                                 onLongPress: () async {
-                                  startRecord();
+                                  if(user_plan=="Free"){
+                                    Fluttertoast.showToast(msg: "This is a premium feature, please purchase a package to use this feature.");
+                                  }else {
+                                    startRecord();
+                                  }
                                 },
                                 onLongPressEnd: (details) {
-                                  stopRecord();
+                                  if(user_plan!="Free"){
+                                    stopRecord();
+                                  }
                                 },
                                 child:Icon(
                                   Icons.mic,
@@ -3069,6 +3097,26 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ),
                               ),
                               // new SizedBox(width: 20,),
+                            ],
+                          ),
+                        ),
+                        if(user_plan=="Free") SizedBox(height: 5,),
+                        if(user_plan=="Free") Container(
+                          alignment:Alignment.centerLeft,
+                          margin: const EdgeInsets.symmetric(horizontal: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.white.withOpacity(0.5),
+                                  size:15,
+                              ),
+                              SizedBox(width: 5,),
+                              Expanded(child: Text("This is a premium feature, please purchase a package to use this feature.",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600,color: CommonColors.white.withOpacity(0.5)),)),
+
+                              SizedBox(width: 10,),
                             ],
                           ),
                         ),
@@ -3150,7 +3198,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               Spacer(),
                               InkWell(
                                 onTap:()async {
-                                  if(spotify_id=="") {
+                                  // if(spotify_id=="" || spotify_id.isEmpty) {
+                                  if(spotify_id!="" || spotify_id.isNotEmpty) {
                                     final dynamic result = await Navigator.of(
                                         context).push(
                                         MaterialPageRoute(
@@ -3207,7 +3256,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                               Spacer(),
                               InkWell(
                                 onTap:()async{
-                                  if(spotify_id=="") {
+                                  if(spotify_id=="" || spotify_id.isEmpty) {
                                     final dynamic result = await Navigator.of(
                                         context).push(
                                         MaterialPageRoute(
@@ -3228,6 +3277,8 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                           spotify_id, spotify_username, playlists,artistNames);
                                     }
                                   }
+                                  // updateSpotify(
+                                  //     "", "", [],[]);
                                 },
                                 child: Text(spotify_id!="" ? "Connected" :"Connect",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: CommonColors.white),),
                               ),
@@ -3615,6 +3666,46 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                           if(religion!="null" && religion!="")  customwidget("Religion","${religion}"),
                           if(caste!="null" && caste!="") customwidget("Caste","${caste}"),
                           if(mother_tongue!="null" && mother_tongue!="") customwidget("Mother tongue","${mother_tongue}"),
+
+
+                          if(spotify_song.isNotEmpty) Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Text("Spotify Fav Songs",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  ),
+                                  SizedBox(height: 5,),
+
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: spotify_song.map((line) => IconTextRow(icon: Icons.music_note, text: line)).toList(),
+                                  ),
+                                ],
+                              )
+                          ),
+                          if(spotify_artist.isNotEmpty) Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Text("Spotify Fav Artist",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  ),
+                                  SizedBox(height: 5,),
+
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: spotify_artist.map((line) => IconTextRow(icon: Icons.person, text: line)).toList(),
+                                  ),
+                                ],
+                              )
+                          ),
+                          
+                          
                           Container(
                               padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
                               child: Column(
@@ -3713,6 +3804,7 @@ class _MyHomePageState extends State<EditProfile> with SingleTickerProviderState
                                 ],
                               )
                           ),
+
                           SizedBox(height: 40,),
                           InkWell(
                             onTap:(){
@@ -3780,6 +3872,23 @@ class EditText extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
       ),
+    );
+  }
+}
+class IconTextRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const IconTextRow({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon,color: Colors.white.withOpacity(0.5),size: 12,),
+        SizedBox(width: 5),
+        Text(text,style: TextStyle(color: Colors.white.withOpacity(0.5)),),
+      ],
     );
   }
 }

@@ -1,12 +1,16 @@
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/Models/plan_list_model.dart';
 import 'package:shadiapp/Models/update_setting_model.dart';
 import 'package:shadiapp/Services/Services.dart';
+import 'package:shadiapp/view/home/Home.dart';
 import 'package:shadiapp/view/subscription/custom/Customcheck.dart';
+import 'package:http/http.dart' as http;
 
 class PremiumSub extends StatefulWidget {
   String name = "";
@@ -47,6 +51,190 @@ class _MyHomePageState extends State<PremiumSub> {
     CheckUserConnection();
     super.initState();
   }
+
+
+
+  String clientSecret = '';
+  Map<String, dynamic>? paymentIntent;
+
+  Future<void> makePayment() async {
+    try {
+      //STEP 1: Create Payment Intent
+      paymentIntent = await createPaymentIntent('${widget.price}', 'INR');
+
+      //STEP 2: Initialize Payment Sheet
+      print(">>>>${paymentIntent!["client_secret"]}");
+      print(">>>>${paymentIntent!["status"]}");
+
+      await Stripe.instance
+          .initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+              paymentIntentClientSecret: paymentIntent!['client_secret'], //Gotten from payment intent
+              style: ThemeMode.light,
+              merchantDisplayName: 'ShaadiApp',
+              // customFlow: true,
+          ))
+          .then((value) {
+      });
+
+      // await Stripe.instance.confirmPayment(paymentIntentClientSecret: paymentIntent!["client_secret"]);
+
+
+      //STEP 3: Display Payment sheet
+      displayPaymentSheet(paymentIntent!["id"]);
+    } catch (err) {
+      throw Exception(">>>>??${err}");
+    }
+  }
+
+
+  createPaymentIntent(String amount, String currency) async {
+    try {
+      //Request body
+      Map<String, dynamic> body = {
+        'amount': calculateAmount(amount),
+        'currency': currency,
+        // "payment_method":"{{CARD_ID}}",
+        // "payment_method_types[]":"card",
+        // "customer":"123123"
+      };
+
+      //Make post request to Stripe
+      var response = await http.post(
+        Uri.parse('https://api.stripe.com/v1/payment_intents'),
+        headers: {
+          'Authorization': 'Bearer sk_test_51Neuj5SC5priZjFLk3rLiKEJFPV5B70o4rfldd8bJkHtEnlvWKCJgLNJabToKxzDElBwC2Q6uOA2rnR8BYJftqYK00pQquLVF7',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: body,
+      );
+
+
+      print(">>>>><<<<<${response.body}");
+      return json.decode(response.body);
+    } catch (err) {
+      throw Exception(err.toString());
+    }
+  }
+
+
+
+  calculateAmount(String amount) {
+    final calculatedAmout = (int.parse(amount)) * 100;
+    return calculatedAmout.toString();
+  }
+
+  void _redirectAfterDelay() {
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => Home(), // Replace 'HomePage' with your actual home page widget
+        ),
+      );
+    });
+  }
+
+  displayPaymentSheet(String payment_id) async {
+    try {
+      final paymentSheetResponse = await Stripe.instance.presentPaymentSheet().then((value) async {
+        // completpayment(paymen t_id);
+        // print(">>>>>${payment_id}");
+        UpdateSettingModel update = await Services.SubscribePlan({"payment_id":"${payment_id}","planId":"${widget.planId}","userId":"${widget.userId}"});
+        Fluttertoast.showToast(msg: update.message ?? "");
+        _redirectAfterDelay();
+
+        if(update.status==1){
+          showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children:  [
+                    Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 100.0,
+                    ),
+                    SizedBox(height: 10.0),
+                    Text("Payment Successful!"),
+                  ],
+                ),
+              ));
+        }
+        paymentIntent = null;
+      }).onError((error, stackTrace) {
+        if (error is StripeException) {
+          if (error.error.localizedMessage ==
+              "The payment flow has been canceled") {
+            // Handle cancellation gracefully
+            _redirectAfterDelay();
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                content: Text("Payment canceled."),
+              ),
+            );
+          }
+        }
+        throw Exception(">>>>${error}");
+      });
+
+      print(">>>><<<<${paymentSheetResponse.status}");
+
+    } on StripeException catch (e) {
+      print('Error is:---> $e');
+      _redirectAfterDelay();
+      AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: const [
+                Icon(
+                  Icons.cancel,
+                  color: Colors.red,
+                ),
+                Text("Payment Failed"),
+              ],
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print('$e');
+    }
+  }
+
+
+  void completpayment(String payment_id)async{
+    // https://api.stripe.com/v1/payment_intents/pi_1GszsE2eZvKYlo2C3d7AiGJV/confirm
+    try {
+      //Request body
+      // Map<String, dynamic> body = {
+      //   'amount': calculateAmount(amount),
+      //   'currency': currency,
+      //   'automatic_payment_methods[enabled]':true.toString()
+      // };
+
+      //Make post request to Stripe
+      var response = await http.post(
+        Uri.parse('https://api.stripe.com/v1/payment_intents/${payment_id}/confirm'),
+        headers: {
+          'Authorization': 'Bearer sk_test_51Neuj5SC5priZjFLk3rLiKEJFPV5B70o4rfldd8bJkHtEnlvWKCJgLNJabToKxzDElBwC2Q6uOA2rnR8BYJftqYK00pQquLVF7',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        // body: body,
+      );
+
+
+      print(">>>>><<<<<${response.body}");
+      // return json.decode(response.body);
+    } catch (err) {
+      throw Exception(err.toString());
+    }
+  }
+
 
 
 
@@ -118,8 +306,8 @@ class _MyHomePageState extends State<PremiumSub> {
 
                     InkWell(
                       onTap: ()async{
-                        UpdateSettingModel update = await Services.SubscribePlan({"planId":"${widget.planId}","userId":"${widget.userId}"});
-                        Fluttertoast.showToast(msg: update.message ?? "");
+                        await makePayment();
+
                         },
                       child: new Container(
                         // margin: const EdgeInsets.all(15),

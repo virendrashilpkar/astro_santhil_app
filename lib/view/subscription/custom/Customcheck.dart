@@ -30,10 +30,10 @@ class Customcheck extends StatelessWidget {
             child: Icon(Icons.check,size: 20,color: textcolor,),
           ),
           new SizedBox(width: 8,),
-          new Container(
-              child:Text("${tittle}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: textcolor),)
+          new Expanded(
+              child:Text("${tittle}",style: new TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: textcolor),maxLines: 1,overflow: TextOverflow.ellipsis,)
           ),
-          new Spacer(),
+          // new Spacer(),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/StarRating.dart';
@@ -96,6 +97,8 @@ class _MyHomePageState extends State<Profile> {
     CheckUserConnection();
     super.initState();
   }
+
+
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
@@ -197,6 +200,7 @@ class _MyHomePageState extends State<Profile> {
   }
 
   int selectpack=100;
+
 
 
 
@@ -1118,12 +1122,16 @@ class _MyHomePageState extends State<Profile> {
                       SizedBox.expand(
                         child: Material(
                           type: MaterialType.transparency,
-                          child: InkWell(onTap: () {
+                          child: InkWell(onTap: () async {
+
+                            // await makePayment();
+
+
 
                             if(selectpack!=100) {
-                              // if (_list[selectpack].name == "BASIC") {
-                              //   Navigator.of(context).pushNamed("FreeSub");
-                              // } else if (_list[selectpack].name == "Premium") {
+                            //   // if (_list[selectpack].name == "BASIC") {
+                            //   //   Navigator.of(context).pushNamed("FreeSub");
+                            //   // } else if (_list[selectpack].name == "Premium") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
                                         PremiumSub(
@@ -1134,19 +1142,19 @@ class _MyHomePageState extends State<Profile> {
                                             "${_list[selectpack].name}",
                                             _list[selectpack].price!.toInt(),
                                             _list[selectpack].feauture!.toList())));
-                              // } else if (_list[selectpack].name == "Gold") {
-                              //   Navigator.of(context).push(MaterialPageRoute(
-                              //       builder: (context) =>
-                              //           GoldSub(_list[selectpack].name.toString(),
-                              //               _list[selectpack].price!.toInt(),
-                              //               _list[selectpack].feauture!.toList())));
-                              // } else if (_list[selectpack].name == "Vip") {
-                              //   Navigator.of(context).push(MaterialPageRoute(
-                              //       builder: (context) =>
-                              //           VIPSub(_list[selectpack].name.toString(),
-                              //               _list[selectpack].price!.toInt(),
-                              //               _list[selectpack].feauture!.toList())));
-                              // }
+                            //   // } else if (_list[selectpack].name == "Gold") {
+                            //   //   Navigator.of(context).push(MaterialPageRoute(
+                            //   //       builder: (context) =>
+                            //   //           GoldSub(_list[selectpack].name.toString(),
+                            //   //               _list[selectpack].price!.toInt(),
+                            //   //               _list[selectpack].feauture!.toList())));
+                            //   // } else if (_list[selectpack].name == "Vip") {
+                            //   //   Navigator.of(context).push(MaterialPageRoute(
+                            //   //       builder: (context) =>
+                            //   //           VIPSub(_list[selectpack].name.toString(),
+                            //   //               _list[selectpack].price!.toInt(),
+                            //   //               _list[selectpack].feauture!.toList())));
+                            //   // }
                             }else{
 
                               Toaster.show(context, "Select package");

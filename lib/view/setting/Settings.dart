@@ -1387,16 +1387,17 @@ class _MyHomePageState extends State<Settings> {
                       child: Row(
                         children: [
                           // new SizedBox(width: 20,),
-                          new Container(
+                          new Expanded(
                             child: new Text(
                               "Only show people in this range",
                               style: new TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: CommonColors.edittextblack),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Spacer(),
                           Transform.scale(
                             scale: 0.8,
                             child: CupertinoSwitch(

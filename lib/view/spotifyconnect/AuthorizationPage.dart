@@ -44,6 +44,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
         'redirect_uri': redirectUri,
       },
     );
+    print("/token>>>>>${response.body}");
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
@@ -62,6 +63,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
+    print("/me>>>>>${response.body}");
+
     if (response.statusCode == 200) {
       final userData = json.decode(response.body);
       username = userData['display_name'];
@@ -71,6 +74,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       // Navigator.pop(context, username);
     } else {
       getUserPlaylists();
+      getFollowedArtists();
       // throw Exception('Failed to retrieve user profile from Spotify.');
     }
   }
@@ -89,9 +93,9 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
 
       if (playlistsData.containsKey('items') || playlistsData['items'].isBlank) {
 
-        playlists = (playlistsData['items'] as List<dynamic>)
-            .map<String>((playlist) => playlist['name'] as String)
-            .toList();
+        // playlists = (playlistsData['items'] as List<dynamic>)
+        //     .map<String>((playlist) => playlist['name'] as String)
+        //     .toList();
         String playlistid=playlistsData['items'][0]["id"];
         getPlaylistTracks(playlistid);
       }
@@ -117,6 +121,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
+    print("/artist>>>>>${response.body}");
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData.containsKey('artists') ||  responseData['artists']['items'].isBlank) {
@@ -139,6 +144,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       Uri.parse(playlistUrl),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
+
+    print("/tracks>>>>${response.body}");
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);

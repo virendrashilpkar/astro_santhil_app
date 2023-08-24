@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/ConnectivityProvider.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Stripe.publishableKey = "pk_test_51Neuj5SC5priZjFLjU31X9irMl3HhAarUx45NTGqkV68tHfmsKypv4JVKSNDXiV0ro3xwduXuoAkI5uoKy6HNMup00GxsK1Iwv";
   runApp(const MyApp());
 }
 
