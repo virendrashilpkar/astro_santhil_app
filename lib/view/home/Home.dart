@@ -60,7 +60,7 @@ class _MyHomePageState extends State<Home> {
       Live(),
       LikesSent(),
       Chat(),
-      Profile()
+      Profile(isback:false)
     ];
     return WillPopScope(
       onWillPop: () async {

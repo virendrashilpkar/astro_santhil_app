@@ -270,18 +270,18 @@ class _MyHomePageState extends State<PremiumSub> {
                     width: 20,
                     child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(width: 1,color: Colors.white),
+                            border: Border.all(width: 1,color: Colors.black),
                             borderRadius: BorderRadius.circular(10)
                         ),
                         padding: const EdgeInsets.all(5),
-                        child: Image.asset("assets/home_close.png")),),
+                        child: Image.asset("assets/home_close.png",color: Colors.black,)),),
                 ),
               ),
               new Container(
-                child: Text("Plan Comparison",style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                child: Text("Plan Comparison",style: new TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),),
               ),
               new Container(
-                child: Text("Choose the best plan for you",style: new TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w400),),
+                child: Text("Choose the best plan for you",style: new TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w400),),
               ),
               new Container(
                 width: double.infinity,
@@ -295,11 +295,11 @@ class _MyHomePageState extends State<PremiumSub> {
                   children: [
                     new SizedBox(height: 20,),
                     new Container(
-                      child: Text(widget.name,style: new TextStyle(color: widget.color,fontSize: 20,fontWeight: FontWeight.w600),),
+                      child: Text(widget.name,style: new TextStyle(color:Colors.black,fontSize: 20,fontWeight: FontWeight.w600),),
                     ),
                     new SizedBox(height: 5,),
                     new Container(
-                      child: Text("Unlock ${widget.name} features to be in\ncontrol of your experience",style: new TextStyle(color:widget.color,fontSize: 12,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                      child: Text("Unlock ${widget.name} features to be in\ncontrol of your experience",style: new TextStyle(color:Colors.black,fontSize: 12,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
                     ),
                     new SizedBox(height: 5,),
 
@@ -322,7 +322,7 @@ class _MyHomePageState extends State<PremiumSub> {
                         child: Column(
                           children: [
                             new Container(
-                              child: Text("Upgrade form ₹ ${widget.price}",style: new TextStyle(color: CommonColors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                              child: Text("Upgrade form ₹ ${widget.price}",style: new TextStyle(color: CommonColors.black,fontSize: 16,fontWeight: FontWeight.w600),),
                             ),
                           ],
                         ),
@@ -352,7 +352,7 @@ class _MyHomePageState extends State<PremiumSub> {
               Expanded(child: ListView.builder(
                 itemCount: widget.list.length,
                   itemBuilder: (context, index){
-                return Customcheck(tittle: widget.list[index].feature.toString(), color: CommonColors.black.withOpacity(0.2), textcolor: CommonColors.white);
+                return Customcheck(tittle: widget.list[index].feature.toString(), color: CommonColors.black.withOpacity(0.2), textcolor: CommonColors.black);
               }))
             ],
           ),

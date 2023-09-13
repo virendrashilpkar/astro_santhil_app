@@ -1,14 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/ShadiApp.dart';
 import 'package:shadiapp/view/home/Home.dart';
 import 'package:shadiapp/view/home/fragment/chats/ChatRoom.dart';
+import 'package:shadiapp/view/home/fragment/profile/Profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Match extends StatefulWidget {
-  String id;
-  String image;
-  String user_image;
-  String full_name;
-  Match(this.image,this.user_image,this.id,this.full_name);
+  String matchid;
+  String login_image;
+  String other_image;
+  String ofull_name;
+  String lfull_name;
+  String login_id;
+  String other_id;
+  bool isonline;
+  Match(this.login_image,this.other_image,this.matchid,this.ofull_name,this.lfull_name,this.login_id,this.other_id,this.isonline);
 
   @override
   State<Match> createState() => _MatchState();
@@ -18,11 +26,38 @@ class Match extends StatefulWidget {
 class _MatchState extends State<Match> {
 
   TextEditingController _message = TextEditingController();
+
+  late SharedPreferences _preferences;
+  String user_plan="";
+  @override
+  void initState() {
+    loadpref();
+  }
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  void loadpref()async{
+    _preferences = await SharedPreferences.getInstance();
+    user_plan = "${_preferences?.getString(ShadiApp.user_plan).toString()}";
+    await _firestore
+        .collection('chatroom')
+        .doc(widget.matchid)//roomid
+        .set({
+      "user1": widget.lfull_name,
+      "user2":widget.ofull_name,
+      "uid1":widget.login_id,
+      "uid2":widget.other_id,
+      'id':widget.matchid,
+      'image1':widget.login_image,
+      'image2':widget.other_image,
+      "isOnline":widget.isonline,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(">>>>${widget.id}");
-    print(">>>>${widget.image}");
-    print(">>>>${widget.user_image}");
+    // print(">>>>${widget.id}");
+    // print(">>>>${widget.image}");
+    // print(">>>>${widget.user_image}");
+    loadpref();
     return Scaffold(
       backgroundColor: CommonColors.themeblack,
       body: Container(
@@ -65,7 +100,7 @@ class _MatchState extends State<Match> {
                             margin: EdgeInsets.all(10.0),
                             child:  ClipRRect(
                               borderRadius: BorderRadius.circular(50.0),
-                              child: Image.network("${widget.image}",
+                              child: Image.network("${widget.login_image}",
                                 width: 100,height: 100,fit: BoxFit.cover,),
                             ),
                           ),
@@ -78,7 +113,7 @@ class _MatchState extends State<Match> {
                             margin: EdgeInsets.all(10.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(50.0),
-                              child: Image.network("${widget.user_image}",
+                              child: Image.network("${widget.other_image}",
                                 width: 100,height: 100,fit: BoxFit.cover,),
                             ),
                           ),
@@ -132,11 +167,23 @@ class _MatchState extends State<Match> {
 
                               // addCustomPrefs(tagsearch.text!);
 
-                              Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => ChatRoom(widget.user_image,widget.id,widget.id,widget.full_name,_message.text)
-                                  )
-                              );
+                              // print(user_plan);
+                              if(user_plan=="Vip") {
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChatRoom(
+                                                widget.other_image, widget.matchid,
+                                                widget.matchid, widget.ofull_name,
+                                                _message.text)
+                                    )
+                                );
+                              }else{
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => Profile(isback:true)
+                                    )
+                                );
+                              }
                             },
                             child: SizedBox(
                               child: Icon(

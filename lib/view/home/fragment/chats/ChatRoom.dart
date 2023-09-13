@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shadiapp/CommonMethod/Toaster.dart';
 import 'package:shadiapp/Models/user_detail_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
@@ -52,6 +53,7 @@ class _ChatRoom extends State<ChatRoom> {
   void initState() {
     userDetail();
     checkPermission();
+    markAllMessagesAsRead(widget.room_id);
     _message.text=widget.msg;
     chatProvider = Get.put(ChatProvider(
         firebaseFirestore: FirebaseFirestore.instance,
@@ -69,6 +71,7 @@ class _ChatRoom extends State<ChatRoom> {
       setState(() {
         _limit += _limitIncrement;
       });
+
     }
   }
 
@@ -106,6 +109,7 @@ class _ChatRoom extends State<ChatRoom> {
       "message": "",
       "type": "img",
       "time": FieldValue.serverTimestamp(),
+      "read":false,
     });
 
     var ref =
@@ -152,6 +156,7 @@ class _ChatRoom extends State<ChatRoom> {
         "message": content,
         "type": type,
         "time": FieldValue.serverTimestamp(),
+        "read": false
       };
 
       _message.clear();
@@ -160,18 +165,18 @@ class _ChatRoom extends State<ChatRoom> {
           .doc(widget.room_id)//roomid
           .collection('chats')
           .add(messages);
-      await _firestore
-          .collection('chatroom')
-          .doc(widget.room_id)//roomid
-          .set({
-        "user1":user_name,
-        "user2":widget.user_name,
-        "uid1":luser_id,
-        "uid2":user_id,
-        'id':widget.room_id,
-        'image1':widget.image,
-        'image2':userimage,
-      });
+      // await _firestore
+      //     .collection('chatroom')
+      //     .doc(widget.room_id)//roomid
+      //     .set({
+      //   "user1":user_name,
+      //   "user2":widget.user_name,
+      //   "uid1":luser_id,
+      //   "uid2":user_id,
+      //   'id':widget.room_id,
+      //   'image1':widget.image,
+      //   'image2':userimage,
+      // });
       // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
       //     duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
@@ -180,10 +185,33 @@ class _ChatRoom extends State<ChatRoom> {
   }
 
 
+  Future<void> markAllMessagesAsRead(String chatId) async {
+    // Get a reference to the chat's messages collection
+    var messagesRef = FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(chatId)
+        .collection('chats');
+
+    // Query for unread messages (where 'read' is false)
+    var querySnapshot = await messagesRef
+        .where('read',isEqualTo:false)
+        .get();
+
+    print(querySnapshot.docs);
+    // Iterate through the query result and update each message's 'read' status
+    for (var messageDoc in querySnapshot.docs) {
+      await messageDoc.reference.update({'read': true});
+    }
+    print("Done");
+  }
+
+
+
   @override
   void dispose() {
     audioController.onClose();
     audioPlayer.stop();
+    super.dispose();
   }
 
   AudioController audioController = Get.put(AudioController());
@@ -211,9 +239,13 @@ class _ChatRoom extends State<ChatRoom> {
   // FlutterSoundRecorder recorder = FlutterSoundRecorder();
   late AnotherAudioRecorder recorder;
   // final recordFilePath = 'path/to/your/record/file.mp3';
+  bool micOn = false;
   void startRecord() async {
     bool hasPermission = await checkpermission2();
     if (hasPermission) {
+      setState(() {
+        micOn = true;
+      });
       recordFilePath = await getFilePath();
 
       recorder = AnotherAudioRecorder(recordFilePath,audioFormat: AudioFormat.AAC); // .wav .aac .m4a
@@ -221,17 +253,9 @@ class _ChatRoom extends State<ChatRoom> {
 
       await recorder.start();
       var recording = await recorder.current(channel: 0);
-      // var result = await recorder.stop();
-      // try {
-      //   await recorder?.openAudioSession();
-      //   await recorder.startRecorder(toFile: recordFilePath, codec: t_CODEC.CODEC_MP3);
-      //   // You can add setState here to update UI elements while recording
-      // } catch (err) {
-      //   print('Error starting recording: $err');
-      // }
-      // RecordMp3.instance.start(recordFilePath, (type) {
+      Toaster.show(context, "Start Recording"); // });
         setState(() {});
-      // });
+
     } else {
       openAppSettings();
       Fluttertoast.showToast(
@@ -240,31 +264,50 @@ class _ChatRoom extends State<ChatRoom> {
     setState(() {});
   }
 
+
   void stopRecord() async {
-    bool stop = false;
-    // bool stop = RecordMp3.instance.stop();
-    var result = await recorder.stop();
-    // setState(() {
-    //   recordFilePath= result?.path ?? "";
-    // });
-    // File file = widget.localFileSystem.file(result.path);
-    // audioController.end.value = DateTime.now();
-    // audioController.calcDuration();
-    // var ap = AudioPlayer();
-    // await audioPlayer.setAsset('assets/Notification.mp3');
-    // await audioPlayer.play();
-    // await ap.play(AssetSource("Notification.mp3"));
-    // ap.onPlayerComplete.listen((a) {});
-    print("stop");
-    if (result!=null) {
-      setState(() {
-        recordFilePath= result.path ?? "";
-      });
-      audioController.isRecording.value = false;
-      audioController.isSending.value = true;
-      await uploadAudio();
+    try {
+      var result = await recorder.stop();
+      if (result != null) {
+        recordFilePath = result.path ?? "";
+        audioController.isRecording.value = false;
+        audioController.isSending.value = true;
+        setState(() {
+          micOn = false;
+        });
+        Toaster.show(context, "Stop Recording");
+        await uploadAudio();
+      }
+    } catch (e) {
+      print(">>>>>>${e}");
     }
   }
+
+  // void stopRecord() async {
+  //   bool stop = false;
+  //   // bool stop = RecordMp3.instance.stop();
+  //   var result = await recorder.stop();
+  //   // setState(() {
+  //   //   recordFilePath= result?.path ?? "";
+  //   // });
+  //   // File file = widget.localFileSystem.file(result.path);
+  //   // audioController.end.value = DateTime.now();
+  //   // audioController.calcDuration();
+  //   // var ap = AudioPlayer();
+  //   // await audioPlayer.setAsset('assets/Notification.mp3');
+  //   // await audioPlayer.play();
+  //   // await ap.play(AssetSource("Notification.mp3"));
+  //   // ap.onPlayerComplete.listen((a) {});
+  //   print("stop");
+  //   if (result!=null) {
+  //     setState(() {
+  //       recordFilePath= result.path ?? "";
+  //     });
+  //     audioController.isRecording.value = false;
+  //     audioController.isSending.value = true;
+  //
+  //   }
+  // }
 
   int i = 0;
 
@@ -346,6 +389,9 @@ class _ChatRoom extends State<ChatRoom> {
 
     return batch.commit();
   }
+
+
+
 
 
   @override
@@ -666,7 +712,9 @@ class _ChatRoom extends State<ChatRoom> {
                                     child: SizedBox(
                                         height: 28,
                                         width: 20,
-                                        child: Image.asset("assets/chat_mic.png"))
+                                        child: Image.asset("assets/chat_mic.png",color: micOn
+                                            ? CommonColors.buttonorg
+                                            : Colors.white,))
                                 ),
                                 onLongPress: () async {
                                   // var audioPlayer = AudioPlayer();

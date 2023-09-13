@@ -82,7 +82,7 @@ class Data {
   int? minAge;
   int? minHeight;
   String? state;
-  bool? isVerified;
+  int? isVerified;
   String? username;
   bool? isEmail;
   bool? isPush;

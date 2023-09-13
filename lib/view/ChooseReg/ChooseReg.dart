@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,6 +8,7 @@ import 'package:shadiapp/Models/otp_verify_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/commonWeb.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
@@ -163,17 +165,19 @@ class _MyHomePageState extends State<ChooseReg> {
   }
 
 
+  final String cookie_policy = 'http://52.63.253.231:4000/cookie';
+  final String pricacy_policy = 'http://52.63.253.231:4000/privacy';
 
+  void _launchInBrowser(String nonSecureUrl) async {
 
-  // final Uri toLaunch = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
-  // Future<void> _launchInBrowser(Uri url) async {
-  //   if (!await launchUrl(
-  //     url,
-  //     mode: LaunchMode.externalApplication,
-  //   )) {
-  //     throw Exception('Could not launch $url');
-  //   }
-  // }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CommonWeb(url: nonSecureUrl),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -198,33 +202,51 @@ class _MyHomePageState extends State<ChooseReg> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 35),
-                  child: Text(
-                    'Before you login please read our privacy policy\nand find out how we handle your data.\nBy logging in you agree to our terms.',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                InkWell(
-                  onTap: (){
-                    // _launchInBrowser(toLaunch);
-                    // Navigator.of(context).pushNamed('AccountRecover');
-                  },
-                  splashColor: CommonColors.themeblack,
-                  highlightColor: CommonColors.themeblack,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 35),
-                    child: Text(
-                      'Privacy Policy and Cookie Policy.',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
+                  child: ListTile(
+                    visualDensity: VisualDensity(horizontal:0),
+                    contentPadding: EdgeInsets.zero,
+                    title: Transform.translate(
+                      offset: const Offset(-18, 0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: "Before you login please read our privacy policy\nand find out how we handle your data.\nBy logging in you agree to our terms.",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),),
+                            TextSpan(
+                              text: "\n",
+                            ),
+                            TextSpan(
+                                text: "Privacy Policy",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w600),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchInBrowser(pricacy_policy);
+                                  }),
+                            TextSpan(
+                              text: " and ",
+                            ),
+                            TextSpan(
+                                text: "Cookie Policy.",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w600),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchInBrowser(cookie_policy);
+                                  }),
+                          ],
+                        ),
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

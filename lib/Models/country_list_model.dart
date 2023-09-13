@@ -36,6 +36,7 @@ class CountryData {
   String? id;
   String? name;
   String? countryCode;
+  String? phoneCode;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? v;
@@ -44,6 +45,7 @@ class CountryData {
     this.id,
     this.name,
     this.countryCode,
+    this.phoneCode,
     this.createdAt,
     this.updatedAt,
     this.v,
@@ -53,6 +55,7 @@ class CountryData {
     id: json["_id"],
     name: json["name"],
     countryCode: json["countryCode"],
+    phoneCode: json["phoneCode"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
     v: json["__v"],
@@ -62,6 +65,7 @@ class CountryData {
     "_id": id,
     "name": name,
     "countryCode": countryCode,
+    "phoneCode": phoneCode,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
     "__v": v,

@@ -76,7 +76,9 @@ class Services {
   static String subscribePlan = BaseUrl + "subscribePlan";
 
   static Future<PhoneLoginModel> LoginCrdentials(String phone) async {
-    final params = {"phone": phone};
+    final params = {
+      "phone": phone
+    };
     print("PhoneLoginParams " + params.toString());
     http.Response response = await http.post(Uri.parse(Login), body: params);
     print("PhoneLoginResponse" + response.body);
@@ -466,10 +468,10 @@ class Services {
     );
     var file = await http.MultipartFile.fromPath("image", image.path);
     request.files.add(file);
-
     request.fields["id"] = uId;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
+    print("VerifyMethod ${request.files}");
     print("VerifyMethod ${request.fields}");
     print("VerifyMethod ${response2.body}");
     if (response2.statusCode == 200) {
@@ -520,7 +522,7 @@ class Services {
     }
   }
 
-  static Future<UserListModel> GetUserMethod(String uId,other_user,my_id) async {
+  static Future<UserListModel> GetUserMethod(String uId,other_user,my_id,firebasetoken) async {
     var request = http.MultipartRequest(
       'GET',
       Uri.parse(UserList),
@@ -529,6 +531,7 @@ class Services {
     request.fields["id"] = uId;
     if(my_id!="") request.fields["my_id"] = my_id;
    if(other_user!="") request.fields["other_user"] = other_user;
+   if(firebasetoken!="") request.fields["fcm_token"] = firebasetoken;
     var response = await request.send();
     var response2 = await http.Response.fromStream(response);
     print("GetUserMethodParams ${request.fields}");
@@ -576,8 +579,9 @@ class Services {
       LikeModel user = LikeModel.fromJson(data);
       return user;
     } else {
-      print(response.body);
-      throw Exception('Failed');
+      var data = jsonDecode(response.body);
+      LikeModel user = LikeModel.fromJson(data);
+      return user;
     }
   }
 
@@ -739,6 +743,20 @@ class Services {
   }
 
   static Future<CountryListModel> CountryList() async {
+
+    http.Response response = await http.post(Uri.parse(Country));
+    print("CountryListResponse" + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      CountryListModel user = CountryListModel.fromJson(data);
+      return user;
+    } else {
+      print(response.body);
+      throw Exception('Failed');
+    }
+  }
+  static Future<CountryListModel> CountryListLogin() async {
 
     http.Response response = await http.post(Uri.parse(Country));
     print("CountryListResponse" + response.body);

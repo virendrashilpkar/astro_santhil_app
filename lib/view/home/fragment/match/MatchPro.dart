@@ -43,9 +43,11 @@ class _MyHomePageState extends State<MatchPro> {
     }
   }
 
+  String user_plan="";
   Future<void> match() async {
     isLoad = true;
     _preferences = await SharedPreferences.getInstance();
+    user_plan = _preferences.getString(ShadiApp.userId).toString();
     _newMatchesModel = await Services.NewMatchesList(_preferences.getString(ShadiApp.userId).toString());
     if(_newMatchesModel.status == 1){
       for(var i = 0; i < _newMatchesModel.data!.length; i++){
@@ -54,7 +56,6 @@ class _MyHomePageState extends State<MatchPro> {
     }
     isLoad = false;
     setState(() {
-
     });
   }
 
@@ -65,8 +66,8 @@ class _MyHomePageState extends State<MatchPro> {
     super.initState();
   }
 
-  List<Color> colorList=[CommonColors.buttonorg,CommonColors.yellow,CommonColors.bluepro];
-  List<String> packagetittle=["Premium","Gold","VIP"];
+  List<Color> colorList=[CommonColors.buttonorg,CommonColors.yellow,CommonColors.bluepro,CommonColors.green];
+  List<String> packagetittle=["Premium","Gold","VIP","Free"];
   int selectindex = 0 ;
   @override
   Widget build(BuildContext context) {
@@ -127,102 +128,115 @@ class _MyHomePageState extends State<MatchPro> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _list.isNotEmpty ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _list.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (ctx,index){
-                        MatchDatum data = _list[index];
-                        return selectindex==index ? InkWell(
-                          onTap: (){
-                            setState(() {
-                              selectindex=index;
-                            });
-                          },
-                          child: new Container(
-                            width: MediaQuery.of(context).size.width/3,
-                            height: MediaQuery.of(context).size.width/2,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Positioned(
-                                  bottom: 10,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width/3.5,
-                                    height: MediaQuery.of(context).size.width/2-50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 1,color: colorList[index]),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15.0) //                 <--- border radius here
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                    _list.isNotEmpty ? Expanded(
+                      child: ListView.builder(
+                        // shrinkWrap: true,
+                        itemCount: _list.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (ctx,index){
+                          MatchDatum data = _list[index];
+                          int position=0;
+                          if("Premium"==data.plan){
+                            position=0;
+                          }else if("Vip"==data.plan){
+                            position=2;
+                          }else if("Gold"==data.plan){
+                            position=1;
+                          }else{
+                            position=3;
+                          }
 
-                                Positioned(
-                                  bottom: 0,
-                                  child: Container(
-                                      margin: const EdgeInsets.only(right: 5,top:5),
+                          return selectindex==index ? InkWell(
+                            onTap: (){
+                              setState(() {
+                                selectindex=index;
+                              });
+                            },
+                            child: new Container(
+                              width: MediaQuery.of(context).size.width/3,
+                              height: MediaQuery.of(context).size.width/2,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    bottom: 10,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width/3.5,
+                                      height: MediaQuery.of(context).size.width/2-50,
                                       decoration: BoxDecoration(
-                                        color: colorList[index],
-                                        borderRadius: BorderRadius.circular(30),
+                                        border: Border.all(width: 1,color: colorList[position]),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15.0) //                 <--- border radius here
+                                        ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 3),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text("${data.plan}",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
-                                        ],
-                                      )
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ):InkWell(
-                          onTap: (){
-                            setState(() {
-                              selectindex=index;
-                            });
-                          },
-                          child: new Container(
-                            width: MediaQuery.of(context).size.width/3,
-                            height: MediaQuery.of(context).size.width/2,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Positioned(
-                                  bottom: 10,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width/3.5,
-                                    height: MediaQuery.of(context).size.width/2-50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 1,color: colorList[index]),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15.0) //                 <--- border radius here
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(15.0),
+                                          child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                        margin: const EdgeInsets.only(right: 5,top:5),
+                                        decoration: BoxDecoration(
+                                          color: colorList[position],
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 3),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("${data.plan}",style: new TextStyle(fontSize: 11,fontWeight: FontWeight.w700,color: Colors.white),),
+                                          ],
+                                        )
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          ):InkWell(
+                            onTap: (){
+                              setState(() {
+                                selectindex=index;
+                              });
+                            },
+                            child: new Container(
+                              width: MediaQuery.of(context).size.width/3,
+                              height: MediaQuery.of(context).size.width/2,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    bottom: 10,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width/3.5,
+                                      height: MediaQuery.of(context).size.width/2-50,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(width: 1,color: colorList[position]),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15.0) //                 <--- border radius here
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(15.0),
+                                          child: Image.network(data.image.toString(),fit: BoxFit.cover,height: 180,width: 180,),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     )
                         : Container(
                       child: Text("No Likes Found",style: TextStyle(color: Colors.white),),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
 import 'package:shadiapp/CommonMethod/Toaster.dart';
+import 'package:shadiapp/Models/country_list_model.dart';
 import 'package:shadiapp/Models/phone_login_Model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
@@ -43,9 +44,7 @@ class _MyHomePageState extends State<PhoneLogin> {
   getAsync() async {
     try{
       _preferences = await SharedPreferences.getInstance();
-      setState(() {
-
-      });
+      setState(() {});
     }catch (e) {
       print(e);
     }
@@ -55,12 +54,14 @@ class _MyHomePageState extends State<PhoneLogin> {
     setState(() {
       clickLoad = true;
     });
+    // loginModel = await Services.LoginCrdentials(_dialCode + phone.text);
     loginModel = await Services.LoginCrdentials(phone.text);
     if(loginModel.status == 1){
       _preferences.setString(ShadiApp.userId,loginModel.data.toString());
       Toaster.show(context, loginModel.massege.toString());
       Navigator.of(context).push(
           MaterialPageRoute(
+              // builder: (context) => OTPVerify(_dialCode + phone.text)
               builder: (context) => OTPVerify(phone.text)
           )
       );
@@ -71,14 +72,35 @@ class _MyHomePageState extends State<PhoneLogin> {
       clickLoad = false;
     });
   }
+  List<String> countryList = [];
+  List<DropdownMenuItem> countryitems = [];
+  late CountryListModel _countryListModel;
+  bool isLoad = false;
+  Future<void> ListCountry() async {
+    _countryListModel = await Services.CountryList();
+    if (_countryListModel.status == true){
+      _dialCode = "${_countryListModel?.data?.first?.phoneCode.toString()}"+" "+"${_countryListModel.data?.first?.name.toString()}";
+      for(var i = 0; i < _countryListModel.data!.length; i++){
+        countryList.add("${_countryListModel.data![i].phoneCode.toString()}"+" "+"${_countryListModel.data![i].name.toString()}");
+        countryitems.add(DropdownMenuItem(
+          value: _countryListModel.data![i].phoneCode.toString(),
+          child: Text(_countryListModel.data![i].name.toString()),
+        ));
+      }
+    }
+    setState(() {
+      isLoad=true;
+    });
+  }
 
   final _formKey = GlobalKey<FormState>();
-  String _dialCode = '+1'; // default dial code
+  String _dialCode = ''; // default dial code
   String _phoneNumber="";
 
   @override
   void initState() {
     CheckUserConnection();
+    ListCountry();
     super.initState();
     getAsync();
   }
@@ -107,7 +129,7 @@ class _MyHomePageState extends State<PhoneLogin> {
             ),
             new SizedBox(height: 50,),
             Container(
-              // height: 50,
+              height: 55,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.symmetric(horizontal: 20),
               // decoration: BoxDecoration(
@@ -115,98 +137,100 @@ class _MyHomePageState extends State<PhoneLogin> {
                 // borderRadius:
                 // const BorderRadius.all(Radius.circular(25)),
               // ),
-              child: Stack(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
 
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            SizedBox(height: 2,),
-                            DropdownButton<String>(
-                              value: _dialCode,
-                              underline: Container(
-                                // height: 1,
-                                // margin:const EdgeInsets.only(top: 20),
-                                // color: Colors.white,
-                              ),
-                              style: TextStyle(color: Colors.white,fontSize: 20),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _dialCode = newValue!;
-                                });
-                              },
-                              selectedItemBuilder: (BuildContext context) {
-                                return ['+1', '+91', '+44', '+81'].map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),),
-                                  );
-                                }).toList();
-                              },
-                              iconSize: 30,
-                              iconDisabledColor: Colors.white,
-                              items: <String>['+1', '+91', '+44', '+81'] // add your own dial codes
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 20,fontWeight: FontWeight.w400,),),
-                                );
-                              }).toList(),
-                            ),
-                            Container(
-                              height: 1,
-                              width: double.maxFinite,
-                              margin:const EdgeInsets.only(top: 1),
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 20,),
-                      Expanded(
-                        flex: 3,
-                        child: TextFormField(
-                          controller: phone,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            hintText: '1234567890',
-                            hintStyle: new TextStyle(color: Colors.grey,fontSize: 20,fontWeight: FontWeight.w400,),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.cyan),
-                            ),
+                   ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: 70,
+                      maxWidth: 120.0, // Set the maximum width for the DropdownButton
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        SizedBox(height: 4,),
+                        if(isLoad) DropdownButton<String>(
+                          value: _dialCode,
+                          isExpanded: true,
+                          isDense: false,
+                          underline: Container(
+                            // height: 1,
+                            // margin:const EdgeInsets.only(top: 20),
+                            // color: Colors.white,
                           ),
-                          style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
+                          style: TextStyle(color: Colors.white,fontSize: 20),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _dialCode = newValue!;
+                            });
                           },
-                          onSaved: (value) {
-                            _phoneNumber = value!;
+                          selectedItemBuilder: (BuildContext context) {
+                            return countryList.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),),
+                              );
+                            }).toList();
                           },
+                          iconSize: 30,
+                          iconDisabledColor: Colors.white,
+                          items: countryList // add your own dial codes
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value,style: TextStyle(color: CommonColors.themeblack,fontSize: 12,fontWeight: FontWeight.w400,),),
+                            );
+                          }).toList(),
+                        ),
+                        Container(
+                          height: 1,
+                          width: double.maxFinite,
+                          margin:const EdgeInsets.only(top: 1),
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20,),
+                  Expanded(
+                    child: TextFormField(
+                      controller: phone,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        hintText: '1234567890',
+                        hintStyle: new TextStyle(color: Colors.grey,fontSize: 20,fontWeight: FontWeight.w400,),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.cyan),
                         ),
                       ),
-                      // Expanded(
-                      //     child: Center(
-                      //       child: TextFormField(
-                      //         decoration:  InputDecoration(
-                      //             border: InputBorder.none,
-                      //             hintText: 'Email address',
-                      //             hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16)
-                      //         ),
-                      //       ),
-                      //     )),
-                    ],
+                      style: new TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400,),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _phoneNumber = value!;
+                      },
+                    ),
                   ),
+                  // Expanded(
+                  //     child: Center(
+                  //       child: TextFormField(
+                  //         decoration:  InputDecoration(
+                  //             border: InputBorder.none,
+                  //             hintText: 'Email address',
+                  //             hintStyle: TextStyle(color: CommonColors.editblack, fontSize: 16)
+                  //         ),
+                  //       ),
+                  //     )),
                 ],
               ),
             ),

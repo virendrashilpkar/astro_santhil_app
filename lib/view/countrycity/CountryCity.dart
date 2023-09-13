@@ -59,7 +59,6 @@ class _MyHomePageState extends State<CountryCity> {
 
   bool clickLoad = false;
   bool isLoad = false;
-
   List<String> countryList = [
     "Select country"
   ];

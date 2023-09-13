@@ -102,9 +102,7 @@ class _MyHomePageState extends State<NameDOB> {
       company = _userDetailModel.data![0].company.toString();
       jobTitle = _userDetailModel.data![0].jobTitle.toString();
       personality_type = _userDetailModel.data![0].personalityType.toString();
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
@@ -381,6 +379,9 @@ class _MyHomePageState extends State<NameDOB> {
                       child: Material(
                         type: MaterialType.transparency,
                         child: InkWell(onTap: () {
+
+
+
                           if(firstName.text.isEmpty) {
                             Toaster.show(context, "Pelase Enter First Name");
                           }else if (lastName.text.isEmpty){
@@ -389,6 +390,8 @@ class _MyHomePageState extends State<NameDOB> {
                             Toaster.show(context, "Pelase Enter Date of Birth");
                           }else if(!isDateValid(intialdateval.text)){
                             Toaster.show(context, "Date of Birth is not valid");
+                          }else if (isDateGreaterThanCurrent(intialdateval.text)){
+                            Toaster.show(context, "The date is greater than the current date.");
                           }else{
                             updateUser();
                           }
@@ -412,6 +415,13 @@ class _MyHomePageState extends State<NameDOB> {
 
 
   }
+  bool isDateGreaterThanCurrent(String dateString) {
+    DateTime dateTime = DateFormat("dd/MM/yyyy").parse(dateString);
+    DateTime currentDate = DateTime.now();
+
+    return dateTime.isAfter(currentDate);
+  }
+
   bool isDateValid(String input) {
     final match = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})$').firstMatch(input);
     if (match == null) {

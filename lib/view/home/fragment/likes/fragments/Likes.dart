@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shadiapp/CommonMethod/CommonColors.dart';
+import 'package:shadiapp/CommonMethod/commonString.dart';
 import 'package:shadiapp/Models/view_like_sent_model.dart';
 import 'package:shadiapp/Services/Services.dart';
 import 'package:shadiapp/ShadiApp.dart';
+import 'package:shadiapp/view/home/Home.dart';
+import 'package:shadiapp/view/home/fragment/ShowBottomSheet.dart';
 import 'package:shadiapp/view/home/fragment/match/Match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,7 +60,19 @@ class _LikesState extends State<Likes> {
     super.initState();
   }
 
-
+  void showProfile(String image, String id){
+    showBottomSheet(
+      context: context,
+      backgroundColor: CommonColors.themeblack,
+      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      builder: (context) {
+        return  ShowBottomSheet(image, id);
+      },
+    );
+  }
 
 
   @override
@@ -89,6 +104,11 @@ class _LikesState extends State<Likes> {
             // print(data.type);
             return InkWell(
               onTap: (){
+                // CommonString.homesearch = "${data.id}";
+                // Navigator.pushReplacement(context,
+                //     MaterialPageRoute(builder: (context) => Home()));
+                print("image: ${data.image.toString()}\nid:${data.userId.toString()}");
+                showProfile(data.image.toString(),data.userId.toString());
               },
               child: Container(
                 height: 168,

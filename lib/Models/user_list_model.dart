@@ -46,6 +46,7 @@ class UserDatum {
   String? image;
   int? age;
   DateTime? dob;
+  bool? isOnline;
 
   UserDatum({
     this.id,
@@ -61,6 +62,7 @@ class UserDatum {
     this.image,
     this.age,
     this.dob,
+    this.isOnline,
   });
 
   factory UserDatum.fromJson(Map<String, dynamic> json) => UserDatum(
@@ -77,6 +79,7 @@ class UserDatum {
     image: json["image"],
     age: json["Age"],
     dob: DateTime.parse(json["dob"]),
+    isOnline: json["show_me_online"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -93,5 +96,6 @@ class UserDatum {
     "image": image,
     "Age": age,
     "dob": dob?.toIso8601String(),
+    "show_me_online": isOnline,
   };
 }

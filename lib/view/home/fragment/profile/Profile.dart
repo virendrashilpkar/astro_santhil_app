@@ -21,6 +21,10 @@ import 'package:swipe_cards/swipe_cards.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget {
+
+  bool isback = false;
+  Profile({super.key,required this.isback});
+
   @override
   State<Profile> createState() => _MyHomePageState();
 }
@@ -105,12 +109,7 @@ class _MyHomePageState extends State<Profile> {
     });
   }
   int currentIndex=0;
-  List<Color> colorList=[CommonColors.blue,CommonColors.buttonorg,CommonColors.yellow,CommonColors.settingblue,CommonColors.settingblue];
-  List<String> packagetittle=["Basic","Premium","Gold","VIP"];
-  List<String> packagedis=["0","20","25","30","30"];
-  List<Color> colorList2=[CommonColors.blue,CommonColors.yellow];
-  List<String> packagetittle2=["Premium","Gold"];
-  List<String> packagedis2=["20","25"];
+
 
   int parcasepackage=100;
 
@@ -125,13 +124,18 @@ class _MyHomePageState extends State<Profile> {
   List<String> vipdialogkr = ["kr 40.33/mo","kr 40.33/mo","kr 40.33/mo"];
   List<String> vipdialogkr2 = ["kr. 139","kr. 139","kr. 139"];
 
+  List<Color> colorList=[CommonColors.blue,CommonColors.buttonorg,CommonColors.yellow,CommonColors.settingblue];
+  List<String> packagetittle=["Basic","Premium","Gold","Vip"];
+  List<String> packagedis=["0","20","25","30","30"];
+  List<Color> colorList2=[CommonColors.blue,CommonColors.yellow];
+  List<String> packagetittle2=["Premium","Gold"];
+  List<String> packagedis2=["20","25"];
 
-
-  Color getRandomColor(int index) {
+  Color getRandomColor(String packagename) {
     // Random random = Random();
-
     // return colorList[random.nextInt(5)];
-    return colorList[index];
+    int goldIndex = packagetittle.indexOf(packagename);
+    return colorList[goldIndex];
   }
 
 
@@ -229,6 +233,19 @@ class _MyHomePageState extends State<Profile> {
                 new Container(
                   child: Row(
                     children: [
+                      if(widget.isback) new SizedBox(
+                        width: 24,
+                      ),
+                      if(widget.isback) InkWell(
+                        onTap:(){
+                          Navigator.of(context).pop();
+                        },
+                        child: new SizedBox(
+                          width: 20,
+                          height: 24,
+                          child: Image.asset("assets/back_icon.png",height:24,width: 20,),
+                        ),
+                      ),
                       new Spacer(),
                       InkWell(
                         onTap:(){
@@ -853,7 +870,7 @@ class _MyHomePageState extends State<Profile> {
                                         width: MediaQuery.of(context).size.width/3.5,
                                         height: MediaQuery.of(context).size.width/2-50,
                                         decoration: BoxDecoration(
-                                          color:getRandomColor(index),
+                                          color:getRandomColor(_list[index].name ?? ""),
                                           border: Border.all(
                                             color: Colors.white, // Border color
                                             width: selectpack==index ? 2.0:0.0,          // Border width
@@ -1135,7 +1152,7 @@ class _MyHomePageState extends State<Profile> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
                                         PremiumSub(
-                                            getRandomColor(selectpack),
+                                            getRandomColor(_list[selectpack].name ?? ""),
                                             _list[selectpack].id.toString(),
                                             _list[selectpack].name.toString(),
                                             "${_preferences.getString(ShadiApp.userId).toString()}",

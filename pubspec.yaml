@@ -46,6 +46,8 @@ dependencies:
   swipe_cards: ^2.0.0+1
   permission_handler: ^10.2.0
   google_sign_in: ^6.1.4
+  firebase_messaging: ^14.6.7
+  firebase_database: ^10.2.5
   firebase_core: ^2.14.0
   firebase_auth: ^4.6.3
   cloud_firestore: ^4.8.2
@@ -67,6 +69,8 @@ dependencies:
   share: ^2.0.4
   get: ^4.6.5
   flutter_stripe: ^9.3.0
+  carousel_slider: ^4.2.1
+  carousel_indicator: ^1.0.6
 
 dev_dependencies:
   flutter_test:

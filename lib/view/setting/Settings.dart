@@ -90,6 +90,7 @@ class _MyHomePageState extends State<Settings> {
   bool isloaddetail=true;
   bool enablePhone=false;
   bool enableEmail=false;
+  String user_plan="Free";
   Future<void> userDetail() async {
     setState(() {
       isLoad = true;
@@ -112,8 +113,10 @@ class _MyHomePageState extends State<Settings> {
       showme = _userDetailModel.data![0].isShowOnCard ?? false;
       incognito = _userDetailModel.data![0].goIncognito ?? false;
       isonline = _userDetailModel.data![0].isOnline ?? false;
+       // _preferences.setBool(ShadiApp.isOnline, _userDetailModel.data?[0].isOnline ?? false);
       isEmail = _userDetailModel.data![0].isEmail ?? false;
       country = _userDetailModel.data![0].savecountry ?? "Select";
+      user_plan = _userDetailModel.data![0].plan ?? "Free";
       isNotification = _userDetailModel.data![0].isPush ?? false;
       _controllerusername.text = _userDetailModel.data![0].username ?? "";
       _currentRangeValues =
@@ -180,6 +183,7 @@ class _MyHomePageState extends State<Settings> {
       // country = _userDetailModel.data?[0].country ?? "Select country";
     }
     isLoad = false;
+    if(mounted)
     setState(() {
     });
   }
@@ -289,14 +293,14 @@ class _MyHomePageState extends State<Settings> {
     _preferences = await SharedPreferences.getInstance();
     OtpSend otpSend = await Services.UpdatePhone("${_preferences?.getString(ShadiApp.userId)}",_controllerphone.text);
     if(otpSend.status == 1){
-      Toaster.show(context, "${otpSend.message}");
+      Toaster.show(context, "${otpSend.massege}");
       Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => VerifyEmailPhone(otpSend.data.toString(),_controllerphone.text,"phone")
           )
       );
     }else{
-      Toaster.show(context, "${otpSend.message}");
+      Toaster.show(context, "${otpSend.massege}");
     }
     setState((){
       click=false;
@@ -1761,7 +1765,6 @@ class _MyHomePageState extends State<Settings> {
                               value: isonline,
                               onChanged: (value) {
                                 isonline = value;
-
                                 setState(() {});
                               },
                               thumbColor: isonline ? CommonColors.buttonorg:CupertinoColors.black,
@@ -1813,7 +1816,7 @@ class _MyHomePageState extends State<Settings> {
                     Container(
                       height: 50,
                       margin: const EdgeInsets.symmetric(horizontal: 30),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.only(right: 5,left:15),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.white),
@@ -1821,11 +1824,12 @@ class _MyHomePageState extends State<Settings> {
                             const BorderRadius.all(Radius.circular(25)),
                       ),
                       child: TextFormField(
+                        readOnly: user_plan=="Free" ? true:false,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.done,
                         controller: _controllerusername,
                         decoration: InputDecoration(
-                          suffixIcon: usernamecheck==1 ? Icon(Icons.check_circle,color: Colors.blue,):null,
+                          suffixIcon: /*usernamecheck==1 ?*/ Icon(Icons.check_circle,color: Colors.blue,)/*:null*/,
                           hintText: 'username',
                           border: InputBorder.none,
                           hintStyle: new TextStyle(
